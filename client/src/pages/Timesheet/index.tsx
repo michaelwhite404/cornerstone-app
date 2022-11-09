@@ -35,7 +35,7 @@ export default function Timesheet() {
       {pageState === "CALENDAR" && <CalendarPage showTimesheetEntry={showTimesheetEntry} />}
       {pageState === "ADMIN" && <Admin showTimesheetEntry={showTimesheetEntry} />}
       <Drawer
-        portalClassName="z-40"
+        // portalClassName="z-40"
         size={width >= 640 ? 480 : "90%"}
         isOpen={drawerOpen}
         onClose={handleDrawerClose}
