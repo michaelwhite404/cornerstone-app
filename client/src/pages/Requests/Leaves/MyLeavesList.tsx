@@ -31,6 +31,7 @@ export default function MyLeavesList(props: Props) {
             >
               <div className="p-4 space-y-0.5" onClick={() => select(leave)}>
                 <div className="text-gray-900 font-medium">{leave.reason}</div>
+                <div className="text-gray-800">{leave.user.fullName}</div>
                 {leave.comments && (
                   <div className="whitespace-nowrap overflow-hidden overflow-ellipsis">
                     {leave.comments}

@@ -98,6 +98,12 @@ export default function Detail(props: OutletContext) {
 
                         {selected && (
                           <div className="mt-10 grid gap-8 grid-cols-2">
+                            <div className="col-span-2">
+                              <FadeIn delay={125}>
+                                <div className="show-entry-label">From</div>
+                                <div>{selected.user.fullName}</div>
+                              </FadeIn>
+                            </div>
                             <div>
                               <FadeIn delay={125}>
                                 <div className="show-entry-label">Date Start</div>

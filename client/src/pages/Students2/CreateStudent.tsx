@@ -94,7 +94,7 @@ export default function CreateStudent() {
                   <AddOnInput
                     label="School Email Address"
                     name="schoolEmail"
-                    addOnText="@cornestone-schools.org"
+                    addOnText="@cornerstone-schools.org"
                     addOnSide="right"
                     value={data.schoolEmail.split("@")[0]}
                     onChange={handleChange}

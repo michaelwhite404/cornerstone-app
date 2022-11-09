@@ -17,6 +17,7 @@ export default function MyLeavesTable(props: Props) {
         <thead>
           <tr>
             <th className="pl-6">Leave</th>
+            <th>From</th>
             <th>Dates</th>
             <th>Status</th>
           </tr>
@@ -33,8 +34,8 @@ export default function MyLeavesTable(props: Props) {
                 key={leave._id}
                 className={i !== leaves.length - 1 ? "border-b border-gray-200" : ""}
               >
-                <td className="pl-6 py-2 w-[35%]">
-                  <div className="pr-6 md:w-[350px]">
+                <td className="pl-6 py-2 w-[30%]">
+                  <div className="pr-6 md:w-[275px]">
                     <div
                       className="text-blue-500 font-medium cursor-pointer"
                       onClick={() => select(leave)}
@@ -48,6 +49,7 @@ export default function MyLeavesTable(props: Props) {
                     )}
                   </div>
                 </td>
+                <td>{leave.user.fullName}</td>
                 <td>
                   <div className="flex">
                     {format(new Date(leave.dateStart), "P")}
