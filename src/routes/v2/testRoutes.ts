@@ -1,11 +1,26 @@
 import { Router } from "express";
 import { authController } from "@controllers/v2";
-import { catchAsync, sheets } from "@utils";
+import { catchAsync, sheets, StaffCalendar } from "@utils";
 const { protect } = authController;
 
 const router = Router();
 
 router.use(protect);
+
+router.get(
+  "/idk",
+  catchAsync(async (req, res, next) => {
+    const calendar = new StaffCalendar("mwhite1@cornerstone-schools.org");
+    // const event = await calendar.addEvent({
+    //   title: "Summary 2",
+    //   start: new Date("2022-11-25T13:45:00.000Z"),
+    //   end: new Date("2022-11-27T22:30:00.000Z"),
+    //   allDay: true,
+    // });
+    const events = await calendar.listEvents();
+    res.sendJson(200, { events });
+  })
+);
 
 router.patch(
   "/update",

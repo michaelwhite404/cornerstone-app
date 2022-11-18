@@ -1,5 +1,6 @@
+import { addDays, format } from "date-fns";
 import { JWT } from "google-auth-library";
-import { google } from "googleapis";
+import { calendar_v3, google } from "googleapis";
 
 /**
  *
@@ -42,3 +43,62 @@ export const sheets = (email: string) =>
     version: "v4",
     auth: googleAuthJWT(["https://www.googleapis.com/auth/spreadsheets"], email),
   });
+
+export class StaffCalendar {
+  private calendarId = process.env.GOOGLE_STAFF_CALENDAR_ID!;
+  private calendarAPI: calendar_v3.Calendar;
+  private timeZone = "America/New_York";
+  constructor(impersonatedEmail: string) {
+    this.calendarAPI = google.calendar({
+      version: "v3",
+      auth: googleAuthJWT(["https://www.googleapis.com/auth/calendar"], impersonatedEmail),
+    });
+  }
+
+  async addEvent(eventDetails: EventDetails) {
+    const formatDate = (date: Date) =>
+      eventDetails.allDay ? { date: format(date, "yyyy-MM-dd") } : { dateTime: date.toISOString() };
+    if (eventDetails.allDay) eventDetails.end = addDays(eventDetails.end, 1);
+
+    const response = await this.calendarAPI.events.insert({
+      calendarId: this.calendarId,
+      requestBody: {
+        summary: eventDetails.title,
+        description: eventDetails.description,
+        start: {
+          timeZone: this.timeZone,
+          ...formatDate(eventDetails.start),
+        },
+        end: {
+          timeZone: this.timeZone,
+          ...formatDate(eventDetails.end),
+        },
+      },
+    });
+
+    return response.data;
+  }
+
+  async listEvents() {
+    const response = await this.calendarAPI.events.list({
+      calendarId: this.calendarId,
+    });
+    return response.data.items || [];
+  }
+
+  async getEvent(eventId: string) {
+    const response = await this.calendarAPI.events.get({
+      calendarId: this.calendarId,
+      eventId,
+    });
+    return response.data;
+  }
+}
+
+interface EventDetails {
+  start: Date;
+  description?: string;
+  title: string;
+  end: Date;
+  allDay?: boolean;
+}
