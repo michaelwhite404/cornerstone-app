@@ -6,12 +6,14 @@ export interface LeaveModel {
   user: PopulatedDoc<EmployeeModel>;
   dateStart: Date;
   dateEnd: Date;
+  allDay?: boolean;
   reason: string;
   comments?: string;
   createdAt: Date;
   sendTo: PopulatedDoc<EmployeeModel>;
   approval?: LeaveApproval;
   message?: string;
+  calendarLink?: string;
 }
 
 export interface LeaveDocument extends LeaveModel, Document {

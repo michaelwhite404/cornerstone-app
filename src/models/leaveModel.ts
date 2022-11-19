@@ -23,6 +23,7 @@ const leaveSchema: Schema<LeaveDocument, Model<LeaveDocument>> = new Schema({
       message: "Start date must be on or before end date",
     },
   },
+  allDay: { type: Boolean, default: true },
   reason: {
     type: String,
     required: true,
@@ -58,6 +59,10 @@ const leaveSchema: Schema<LeaveDocument, Model<LeaveDocument>> = new Schema({
   message: {
     type: String,
     select: false,
+  },
+  calendarLink: {
+    type: String,
+    required: false,
   },
 });
 

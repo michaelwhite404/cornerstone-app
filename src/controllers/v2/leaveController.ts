@@ -1,6 +1,6 @@
 import { Leave } from "@models";
 import { LeaveDocument } from "@@types/models";
-import { APIFeatures, AppError, catchAsync, getUserLeaders } from "@utils";
+import { APIFeatures, AppError, catchAsync, getUserLeaders, StaffCalendar } from "@utils";
 import { handlerFactory as factory } from ".";
 import { leaveEvent } from "@events";
 
@@ -64,6 +64,18 @@ export const approveLeave = catchAsync(async (req, res, next) => {
     date: new Date(req.requestTime),
     approved,
   };
+  if (approved) {
+    try {
+      const calendar = new StaffCalendar(req.employee.email);
+      const event = await calendar.addEvent({
+        title: `${leave.user.fullName} Out`,
+        start: leave.dateStart,
+        end: leave.dateEnd,
+        allDay: leave.allDay,
+      });
+      leave.calendarLink = event.htmlLink!;
+    } catch (err) {}
+  }
   await leave.save();
   await leave.populate({ path: "approval.user", select: "fullName email" }).execPopulate();
   res.sendJson(200, { leave });
@@ -71,7 +83,7 @@ export const approveLeave = catchAsync(async (req, res, next) => {
 });
 
 export const createLeave = catchAsync(async (req, res, next) => {
-  const { dateStart, dateEnd, reason, comments, sendTo } = req.body;
+  const { dateStart, dateEnd, reason, comments, sendTo, allDay = true } = req.body;
   // Is user leader
   const leaders = await getUserLeaders(req.employee);
   if (!leaders.map((l) => l._id.toString() as string).includes(sendTo)) {
@@ -88,6 +100,7 @@ export const createLeave = catchAsync(async (req, res, next) => {
     comments,
     sendTo,
     createdAt: new Date(),
+    allDay,
   });
   leave = await Model.populate(leave, {
     path: "user sendTo",
