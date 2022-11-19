@@ -79,7 +79,7 @@ export default function CreateDepartmentModal(props: CreateDepartmentProps) {
                   </div>
                   <div className="text-white px-6 pt-4 pb-2 bg-blue-600">
                     <span className="font-medium text-xl">Create Department</span>
-                    <p className="mt-1">Enter the information below to create a new user.</p>
+                    <p className="mt-1">Enter the information below to create a new department.</p>
                   </div>
                   <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <LabeledInput2 name="name" label="Department Name" onChange={handleChange} />
@@ -91,7 +91,7 @@ export default function CreateDepartmentModal(props: CreateDepartmentProps) {
                       onClick={submit}
                       disabled={!submittable}
                     >
-                      Create User
+                      Create Department
                     </button>
                     <button
                       type="button"

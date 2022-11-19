@@ -41,7 +41,7 @@ export const createEmployee = catchAsync(
           },
           primaryEmail: user.email,
           password,
-          orgUnitPath: "Staff",
+          orgUnitPath: "/Staff",
         },
       });
       if (response.data.id) (user.googleId = response.data.id), await user.save();
