@@ -1,8 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import axios, { AxiosError } from "axios";
-import { endOfDay, isBefore, isSameDay, startOfDay } from "date-fns";
-import { ChangeEventHandler, Fragment, useEffect, useState } from "react";
+import { isBefore, isSameDay, set } from "date-fns";
+import { ChangeEventHandler, Fragment, useEffect, useRef, useState } from "react";
+import { TimePicker } from "sassy-datepicker";
 import { Leave } from ".";
 import DateSelector from "../../../components/DateSelector";
 import { useToasterContext } from "../../../hooks";
@@ -15,11 +16,12 @@ interface AddLeaveProps {
   setLeaves: React.Dispatch<React.SetStateAction<Leave[]>>;
 }
 const initialData = {
-  dateStart: startOfDay(new Date()),
-  dateEnd: endOfDay(new Date()),
+  dateStart: set(new Date(), { hours: 7, minutes: 30, seconds: 0 }),
+  dateEnd: set(new Date(), { hours: 15, minutes: 30, seconds: 0 }),
   reason: "",
   comments: "",
   sendTo: "",
+  allDay: true,
 };
 
 interface DepartmentLeader {
@@ -32,10 +34,16 @@ interface DepartmentLeader {
   };
 }
 
+interface Time {
+  hours: number;
+  minutes: number;
+}
+
 export default function AddLeave(props: AddLeaveProps) {
   const [data, setData] = useState(initialData);
   const [myLeaders, setMyLeaders] = useState<Omit<DepartmentLeader, "department">[]>([]);
   const { showToaster } = useToasterContext();
+  const ref = useRef(null);
   useEffect(() => {
     const getMyLeaders = async () => {
       const uniqueIds: string[] = [];
@@ -84,8 +92,23 @@ export default function AddLeave(props: AddLeaveProps) {
     data.reason.length > 0;
   // && data.sendTo.length > 0
 
-  const handleDateChange = (date: Date, name: string) =>
-    setData({ ...data, [name]: startOfDay(date) });
+  const handleDateChange = (date: Date, name: "dateStart" | "dateEnd") => {
+    const newDate = set(data[name], {
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      date: date.getDate(),
+    });
+    setData({ ...data, [name]: newDate });
+  };
+  const handleTimeChange = (time: Time, name: "dateStart" | "dateEnd") => {
+    const newDate = set(data[name], {
+      hours: time.hours,
+      minutes: time.minutes,
+    });
+    if (newDate.getTime() === data[name].getTime()) return;
+    setData({ ...data, [name]: newDate });
+  };
+
   const handleChange: ChangeEventHandler<HTMLTextAreaElement | HTMLSelectElement> = (e) =>
     setData({ ...data, [e.target.name]: e.target.value });
 
@@ -116,7 +139,7 @@ export default function AddLeave(props: AddLeaveProps) {
         </Transition.Child>
 
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
+          <div className="flex items-center justify-center min-h-full p-4 text-center sm:p-0">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -145,20 +168,62 @@ export default function AddLeave(props: AddLeaveProps) {
                   <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     {/* <TextInput label="" /> */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="flex add-leave-date-selector">
+                      <div className="flex add-leave-date-selector col-span-2 xs:col-span-1">
                         <DateSelector
                           label="Date Start"
                           maxDate={new Date("Dec 31, 9999")}
                           onChange={(date) => handleDateChange(date, "dateStart")}
                           align="left"
                         />
+                        {!data.allDay && (
+                          <TimePicker
+                            displayFormat={"12hr"}
+                            minutesInterval={5}
+                            onChange={(time) => handleTimeChange(time, "dateStart")}
+                            value={{ hours: 12, minutes: 30 }}
+                          />
+                        )}
                       </div>
-                      <div className="flex add-leave-date-selector">
+                      <div className="flex add-leave-date-selector col-span-2 xs:col-span-1">
                         <DateSelector
                           label="Date End"
                           maxDate={new Date("Dec 31, 9999")}
                           onChange={(date) => handleDateChange(date, "dateEnd")}
                         />
+                        {!data.allDay && (
+                          <TimePicker
+                            displayFormat={"12hr"}
+                            minutesInterval={5}
+                            onChange={(time) => handleTimeChange(time, "dateEnd")}
+                            value={{
+                              hours: data.dateEnd.getHours(),
+                              minutes: data.dateEnd.getMinutes(),
+                            }}
+                            ref={ref}
+                          />
+                        )}
+                      </div>
+                      <div className="col-span-2">
+                        <div className="relative flex items-start">
+                          <div className="flex items-center h-5">
+                            <input
+                              id="allDay"
+                              name="allDay"
+                              type="checkbox"
+                              className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                              checked={!data.allDay}
+                              onChange={() => setData({ ...data, allDay: !data.allDay })}
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">
+                            <label
+                              htmlFor="allDay"
+                              className="font-medium text-gray-700 select-none"
+                            >
+                              <span className="text-gray-500">Add Times</span>
+                            </label>
+                          </div>
+                        </div>
                       </div>
                       <div className="col-span-2">
                         <label htmlFor="reason" className="block text-sm font-medium text-gray-700">

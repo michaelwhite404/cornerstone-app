@@ -9,6 +9,7 @@ import { FocusStyleManager } from "@blueprintjs/core";
 // import SingleDevice from "./pages/DeviceType/SingleDevice/SingleDevice";
 import { ToasterProvider } from "./context/ToasterContext";
 import "./pages/Devices/Devices.sass";
+import "./sassy.css";
 import AuthProvider from "./context/AuthProvider";
 import SocketIoProvider from "./context/SocketIoProvider";
 import Routes from "./Routes";

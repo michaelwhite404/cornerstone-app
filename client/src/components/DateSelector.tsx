@@ -78,7 +78,8 @@ export default function DateSelector(props: DateSelectorProps) {
       {open && (
         <DatePicker
           ref={pickerRef}
-          selected={date}
+          value={date}
+          // selected={date}
           onChange={onDateSelect}
           maxDate={props.maxDate || new Date()}
           style={{
