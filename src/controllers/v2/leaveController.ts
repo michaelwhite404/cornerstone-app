@@ -8,9 +8,12 @@ const Model = Leave;
 const key = "leave";
 
 export const getAllLeaves = catchAsync(async (req, res) => {
-  const query = Model.find({
-    $or: [{ sendTo: req.employee._id }, { user: req.employee._id }],
-  }).populate([
+  const isInFinance = req.employee.departments?.some((d) => d.name === "Finance") || false;
+  const filter = isInFinance
+    ? {}
+    : { $or: [{ sendTo: req.employee._id }, { user: req.employee._id }] };
+
+  const query = Model.find(filter).populate([
     { path: "user sendTo", select: "fullName slug email" },
     { path: "approval", populate: { path: "user", select: "fullName email" } },
   ]);
