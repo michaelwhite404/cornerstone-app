@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useAuth, useDocTitle, useSocket } from "../../../hooks";
 import { LeaveApproval, LeaveModel } from "../../../../../src/types/models";
 import Detail from "./Detail";
 import AddLeave from "./AddLeave";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import Tabs2 from "../../../components/Tabs2";
+import Tabs2, { TabOption } from "../../../components/Tabs2";
 import MyLeaves from "./MyLeaves";
 import { APILeaveResponse } from "../../../types/apiResponses";
 import { useLocation } from "react-router-dom";
 
-type PageState = "MY_LEAVES" | "APPROVALS";
+type PageState = "MY_LEAVES" | "APPROVALS" | "ALL";
 const getStatus = (approval?: LeaveApproval): Leave["status"] =>
   approval ? (approval.approved ? "Approved" : "Rejected") : "Pending";
 
@@ -87,7 +87,9 @@ function Leaves() {
     };
   }, [leaves, socket, user]);
 
-  const isLeader = user.departments?.some((d) => d.role === "LEADER");
+  const isLeader = user.departments?.some((d) => d.role === "LEADER") || false;
+  const isInFinance = user.departments?.some((d) => d.name === "Finance") || false;
+  const showTabs = isLeader || isInFinance;
   const selected = leaves.find((leave) => leave.selected);
 
   const select = (r: Leave) => {
@@ -104,6 +106,22 @@ function Leaves() {
     return res.data.data.leave;
   };
 
+  const tabs = useMemo(() => {
+    const tabs: TabOption<PageState>[] = [{ name: "My Leaves", value: "MY_LEAVES" }];
+    isLeader &&
+      tabs.push({
+        name: "Approvals",
+        value: "APPROVALS",
+        count: leaves.filter((r) => r.sendTo._id === user._id && !r.approval).length,
+      });
+    isInFinance &&
+      tabs.push({
+        name: "All",
+        value: "ALL",
+      });
+    return tabs;
+  }, [isInFinance, isLeader, leaves, user._id]);
+
   return (
     <div className="relative h-[100vh]" style={{ padding: "10px 25px 25px" }}>
       <div className="sm:flex sm:justify-between  sm:align-center">
@@ -119,20 +137,9 @@ function Leaves() {
           />
         </div>
       </div>
-      {isLeader && (
+      {showTabs && (
         <div className="sm:mt-0 mt-3">
-          <Tabs2
-            tabs={[
-              { name: "My Leaves", value: "MY_LEAVES" },
-              {
-                name: "Approvals",
-                value: "APPROVALS",
-                count: leaves.filter((r) => r.sendTo._id === user._id && !r.approval).length,
-              },
-            ]}
-            value={pageState}
-            onChange={(tab) => setPageState(tab.value)}
-          />
+          <Tabs2 tabs={tabs} value={pageState} onChange={(tab) => setPageState(tab.value)} />
         </div>
       )}
       {loaded && (
@@ -140,9 +147,10 @@ function Leaves() {
           {pageState === "MY_LEAVES" && (
             <MyLeaves leaves={leaves.filter((l) => l.user._id === user._id)} select={select} />
           )}
-          {loaded && pageState === "APPROVALS" && (
+          {isLeader && pageState === "APPROVALS" && (
             <MyLeaves leaves={leaves.filter((l) => l.sendTo._id === user._id)} select={select} />
           )}
+          {isInFinance && pageState === "ALL" && <MyLeaves leaves={leaves} select={select} />}
         </>
       )}
       <AddLeave open={modalOpen} setOpen={setModalOpen} setLeaves={setLeaves} />
