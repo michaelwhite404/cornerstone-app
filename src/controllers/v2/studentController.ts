@@ -179,8 +179,7 @@ const createOrgUnitPath = (student: StudentDocument) => {
   if (student.status === "Graduate") return "/Graduates";
   if (student.status === "Inactive") return "/Inactive/Students";
   const grade = student.grade!;
-  if (grade === 0) return "/Students/Elementary School/Kindergarten";
-  if (grade <= 5) return `/Students/Elementary School/${ordinal(grade)} Grade`;
-  if (grade >= 6 && grade <= 8) return `/Students/Middle School/${ordinal(grade)} Grade`;
-  return `/Students/High School/${ordinal(grade)} Grade`;
+  if (grade === 0) return "/Students/Lower School/Kindergarten";
+  if (grade <= 6) return `/Students/Lower School/${ordinal(grade)} Grade`;
+  return `/Students/Upper School/${ordinal(grade)} Grade`;
 };
