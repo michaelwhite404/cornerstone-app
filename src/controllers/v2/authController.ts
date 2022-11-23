@@ -74,12 +74,13 @@ export const googleLogin = catchAsync(async (req: Request, res: Response, next: 
   const { email, picture } = ticket.getPayload()!;
   const employee = await Employee.findOne({ email, active: true }).populate({
     path: "departments",
+    populate: "department",
   });
   if (!employee) return next(new AppError("You are not authorized to use this app", 403));
   employee.lastLogin = new Date(req.requestTime);
   employee.image = picture;
   await employee.save();
-  createSendToken(employee, 200, res);
+  createSendToken(formatDepartments(employee), 200, res);
 });
 
 const formatDepartments = (user: any) => {
@@ -149,13 +150,17 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password", 400));
   }
   // 2. Check if employee exists & password is correct
-  const employee = await Employee.findOne({ email })
-    .populate({ path: "departments" })
+  const possibleEmployee = await Employee.findOne({ email })
+    .populate({ path: "departments", populate: "department" })
     .select("+password");
-  if (!employee || !(await employee.correctPassword(password, employee.password))) {
+  if (
+    !possibleEmployee ||
+    !(await possibleEmployee.correctPassword(password, possibleEmployee.password))
+  ) {
     return next(new AppError("Incorrect email or password", 401));
   }
   // 3. If everything is ok, send token to client
+  const employee = formatDepartments(possibleEmployee);
   employee.lastLogin = new Date(Date.now());
   await employee.save({ validateBeforeSave: false });
   createSendToken(employee, 200, res);
