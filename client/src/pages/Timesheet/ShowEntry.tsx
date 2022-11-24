@@ -4,7 +4,7 @@ import { CircularProgressbarWithChildren, buildStyles } from "react-circular-pro
 import { TimesheetModel } from "../../../../src/types/models";
 import "./ShowEntry.sass";
 import "react-circular-progressbar/dist/styles.css";
-import ProgressProvider from "./ProgressProvider";
+import CircularProgressProvider from "../../components/CircularProgressProvider";
 import FadeIn from "../../components/FadeIn";
 import ApprovalBadge from "../../components/Badges/ApprovalBadge";
 
@@ -59,7 +59,7 @@ export default function ShowEntry(props: ShowEntryProps) {
             <FadeIn>Hours</FadeIn>
           </div>
           <div className="w-28 h-28 mt-3">
-            <ProgressProvider valueStart={0} valueEnd={props.entry.hours!}>
+            <CircularProgressProvider valueStart={0} valueEnd={props.entry.hours!}>
               {(value) => (
                 <CircularProgressbarWithChildren
                   minValue={0}
@@ -74,7 +74,7 @@ export default function ShowEntry(props: ShowEntryProps) {
                   <div className="relative text-gray-400">/8</div>
                 </CircularProgressbarWithChildren>
               )}
-            </ProgressProvider>
+            </CircularProgressProvider>
           </div>
         </div>
         {props.entry.finalizedAt && (

@@ -4,6 +4,7 @@ import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import { singular } from "pluralize";
 import { Link } from "react-router-dom";
 import { TicketModel } from "../../../../src/types/models";
+import PriorityCircle from "../../components/PriorityCircle";
 import TableWrapper from "../../components/TableWrapper";
 
 interface MyTicketTableProps {
@@ -82,7 +83,12 @@ const DesktopRow = ({ ticket }: { ticket: TicketModel }) => {
             }`}
         </div>
       </div>
-      <div className="text-center">{capitalize(ticket.priority.toLowerCase())}</div>
+      <div className="flex justify-center">
+        <div className="h-10 w-10">
+          <PriorityCircle priority={ticket.priority} />
+        </div>
+        {/* {capitalize(ticket.priority.toLowerCase())} */}
+      </div>
       <div className="text-center">{capitalize(ticket.status.toLowerCase())}</div>
     </div>
   );

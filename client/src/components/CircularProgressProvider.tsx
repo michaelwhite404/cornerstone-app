@@ -1,5 +1,5 @@
 import React from "react";
-const ProgressProvider = (props: ProgressProviderProps) => {
+const CircularProgressProvider = (props: CircularProgressProviderProps) => {
   const [value, setValue] = React.useState(props.valueStart);
   React.useEffect(() => {
     setTimeout(() => setValue(props.valueEnd), 100);
@@ -7,9 +7,9 @@ const ProgressProvider = (props: ProgressProviderProps) => {
 
   return props.children(value);
 };
-export default ProgressProvider;
+export default CircularProgressProvider;
 
-interface ProgressProviderProps {
+interface CircularProgressProviderProps {
   children: (value: number) => JSX.Element;
   valueStart: number;
   valueEnd: number;

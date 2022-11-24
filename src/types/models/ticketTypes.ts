@@ -24,4 +24,4 @@ export interface TicketDocument extends TicketModel, Document {
 }
 
 type TicketStatus = "OPEN" | "CLOSED";
-type TicketPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW";
+export type TicketPriority = "URGENT" | "HIGH" | "MEDIUM" | "LOW";
