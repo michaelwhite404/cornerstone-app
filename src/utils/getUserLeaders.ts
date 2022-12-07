@@ -1,7 +1,8 @@
 import { DepartmentMember } from "@models";
 
 export default async function getUserLeaders(employee: Employee) {
-  const myDepartments = employee.departments!;
+  // Don't use departments where you are the leader
+  const myDepartments = employee.departments!.filter((d) => d.role !== "LEADER");
   const myDeptIds = myDepartments.map((myD) => myD._id.toString());
   const leaders = await DepartmentMember.find({
     department: { $in: myDeptIds },
