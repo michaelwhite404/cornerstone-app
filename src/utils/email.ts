@@ -1,8 +1,8 @@
 import { EmployeeDocument } from "@@types/models";
 
-const nodemailer = require("nodemailer");
-const pug = require("pug");
-const htmlToText = require("html-to-text");
+import nodemailer, { SendMailOptions } from "nodemailer";
+import pug from "pug";
+import { htmlToText } from "html-to-text";
 
 // new Email(user, url).sendWelcome();
 // new Email(user, url).sendReset();
@@ -34,6 +34,7 @@ export default class Email {
     }
 
     return nodemailer.createTransport({
+      // @ts-ignore
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
       auth: {
@@ -46,7 +47,7 @@ export default class Email {
   // Send the actual email
   async send(template: string, subject: string) {
     // 1) Render HTML based on a pug template
-    const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
+    const html = pug.renderFile(`${__dirname}/../../views/email/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
       subject,
@@ -55,23 +56,23 @@ export default class Email {
     });
 
     // 2) Define email options
-    const mailOptions = {
+    const mailOptions: SendMailOptions = {
       from: this.from,
       to: this.to,
       subject,
       html,
-      text: htmlToText.fromString(html),
+      text: htmlToText(html),
     };
 
     // 3) Create a transport and send email
-    await this.newTransport().sendMail(mailOptions);
+    return await this.newTransport().sendMail(mailOptions);
   }
 
   async sendWelcome() {
-    await this.send("welcome", "Welcome to the new Cornerstone App!");
+    return await this.send("welcome", "Welcome to the new Cornerstone App!");
   }
 
   async sendPasswordReset() {
-    await this.send("passwordReset", "Reset your password");
+    return await this.send("passwordReset", "Reset your password");
   }
 }

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authController } from "@controllers/v2";
-import { catchAsync, sheets, StaffCalendar } from "@utils";
+import { catchAsync, sheets, Email } from "@utils";
 const { protect } = authController;
 
 const router = Router();
@@ -9,16 +9,15 @@ router.use(protect);
 
 router.get(
   "/idk",
-  catchAsync(async (req, res, next) => {
-    const calendar = new StaffCalendar("mwhite1@cornerstone-schools.org");
-    // const event = await calendar.addEvent({
-    //   title: "Summary 2",
-    //   start: new Date("2022-11-25T13:45:00.000Z"),
-    //   end: new Date("2022-11-27T22:30:00.000Z"),
-    //   allDay: true,
+  catchAsync(async (req, res /* , next */) => {
+    // const {
+    //   data: { messages },
+    // } = await gmail.users.messages.list({
+    //   userId: "mwhite1@cornerstone-schools.org",
     // });
-    const events = await calendar.listEvents();
-    res.sendJson(200, { events });
+    // res.sendJson(200, { messages });
+    await new Email(req.employee, "https://espn.com").sendPasswordReset();
+    res.sendJson(200, "success");
   })
 );
 

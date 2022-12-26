@@ -21,11 +21,12 @@ interface UserDepartment {
 declare namespace Express {
   import { ObjectId } from "mongoose";
   import { Send } from "express";
+  import { EmployeeDocument } from "@@types/models";
 
   export interface Request {
     /** Time of the request */
     requestTime: string;
-    employee: Employee;
+    employee: EmployeeDocument;
   }
 
   export interface Response {
