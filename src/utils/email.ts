@@ -1,4 +1,4 @@
-import { EmployeeDocument } from "@@types/models";
+import { EmployeeDocument, LeaveDocument } from "@@types/models";
 
 import nodemailer, { SendMailOptions } from "nodemailer";
 import pug from "pug";
@@ -36,7 +36,7 @@ export default class Email {
     return nodemailer.createTransport({
       // @ts-ignore
       host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
+      port: +process.env.EMAIL_PORT!,
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
@@ -45,7 +45,7 @@ export default class Email {
   }
 
   // Send the actual email
-  async send(template: string, subject: string) {
+  async send(template: string, subject: string, data?: any) {
     // 1) Render HTML based on a pug template
     const html = pug.renderFile(`${__dirname}/../../views/email/${template}.pug`, {
       firstName: this.firstName,
@@ -53,6 +53,7 @@ export default class Email {
       subject,
       password: this.password,
       email: this.to,
+      data,
     });
 
     // 2) Define email options
@@ -74,5 +75,11 @@ export default class Email {
 
   async sendPasswordReset() {
     return await this.send("passwordReset", "Reset your password");
+  }
+
+  async sendLeaveRequest(leave: LeaveDocument) {
+    return await this.send("leaveRequested", `Leave Request Submission - ${leave.user.fullName}`, {
+      leave,
+    });
   }
 }

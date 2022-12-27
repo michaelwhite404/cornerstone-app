@@ -15,7 +15,6 @@ class APIFeatures<T extends Document> {
     const queryObj = { ...this.queryString };
     const excludeFields = ["page", "sort", "limit", "fields", "populate"];
     excludeFields.forEach((el) => delete queryObj[el]);
-    console.log(queryObj);
 
     // 1B) Advanced Filtering
     let queryStr = JSON.stringify(queryObj);
