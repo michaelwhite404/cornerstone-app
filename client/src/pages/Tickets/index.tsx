@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import { TicketModel } from "../../../../src/types/models";
 import EmptyStateIllustration from "../../components/EmptyStateIllustration";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
+import { useDocTitle } from "../../hooks";
 import CreateTicketModal from "./CreateTicketModal";
 import MyTicketTable from "./MyTicketTable";
 import TicketDetails from "./TicketDetails";
 
 export default function Tickets() {
+  useDocTitle("Tickets | Cornerstone App");
   const [tickets, setTickets] = useState<TicketModel[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);

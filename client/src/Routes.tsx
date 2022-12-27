@@ -70,6 +70,7 @@ export default function Routes() {
             <Route path="users/groups/:slug" element={<Page.Users.GroupData />} />
           </Route>
         )}
+        <Route path="profile" element={<Page.Profile />} />
       </Route>
     </ReactRoutes>
   );
