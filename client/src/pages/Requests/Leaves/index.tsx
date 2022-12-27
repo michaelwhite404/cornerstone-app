@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useAuth, useDocTitle, useSocket } from "../../../hooks";
 import { LeaveApproval, LeaveModel } from "../../../../../src/types/models";
@@ -19,11 +19,24 @@ export interface Leave extends LeaveModel {
   status: "Approved" | "Rejected" | "Pending";
 }
 
+interface Sort {
+  key: string;
+  order: "asc" | "desc";
+}
+
+interface SortContext {
+  sort: Sort | null;
+  setSort: React.Dispatch<React.SetStateAction<Sort | null>>;
+}
+
+export const LeavesSortContext = createContext({} as SortContext);
+
 function Leaves() {
   useDocTitle("Leave Requests | Cornerstone App");
   const [pageState, setPageState] = useState<PageState>("MY_LEAVES");
   const [loaded, setLoaded] = useState(false);
   const [leaves, setLeaves] = useState<Leave[]>([]);
+  const [sort, setSort] = useState<Sort | null>(null);
   const [slideOpen, setSlideOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const location = useLocation();
@@ -87,6 +100,38 @@ function Leaves() {
     };
   }, [leaves, socket, user]);
 
+  useEffect(() => {
+    if (sort === null) return;
+    setLeaves((leaves) => {
+      const leavesCopy = [...leaves];
+      const stringSort = (key: keyof Leave) => {
+        return leavesCopy.sort((a, b) =>
+          sort.order === "desc" ? b[key].localeCompare(a[key]) : a[key].localeCompare(b[key])
+        );
+      };
+      switch (sort.key) {
+        case "Leave":
+          return stringSort("reason");
+        case "From":
+          return leavesCopy.sort((a, b) =>
+            sort.order === "desc"
+              ? b.user.fullName.localeCompare(a.user.fullName)
+              : a.user.fullName.localeCompare(b.user.fullName)
+          );
+        case "Dates":
+          return leavesCopy.sort((a, b) =>
+            sort.order === "desc"
+              ? new Date(b.dateStart).getTime() - new Date(a.dateStart).getTime()
+              : new Date(a.dateStart).getTime() - new Date(b.dateStart).getTime()
+          );
+        case "Status":
+          return stringSort("status");
+        default:
+          return leavesCopy;
+      }
+    });
+  }, [sort]);
+
   const isLeader = user.departments?.some((d) => d.role === "LEADER") || false;
   const isInFinance = user.departments?.some((d) => d.name === "Finance") || false;
   const showTabs = isLeader || isInFinance;
@@ -123,47 +168,49 @@ function Leaves() {
   }, [isInFinance, isLeader, leaves, user._id]);
 
   return (
-    <div className="relative h-[100vh]" style={{ padding: "10px 25px 25px" }}>
-      <div className="sm:flex sm:justify-between  sm:align-center">
-        <div className="page-header">
-          <h1 style={{ textTransform: "capitalize", marginBottom: "10px" }}>Leave Requests</h1>
-          <p>View and create leave requests</p>
+    <LeavesSortContext.Provider value={{ sort, setSort }}>
+      <div className="relative h-[100vh]" style={{ padding: "10px 25px 25px" }}>
+        <div className="sm:flex sm:justify-between  sm:align-center">
+          <div className="page-header">
+            <h1 style={{ textTransform: "capitalize", marginBottom: "10px" }}>Leave Requests</h1>
+            <p>View and create leave requests</p>
+          </div>
+          <div className="flex justify-end sm:block sm:mt-4">
+            <PrimaryButton
+              className="w-full sm:w-auto"
+              text="+ Create Leave"
+              onClick={() => setModalOpen(true)}
+            />
+          </div>
         </div>
-        <div className="flex justify-end sm:block sm:mt-4">
-          <PrimaryButton
-            className="w-full sm:w-auto"
-            text="+ Create Leave"
-            onClick={() => setModalOpen(true)}
-          />
-        </div>
+        {showTabs && (
+          <div className="sm:mt-0 mt-3">
+            <Tabs2 tabs={tabs} value={pageState} onChange={(tab) => setPageState(tab.value)} />
+          </div>
+        )}
+        {loaded && (
+          <>
+            {pageState === "MY_LEAVES" && (
+              <MyLeaves leaves={leaves.filter((l) => l.user._id === user._id)} select={select} />
+            )}
+            {isLeader && pageState === "APPROVALS" && (
+              <MyLeaves leaves={leaves.filter((l) => l.sendTo._id === user._id)} select={select} />
+            )}
+            {isInFinance && pageState === "ALL" && <MyLeaves leaves={leaves} select={select} />}
+          </>
+        )}
+        <AddLeave open={modalOpen} setOpen={setModalOpen} setLeaves={setLeaves} />
+        <Detail
+          open={slideOpen}
+          setOpen={setSlideOpen}
+          selected={selected}
+          setLeaves={setLeaves}
+          user={user}
+          finalizeLeave={finalizeLeave}
+          getStatus={getStatus}
+        />
       </div>
-      {showTabs && (
-        <div className="sm:mt-0 mt-3">
-          <Tabs2 tabs={tabs} value={pageState} onChange={(tab) => setPageState(tab.value)} />
-        </div>
-      )}
-      {loaded && (
-        <>
-          {pageState === "MY_LEAVES" && (
-            <MyLeaves leaves={leaves.filter((l) => l.user._id === user._id)} select={select} />
-          )}
-          {isLeader && pageState === "APPROVALS" && (
-            <MyLeaves leaves={leaves.filter((l) => l.sendTo._id === user._id)} select={select} />
-          )}
-          {isInFinance && pageState === "ALL" && <MyLeaves leaves={leaves} select={select} />}
-        </>
-      )}
-      <AddLeave open={modalOpen} setOpen={setModalOpen} setLeaves={setLeaves} />
-      <Detail
-        open={slideOpen}
-        setOpen={setSlideOpen}
-        selected={selected}
-        setLeaves={setLeaves}
-        user={user}
-        finalizeLeave={finalizeLeave}
-        getStatus={getStatus}
-      />
-    </div>
+    </LeavesSortContext.Provider>
   );
 }
 

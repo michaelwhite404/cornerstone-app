@@ -26,7 +26,7 @@ declare namespace Express {
   export interface Request {
     /** Time of the request */
     requestTime: string;
-    employee: EmployeeDocument;
+    employee: Employee;
   }
 
   export interface Response {

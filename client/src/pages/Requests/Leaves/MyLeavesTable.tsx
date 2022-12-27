@@ -1,6 +1,9 @@
+import { Icon } from "@blueprintjs/core";
 import { ArrowNarrowRightIcon } from "@heroicons/react/outline";
+import classNames from "classnames";
 import { format } from "date-fns";
-import { Leave } from ".";
+import { useContext } from "react";
+import { Leave, LeavesSortContext } from ".";
 import ApprovalBadge from "../../../components/Badges/ApprovalBadge";
 import TableWrapper from "../../../components/TableWrapper";
 
@@ -9,17 +12,58 @@ interface Props {
   select: (leave: Leave) => void;
 }
 
+const headers = [{ name: "Leave" }, { name: "From" }, { name: "Dates" }, { name: "Status" }];
+
+const Header = ({
+  name,
+  first = false,
+  selected = false,
+  order = "desc",
+  setSort,
+}: {
+  name: string;
+  first?: boolean;
+  selected?: boolean;
+  order?: "asc" | "desc";
+  setSort: any;
+}) => {
+  const switchOrder = () => (order === "desc" ? "asc" : "desc");
+  const handleClick = () => setSort({ key: name, order: selected ? switchOrder() : "desc" });
+  return (
+    <th className={classNames("relative py-1", { "pl-6": first })} key={name}>
+      <button
+        name={name}
+        className={classNames(
+          "flex items-center uppercase tracking-[1px] hover:bg-gray-200 py-1 px-1.5 rounded relative -left-[6px]",
+          { "text-gray-600": selected }
+        )}
+        onClick={handleClick}
+      >
+        {name}
+        {selected && <Icon icon={order === "desc" ? "caret-down" : "caret-up"} />}
+      </button>
+    </th>
+  );
+};
+
 export default function MyLeavesTable(props: Props) {
+  const { sort, setSort } = useContext(LeavesSortContext);
   const { leaves, select } = props;
   return (
     <TableWrapper>
       <table>
         <thead>
-          <tr>
-            <th className="pl-6">Leave</th>
-            <th>From</th>
-            <th>Dates</th>
-            <th>Status</th>
+          <tr className="h-[36px]">
+            {headers.map(({ name }, i) => (
+              <Header
+                key={name}
+                name={name}
+                first={i === 0}
+                selected={sort?.key === name}
+                order={sort?.order}
+                setSort={setSort}
+              />
+            ))}
           </tr>
         </thead>
         <tbody className="text-gray-400 text-sm">
