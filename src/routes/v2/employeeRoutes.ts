@@ -13,7 +13,7 @@ employeeRouter.patch("/spaces", v2auth.gChatProtect, employeeController.addToSpa
 
 employeeRouter.use(v2auth.protect);
 
-employeeRouter.patch("/update-password", v1auth.updatePassword);
+employeeRouter.patch("/update-password", v2auth.updatePassword);
 
 employeeRouter.route("/").get(employeeController.getAllEmployees).post(v2auth.createEmployee);
 employeeRouter.route("/me").get(employeeController.getMe, employeeController.getOneEmployee);

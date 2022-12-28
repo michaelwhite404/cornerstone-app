@@ -165,3 +165,20 @@ export const login = catchAsync(async (req, res, next) => {
   await employee.save({ validateBeforeSave: false });
   createSendToken(employee, 200, res);
 });
+
+export const updatePassword = catchAsync(async (req, res, next) => {
+  // 1.) Get employee from collection
+  const employee = await Employee.findById(req.employee._id).select("+password");
+  if (!employee) {
+    return next(new AppError("You are not logged in", 403));
+  }
+  // 3.) If so, update password
+  if (req.body.password !== req.body.passwordConfirm) {
+    return next(new AppError("Passwords are not the same", 400));
+  }
+  employee.password = req.body.password;
+  employee.passwordConfirm = req.body.passwordConfirm;
+  await employee.save();
+  // 4.) Log employee in, send JWT
+  createSendToken(employee, 200, res);
+});
