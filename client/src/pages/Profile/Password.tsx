@@ -1,14 +1,13 @@
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import axios from "axios";
 import { useState } from "react";
-import { EmployeeModel } from "../../../../src/types/models";
 import LabeledInput2 from "../../components/LabeledInput2";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useToasterContext } from "../../hooks";
 
 const initialData = { password: "", passwordConfirm: "" };
 
-export default function Password({ user }: { user: EmployeeModel }) {
+export default function Password() {
   const [data, setData] = useState(initialData);
   const [submitting, setSubmitting] = useState(false);
   const { showToaster, showError } = useToasterContext();
