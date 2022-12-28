@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth, useDocTitle } from "../../hooks";
 import Tabs2, { TabOption } from "../../components/Tabs2";
 import General from "./General";
+import Password from "./Password";
 
 type PageState = "GENERAL" | "PASSWORD" | "NOTIFICATIONS" | "TEAMS";
 
@@ -29,6 +30,7 @@ export default function Profile() {
         <Tabs2 tabs={tabs} value={pageState} onChange={({ value }) => setPageState(value)} />
       </div>
       {pageState === "GENERAL" && <General user={user!} />}
+      {pageState === "PASSWORD" && <Password user={user!} />}
     </div>
   );
 }
