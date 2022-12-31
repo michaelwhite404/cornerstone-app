@@ -13,6 +13,8 @@ const userSettingSchema = new Schema({
     required: [true, "Each user setting must reference a user"],
     immutable: true,
   },
+  type: { type: String, required: true },
+  settingName: { type: String, required: true },
   value: Schema.Types.Mixed,
 });
 
