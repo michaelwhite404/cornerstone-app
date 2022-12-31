@@ -45,7 +45,7 @@ interface FieldDescription {
 //       defaultValue: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE",
 //       knownValueDescriptions: [
 //         {
-//           value: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE",
+//           value: "DEVICE_CHECK_IN_EMAIL_ENUM_ALL",
 //           description: "Send email on every device check in.",
 //         },
 //         {

@@ -4,6 +4,7 @@ import Tabs2, { TabOption } from "../../components/Tabs2";
 import General from "./General";
 import Password from "./Password";
 import Teams from "./Teams";
+import Notifications from "./Notifications";
 import axios from "axios";
 import { UserGroup } from "../../../../src/types/models";
 
@@ -53,6 +54,7 @@ export default function Profile() {
       {pageState === "GENERAL" && <General user={user!} />}
       {pageState === "PASSWORD" && <Password />}
       {pageState === "TEAMS" && <Teams user={user!} groups={groups} />}
+      {pageState === "NOTIFICATIONS" && <Notifications />}
     </div>
   );
 }
