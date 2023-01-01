@@ -1,31 +1,23 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
+import notificationSettings from "../../utils/notificationSettings";
+import NotificationCategory from "./Notifications/NotificationCategory";
 
-const notificationMethods = [
-  {
-    value: "DEVICE_CHECK_IN_EMAIL_ENUM_ALL",
-    description: "Send email on every device check in",
-  },
-  {
-    value: "DEVICE_CHECK_IN_EMAIL_ENUM_BROKEN",
-    description: "Send email on every devices checked in marked as broken",
-  },
-  {
-    value: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE",
-    description: "Do not send email on device check in",
-  },
-];
+export const NotificationContext = createContext({} as NotificationContextValue);
+interface NotificationContextValue {
+  handleChange: (setting: string, field: string, value: string) => void;
+  data: { [x: string]: any };
+}
 
 export default function Notifications() {
-  const [data, setData] = useState({
-    DeviceCheckInEmail: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE",
+  const [data, setData] = useState<{ [x: string]: any }>({
+    DeviceCheckInEmail: { deviceCheckInEmail: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE" },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ ...data, [e.target.name]: e.target.value });
-  };
+  const handleChange = (setting: string, field: string, value: string) =>
+    setData({ ...data, [setting]: { [field]: value } });
 
   return (
-    <>
+    <NotificationContext.Provider value={{ data, handleChange }}>
       <div className="mt-10 divide-y divide-gray-200">
         <div className="space-y-1">
           <h3 className="text-lg font-medium leading-6 text-gray-900">Email Notifications</h3>
@@ -34,41 +26,16 @@ export default function Notifications() {
         <div className="mt-6">
           <div className="divide-y divide-gray-200">
             <div className="py-4">
-              <div className="text-lg font-medium text-gray-600">Devices</div>
-              <div className="py-4 sm:grid sm:grid-cols-[1fr_5fr] sm:gap-4 sm:py-5">
-                <div className="text-sm font-medium text-gray-500">Check In</div>
-                <div className="mt-1 flex flex-col text-sm text-gray-400 sm:mt-0">
-                  <span className="flex-grow">Notification to send on device check in</span>
-                  <fieldset className="mt-4">
-                    <legend className="sr-only">Notification method</legend>
-                    <div className="space-y-4">
-                      {notificationMethods.map((notificationMethod) => (
-                        <div key={notificationMethod.value} className="flex items-center">
-                          <input
-                            id={notificationMethod.value}
-                            name="DeviceCheckInEmail"
-                            type="radio"
-                            checked={notificationMethod.value === data.DeviceCheckInEmail}
-                            className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
-                            onChange={handleChange}
-                            value={notificationMethod.value}
-                          />
-                          <label
-                            htmlFor={notificationMethod.value}
-                            className="ml-3 block text-sm font-medium text-gray-700"
-                          >
-                            {notificationMethod.description}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
+              {notificationSettings.map((notificationCategory) => (
+                <NotificationCategory
+                  key={notificationCategory.category}
+                  notificationCategory={notificationCategory}
+                />
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </>
+    </NotificationContext.Provider>
   );
 }
