@@ -10,14 +10,15 @@ export default function NotificationField(props: NotificationFieldProps) {
   let Inputs: JSX.Element[];
 
   switch (notificationField.type) {
+    case "TYPE_BOOL":
     case "TYPE_ENUM": {
       Inputs = notificationField.knownValues.map((knownValue) => (
         <NotificationSettingEnumInput
-          key={knownValue.value}
+          key={`${notificationField.name}_${knownValue.value}`}
           field={notificationField.name}
-          id={knownValue.value}
+          id={`${notificationField.name}_${knownValue.value}`}
           text={knownValue.description}
-          value={knownValue.value}
+          value={knownValue.value as string}
           checked={knownValue.value === data[settingName][notificationField.name]}
           onChange={handleChange}
           setting={settingName}

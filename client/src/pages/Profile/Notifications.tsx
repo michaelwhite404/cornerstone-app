@@ -11,6 +11,12 @@ interface NotificationContextValue {
 export default function Notifications() {
   const [data, setData] = useState<{ [x: string]: any }>({
     DeviceCheckInEmail: { deviceCheckInEmail: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE" },
+    LeaveRequestEmail: { leaveRequestEmail: true },
+    LeaveFinalizedEmail: { leaveFinalizedEmail: "LEAVE_FINALIZED_EMAIL_ENUM_ALL" },
+    ReimbursementRequestEmail: { reimbursementRequestEmail: true },
+    ReimbursementFinalizedEmail: {
+      reimbursementFinalizedEmail: "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_ALL",
+    },
   });
 
   const handleChange = (setting: string, field: string, value: string) =>
@@ -25,7 +31,7 @@ export default function Notifications() {
         </div>
         <div className="mt-6">
           <div className="divide-y divide-gray-200">
-            <div className="py-4">
+            <div className="divide-y divide-gray-200">
               {notificationSettings.map((notificationCategory) => (
                 <NotificationCategory
                   key={notificationCategory.category}
