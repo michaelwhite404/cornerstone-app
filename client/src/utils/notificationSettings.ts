@@ -33,6 +33,51 @@ const notificationSettings: INotificationCategory[] = [
     ],
   },
   {
+    category: "Textbooks",
+    settings: [
+      {
+        name: "TextbookCheckInEmail",
+        label: "Check In",
+        roles: ["*"],
+        fields: [
+          {
+            name: "textbookCheckInEmail",
+            type: "TYPE_ENUM",
+            description: "Email setting when textbook is checked in",
+            defaultValue: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL",
+            knownValues: [
+              {
+                value: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL",
+                description: "Send email on all textbook check ins",
+              },
+              {
+                value: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_NONE",
+                description: "Do not send email on any textbook check ins",
+              },
+              {
+                value: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_PICK",
+                description: "Send email on when textbook has certain quality",
+              },
+            ],
+          },
+          // {
+          //   name: "textbookCheckInEmail",
+          //   type: "TYPE_ENUM",
+          //   description: "",
+          //   defaultValue: null,
+          //   knownValues: [
+          //     { value: "Excellent", description: "Excellent" },
+          //     { value: "Good", description: "Good" },
+          //     { value: "Acceptable", description: "Acceptable" },
+          //     { value: "Poor", description: "Poor" },
+          //     { value: "Lost", description: "Lost" },
+          //   ],
+          // },
+        ],
+      },
+    ],
+  },
+  {
     category: "Leaves",
     settings: [
       {

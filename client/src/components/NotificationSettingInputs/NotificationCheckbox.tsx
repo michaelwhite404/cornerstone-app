@@ -1,5 +1,8 @@
-export const NotificationSettingEnumInput = (props: NotificationSettingEnumInputProps) => {
+import React from "react";
+
+export default function NotificationCheckbox(props: NotificationSettingCheckboxProps) {
   const { checked, field, id, onChange, setting, text, value, disabled } = props;
+
   return (
     <div className="flex items-center">
       <input
@@ -20,9 +23,9 @@ export const NotificationSettingEnumInput = (props: NotificationSettingEnumInput
       </label>
     </div>
   );
-};
+}
 
-interface NotificationSettingEnumInputProps {
+interface NotificationSettingCheckboxProps {
   id: string;
   field: string;
   value: string;

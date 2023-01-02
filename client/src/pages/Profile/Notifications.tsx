@@ -11,6 +11,7 @@ interface NotificationContextValue {
 export default function Notifications() {
   const [data, setData] = useState<{ [x: string]: any }>({
     DeviceCheckInEmail: { deviceCheckInEmail: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE" },
+    TextbookCheckInEmail: { textbookCheckInEmail: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL" },
     LeaveRequestEmail: { leaveRequestEmail: true },
     LeaveFinalizedEmail: { leaveFinalizedEmail: "LEAVE_FINALIZED_EMAIL_ENUM_ALL" },
     ReimbursementRequestEmail: { reimbursementRequestEmail: true },
