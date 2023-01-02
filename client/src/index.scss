@@ -126,6 +126,10 @@ font-face {
     Noto Color Emoji;
 }
 
+html {
+  overflow-y: hidden;
+}
+
 body {
   font-family: inherit;
   margin: 0;

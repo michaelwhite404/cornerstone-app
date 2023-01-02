@@ -60,7 +60,7 @@ const notificationSettings: INotificationCategory[] = [
             name: "leaveFinalizedEmail",
             type: "TYPE_ENUM",
             description: "Email setting when a leave request is finalized",
-            defaultValue: "",
+            defaultValue: "LEAVE_FINALIZED_EMAIL_ENUM_ALL",
             knownValues: [
               {
                 value: "LEAVE_FINALIZED_EMAIL_ENUM_ALL",
@@ -113,7 +113,7 @@ const notificationSettings: INotificationCategory[] = [
             name: "reimbursementFinalizedEmail",
             type: "TYPE_ENUM",
             description: "Email setting when a reimbursement request is finalized",
-            defaultValue: "",
+            defaultValue: "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_ALL",
             knownValues: [
               {
                 value: "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_ALL",
@@ -131,6 +131,68 @@ const notificationSettings: INotificationCategory[] = [
                 value: "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_NONE",
                 description: "Do not send email when reimbursement is finalized",
               },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    category: "Tickets",
+    settings: [
+      {
+        name: "TicketAssignEmail",
+        label: "Ticket Assign",
+        roles: ["*"],
+        fields: [
+          {
+            name: "ticketAssignEmail",
+            type: "TYPE_BOOL",
+            description: "Email setting when assigned to a ticket",
+            defaultValue: true,
+            knownValues: [
+              {
+                value: true,
+                description: "Send email when assigned to a ticket",
+              },
+              { value: false, description: "Do not send email when assigned to a ticket" },
+            ],
+          },
+        ],
+      },
+      {
+        name: "TicketCommentEmail",
+        label: "Ticket Comment",
+        roles: ["*"],
+        fields: [
+          {
+            name: "ticketCommentEmail",
+            type: "TYPE_BOOL",
+            description: "Email setting when a comment is added to a ticket",
+            defaultValue: true,
+            knownValues: [
+              { value: true, description: "Send email when a comment is added to a ticket" },
+              {
+                value: false,
+                description: "Do not send email when a comment is added to a ticket",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        name: "TicketClosedEmail",
+        label: "Ticket Closed",
+        roles: ["*"],
+        fields: [
+          {
+            name: "ticketClosedEmail",
+            type: "TYPE_BOOL",
+            description: "Email setting when a ticket is closed",
+            defaultValue: true,
+            knownValues: [
+              { value: true, description: "Send email when ticket is closed" },
+              { value: false, description: "Do not send email when ticket is closed" },
             ],
           },
         ],

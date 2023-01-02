@@ -17,6 +17,9 @@ export default function Notifications() {
     ReimbursementFinalizedEmail: {
       reimbursementFinalizedEmail: "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_ALL",
     },
+    TicketAssignEmail: { ticketAssignEmail: true },
+    TicketCommentEmail: { ticketCommentEmail: true },
+    TicketClosedEmail: { ticketClosedEmail: true },
   });
 
   const handleChange = (setting: string, field: string, value: string) =>
