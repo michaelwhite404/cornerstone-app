@@ -24,6 +24,7 @@ const settingSchema = new Schema({
           "TYPE_FLOAT",
           "TYPE_INT32",
           "TYPE_INT64",
+          "TYPE_ENUM_ARRAY",
         ],
       },
     },

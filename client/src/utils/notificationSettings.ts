@@ -60,19 +60,20 @@ const notificationSettings: INotificationCategory[] = [
               },
             ],
           },
-          // {
-          //   name: "textbookCheckInEmail",
-          //   type: "TYPE_ENUM",
-          //   description: "",
-          //   defaultValue: null,
-          //   knownValues: [
-          //     { value: "Excellent", description: "Excellent" },
-          //     { value: "Good", description: "Good" },
-          //     { value: "Acceptable", description: "Acceptable" },
-          //     { value: "Poor", description: "Poor" },
-          //     { value: "Lost", description: "Lost" },
-          //   ],
-          // },
+          {
+            name: "textbookCheckInQualityPick",
+            type: "TYPE_ENUM_ARRAY",
+            description: "",
+            defaultValue: ["Poor", "Lost"],
+            disabled: true,
+            knownValues: [
+              { value: "Excellent", description: "Excellent" },
+              { value: "Good", description: "Good" },
+              { value: "Acceptable", description: "Acceptable" },
+              { value: "Poor", description: "Poor" },
+              { value: "Lost", description: "Lost" },
+            ],
+          },
         ],
       },
     ],
@@ -264,7 +265,8 @@ export interface INotificationSetting {
 export type INotificationSettingField =
   | NotificationSettingEnumField
   | NotificationSettingStringField
-  | NotificationSettingBooleanField;
+  | NotificationSettingBooleanField
+  | NotificationSettingEnumArrayField;
 
 interface NotificationSettingBaseField {
   name: string;
@@ -285,6 +287,11 @@ interface NotificationSettingStringField extends NotificationSettingBaseField {
 interface NotificationSettingBooleanField extends NotificationSettingBaseField {
   type: "TYPE_BOOL";
   knownValues: [KnownValue<boolean>, KnownValue<boolean>];
+}
+
+interface NotificationSettingEnumArrayField extends NotificationSettingBaseField {
+  type: "TYPE_ENUM_ARRAY";
+  knownValues: KnownValue<string>[];
 }
 
 interface KnownValue<T = any> {

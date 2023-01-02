@@ -4,14 +4,17 @@ import NotificationCategory from "./Notifications/NotificationCategory";
 
 export const NotificationContext = createContext({} as NotificationContextValue);
 interface NotificationContextValue {
-  handleChange: (setting: string, field: string, value: string) => void;
+  handleChange: (setting: string, field: string, value: any) => void;
   data: { [x: string]: any };
 }
 
 export default function Notifications() {
   const [data, setData] = useState<{ [x: string]: any }>({
     DeviceCheckInEmail: { deviceCheckInEmail: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE" },
-    TextbookCheckInEmail: { textbookCheckInEmail: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL" },
+    TextbookCheckInEmail: {
+      textbookCheckInEmail: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL",
+      textbookCheckInQualityPick: ["Poor", "Lost"],
+    },
     LeaveRequestEmail: { leaveRequestEmail: true },
     LeaveFinalizedEmail: { leaveFinalizedEmail: "LEAVE_FINALIZED_EMAIL_ENUM_ALL" },
     ReimbursementRequestEmail: { reimbursementRequestEmail: true },
@@ -24,7 +27,7 @@ export default function Notifications() {
   });
 
   const handleChange = (setting: string, field: string, value: string) =>
-    setData({ ...data, [setting]: { [field]: value } });
+    setData({ ...data, [setting]: { ...data[setting], [field]: value } });
 
   return (
     <NotificationContext.Provider value={{ data, handleChange }}>

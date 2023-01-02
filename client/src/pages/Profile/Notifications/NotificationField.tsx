@@ -1,5 +1,8 @@
 import { Fragment, useContext } from "react";
-import { NotificationSettingEnumInput } from "../../../components/NotificationSettingInputs";
+import {
+  NotificationSettingEnumInput,
+  NotificationSettingCheckbox,
+} from "../../../components/NotificationSettingInputs";
 import { INotificationSettingField } from "../../../utils/notificationSettings";
 import { NotificationContext } from "../Notifications";
 
@@ -25,6 +28,35 @@ export default function NotificationField(props: NotificationFieldProps) {
           disabled={notificationField.disabled}
         />
       ));
+      break;
+    }
+    case "TYPE_ENUM_ARRAY": {
+      Inputs = notificationField.knownValues.map((knownValue) => {
+        const field: Array<string> = [...data[settingName][notificationField.name]];
+        const checked = field.includes(knownValue.value);
+
+        const getNewValue = () => {
+          let copy = [...field];
+          checked
+            ? (copy = copy.filter((str) => str !== knownValue.value))
+            : copy.push(knownValue.value);
+          return copy;
+        };
+        const change = handleChange.bind(null, settingName, notificationField.name);
+        return (
+          <NotificationSettingCheckbox
+            key={`${notificationField.name}_${knownValue.value}`}
+            field={notificationField.name}
+            id={`${notificationField.name}_${knownValue.value}`}
+            text={knownValue.description}
+            value={knownValue.value as string}
+            checked={checked}
+            onChange={() => change(getNewValue())}
+            setting={settingName}
+            disabled={notificationField.disabled}
+          />
+        );
+      });
       break;
     }
     default: {
