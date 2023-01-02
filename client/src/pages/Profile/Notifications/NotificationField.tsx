@@ -22,6 +22,7 @@ export default function NotificationField(props: NotificationFieldProps) {
           checked={knownValue.value === data[settingName][notificationField.name]}
           onChange={handleChange}
           setting={settingName}
+          disabled={notificationField.disabled}
         />
       ));
       break;

@@ -1,5 +1,5 @@
 export const NotificationSettingEnumInput = (props: NotificationSettingEnumInputProps) => {
-  const { checked, field, id, onChange, setting, text, value } = props;
+  const { checked, field, id, onChange, setting, text, value, disabled } = props;
   return (
     <div className="flex items-center">
       <input
@@ -7,9 +7,10 @@ export const NotificationSettingEnumInput = (props: NotificationSettingEnumInput
         name={field}
         type="radio"
         checked={checked}
-        className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+        className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 disabled:text-blue-200"
         onChange={() => onChange(setting, field, value)}
         value={value}
+        disabled={disabled}
       />
       <label htmlFor={id} className="ml-3 block text-sm font-medium text-gray-700">
         {text}
@@ -26,4 +27,5 @@ interface NotificationSettingEnumInputProps {
   onChange: (setting: string, field: string, value: string) => any;
   checked: boolean;
   setting: string;
+  disabled?: boolean;
 }
