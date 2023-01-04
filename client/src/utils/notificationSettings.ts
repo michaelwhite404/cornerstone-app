@@ -65,7 +65,10 @@ const notificationSettings: INotificationCategory[] = [
             type: "TYPE_ENUM_ARRAY",
             description: "",
             defaultValue: ["Poor", "Lost"],
-            disabled: true,
+            disabled: (data) =>
+              data.TextbookCheckInEmail.textbookCheckInEmail !==
+              "TEXTBOOK_CHECK_IN_EMAIL_ENUM_PICK",
+            shift: 30,
             knownValues: [
               { value: "Excellent", description: "Excellent" },
               { value: "Good", description: "Good" },
@@ -251,13 +254,17 @@ const notificationSettings: INotificationCategory[] = [
 export default notificationSettings;
 
 export interface INotificationCategory {
+  /** Category name */
   category: string;
   settings: INotificationSetting[];
 }
 
 export interface INotificationSetting {
+  /** Name of the setting */
   name: string;
+  /** Label given to the setting */
   label: string;
+  /** The fields connected to the setting */
   fields: INotificationSettingField[];
   roles: string[];
 }
@@ -269,10 +276,15 @@ export type INotificationSettingField =
   | NotificationSettingEnumArrayField;
 
 interface NotificationSettingBaseField {
+  /** The name of the field */
   name: string;
+  /** A description of the field */
   description: string;
   defaultValue: any;
-  disabled?: boolean;
+  /** Whether the field inputs should be disabled */
+  disabled?: boolean | ((data: any) => boolean);
+  /** How far to shift the inputs in the UI */
+  shift?: number;
 }
 
 interface NotificationSettingEnumField extends NotificationSettingBaseField {
@@ -281,10 +293,12 @@ interface NotificationSettingEnumField extends NotificationSettingBaseField {
 }
 
 interface NotificationSettingStringField extends NotificationSettingBaseField {
+  /** String field type */
   type: "TYPE_STRING";
 }
 
 interface NotificationSettingBooleanField extends NotificationSettingBaseField {
+  /** Boolean field type */
   type: "TYPE_BOOL";
   knownValues: [KnownValue<boolean>, KnownValue<boolean>];
 }
@@ -295,6 +309,8 @@ interface NotificationSettingEnumArrayField extends NotificationSettingBaseField
 }
 
 interface KnownValue<T = any> {
+  /** Enum value */
   value: T;
+  /** Enum description */
   description: string;
 }

@@ -12,6 +12,17 @@ export default function NotificationField(props: NotificationFieldProps) {
 
   let Inputs: JSX.Element[];
 
+  const disableField = () => {
+    let disabled: boolean | undefined;
+    if (typeof notificationField.disabled === "function") {
+      disabled = notificationField.disabled(data);
+      console.log(disabled);
+    } else if (typeof notificationField.disabled === "boolean") {
+      disabled = notificationField.disabled;
+    }
+    return disabled;
+  };
+
   switch (notificationField.type) {
     case "TYPE_BOOL":
     case "TYPE_ENUM": {
@@ -25,7 +36,7 @@ export default function NotificationField(props: NotificationFieldProps) {
           checked={knownValue.value === data[settingName][notificationField.name]}
           onChange={handleChange}
           setting={settingName}
-          disabled={notificationField.disabled}
+          disabled={disableField()}
         />
       ));
       break;
@@ -53,7 +64,7 @@ export default function NotificationField(props: NotificationFieldProps) {
             checked={checked}
             onChange={() => change(getNewValue())}
             setting={settingName}
-            disabled={notificationField.disabled}
+            disabled={disableField()}
           />
         );
       });
@@ -69,7 +80,9 @@ export default function NotificationField(props: NotificationFieldProps) {
       <span className="flex-grow">{notificationField.description}</span>
       <fieldset className="mt-4">
         <legend className="sr-only">Notification method</legend>
-        <div className="space-y-4">{Inputs}</div>
+        <div className="space-y-4" style={{ paddingLeft: notificationField.shift }}>
+          {Inputs}
+        </div>
       </fieldset>
     </Fragment>
   );
