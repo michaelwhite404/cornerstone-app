@@ -5,6 +5,7 @@ import { CheckoutLog, Device, ErrorLog, Student } from "@models";
 import { admin, AppError, catchAsync } from "@utils";
 import { ErrorLogModel } from "@@types/models";
 import * as factory from "./handlerFactory";
+import { deviceEvent } from "@events";
 
 const Model = Device;
 const key = "device";
@@ -97,7 +98,7 @@ export const checkOutDevice: RequestHandler = catchAsync(
 );
 
 export const checkInDevice = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const device = await Device.findById(req.params.id);
+  const device = await Device.findById(req.params.id).populate("lastUser");
   // If no Device
   if (!device) {
     return next(new AppError("No device found with that ID", 404));
@@ -117,7 +118,7 @@ export const checkInDevice = catchAsync(async (req: Request, res: Response, next
     device: device._id,
     checkedIn: false,
   });
-
+  let errorData: ErrorLogModel | undefined;
   // If error
   if (log) {
     log.checkInDate = new Date(req.requestTime);
@@ -126,7 +127,7 @@ export const checkInDevice = catchAsync(async (req: Request, res: Response, next
 
     if (req.body.error === true || req.body.error === "true") {
       const { title, description } = req.body;
-      const errorData: ErrorLogModel = {
+      errorData = {
         title,
         description,
         device: device._id,
@@ -152,6 +153,7 @@ export const checkInDevice = catchAsync(async (req: Request, res: Response, next
       device,
     },
   });
+  deviceEvent.checkIn(device, req.employee, errorData);
 });
 
 export const getAllDeviceTypes = catchAsync(async (req: Request, res: Response) => {

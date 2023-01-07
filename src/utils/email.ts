@@ -1,4 +1,4 @@
-import { EmployeeDocument, LeaveDocument } from "@@types/models";
+import { DeviceDocument, EmployeeDocument, ErrorLogModel, LeaveDocument } from "@@types/models";
 
 import nodemailer, { SendMailOptions } from "nodemailer";
 import pug from "pug";
@@ -8,11 +8,11 @@ import { htmlToText } from "html-to-text";
 // new Email(user, url).sendReset();
 
 export default class Email {
-  to: string;
-  firstName: string;
-  url: string;
-  password: string;
-  from: string;
+  private to: string;
+  private firstName: string;
+  private url: string;
+  private password: string;
+  private from: string;
   constructor(user: EmployeeDocument, url: string) {
     this.to = user.email;
     this.firstName = user.firstName.split(" ")[0];
@@ -21,7 +21,7 @@ export default class Email {
     this.from = `Cornerstone App <${process.env.EMAIL_FROM}>`;
   }
 
-  newTransport() {
+  private newTransport() {
     if (process.env.NODE_ENV === "production") {
       // Sendgrid
       return nodemailer.createTransport({
@@ -45,7 +45,7 @@ export default class Email {
   }
 
   // Send the actual email
-  async send(template: string, subject: string, data?: any) {
+  private async send(template: string, subject: string, data?: any) {
     // 1) Render HTML based on a pug template
     const html = pug.renderFile(`${__dirname}/../../views/email/${template}.pug`, {
       firstName: this.firstName,
@@ -80,6 +80,20 @@ export default class Email {
   async sendLeaveRequest(leave: LeaveDocument) {
     return await this.send("leaveRequested", `Leave Request Submission - ${leave.user.fullName}`, {
       leave,
+    });
+  }
+
+  async sendDeviceCheckInEmail(
+    device: DeviceDocument,
+    checkedInBy: Employee,
+    error?: ErrorLogModel
+  ) {
+    let subject = `${device.name} Checked In`;
+    if (error) subject += ` - Broken`;
+    return await this.send("deviceCheckedIn", subject, {
+      device,
+      checkedInBy,
+      error,
     });
   }
 }
