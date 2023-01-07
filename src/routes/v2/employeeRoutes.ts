@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { employeeController, authController as v2auth } from "@controllers/v2";
+import {
+  employeeController,
+  authController as v2auth,
+  userSettingsController,
+} from "@controllers/v2";
 import * as v1auth from "@controllers/v1/authController";
 
 const employeeRouter = Router();
@@ -17,6 +21,7 @@ employeeRouter.patch("/update-password", v2auth.updatePassword);
 
 employeeRouter.route("/").get(employeeController.getAllEmployees).post(v2auth.createEmployee);
 employeeRouter.route("/me").get(employeeController.getMe, employeeController.getOneEmployee);
+employeeRouter.route("/me/settings").get(userSettingsController.getMySettings);
 employeeRouter.get(
   "/from-google",
   v2auth.restrictTo("Super Admin"),

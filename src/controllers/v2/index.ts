@@ -20,3 +20,4 @@ export * as textbookController from "./textbookController";
 export * as timesheetController from "./timesheetController";
 export * as ticketController from "./ticketController";
 export * as leaveController from "./leaveController";
+export * as userSettingsController from "./userSettingsController";

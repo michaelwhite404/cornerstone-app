@@ -16,7 +16,6 @@ export default function NotificationField(props: NotificationFieldProps) {
     let disabled: boolean | undefined;
     if (typeof notificationField.disabled === "function") {
       disabled = notificationField.disabled(data);
-      console.log(disabled);
     } else if (typeof notificationField.disabled === "boolean") {
       disabled = notificationField.disabled;
     }
