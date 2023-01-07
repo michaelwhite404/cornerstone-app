@@ -1,0 +1,35 @@
+extends baseEmail
+
+block content
+  table(style="padding-bottom:15px" role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          p Hi #{firstName},
+          p #{data.device.name} was checked in by #{data.device.lastUser.fullName} to #{data.checkedInBy.fullName}.
+          if (data.error)
+            p The #{data.device.deviceType} was marked as Broken.
+  if (data.error)
+    table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+      tbody
+        tr
+          td(align='left')
+            table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+              tbody
+                tr
+                  td(align='left')
+                    span.stat-label Title
+                    p #{data.error.title}
+                tr
+                  td(align='left')
+                    span.stat-label Description
+                    p #{data.error.description}
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='center')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`) View #{data.device.name}
