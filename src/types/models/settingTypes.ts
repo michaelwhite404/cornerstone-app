@@ -1,4 +1,8 @@
+import { Document } from "mongoose";
+
 export interface SettingModel {
+  /** Id of the setting */
+  _id: any;
   settingName: string;
   category: string;
   description: string;
@@ -30,6 +34,11 @@ interface FieldDescription {
   knownValueDescriptions?: KnownValueDescription[];
 }
 
+export interface SettingDocument extends SettingModel, Document {
+  _id: any;
+}
+
+// EXAMPLE:
 // const exampleSetting: SettingModel = {
 //   settingName: "setting.user.notification.DeviceCheckInEmail",
 //   category: "Devices",

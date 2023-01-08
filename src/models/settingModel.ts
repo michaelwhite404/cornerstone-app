@@ -1,6 +1,7 @@
-import { model, Schema } from "mongoose";
+import { SettingDocument } from "@@types/models";
+import { Model, model, Schema } from "mongoose";
 
-const settingSchema = new Schema({
+const settingSchema: Schema<SettingDocument, Model<SettingDocument>> = new Schema({
   name: { type: String, required: true, unique: true },
   category: { type: String, required: true },
   description: { type: String, required: true },
@@ -31,6 +32,6 @@ const settingSchema = new Schema({
   ],
 });
 
-const Setting = model("Setting", settingSchema);
+const Setting = model<SettingDocument>("Setting", settingSchema);
 
 export default Setting;

@@ -1,6 +1,7 @@
-import { model, Schema } from "mongoose";
+import { UserSettingDocument } from "@@types/models";
+import { Model, model, Schema } from "mongoose";
 
-const userSettingSchema = new Schema({
+const userSettingSchema: Schema<UserSettingDocument, Model<UserSettingDocument>> = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "Employee",
@@ -12,6 +13,6 @@ const userSettingSchema = new Schema({
   value: Schema.Types.Mixed,
 });
 
-const UserSetting = model("UserSetting", userSettingSchema);
+const UserSetting = model<UserSettingDocument>("UserSetting", userSettingSchema);
 
 export default UserSetting;
