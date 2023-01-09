@@ -1,0 +1,40 @@
+extends baseEmail
+
+
+block content
+  - const userPick = data.userSetting.value.textbookCheckInEmail === "TEXTBOOK_CHECK_IN_EMAIL_ENUM_PICK"
+  - const were = data.textbooks.length === 1 ? "was" : "were"
+  - const pickedTextbook = (textbook) => data.userSetting.value.textbookCheckInQualityPick.includes(textbook.quality);
+  table(style="padding-bottom:25px" role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          p Hi #{firstName},
+          p #{data.pluralize("textbooks", data.textbooks.length, true)} #{were} checked in.
+          if userPick
+            - const pickedTextbooks = data.textbooks.filter(pickedTextbook)
+            - const are = pickedTextbooks.length === 1 ? "is" : "are"
+            p #{data.pluralize("textbooks", pickedTextbooks.length, true)} #{are} marked as #{new Intl.ListFormat('en-US', { style: 'short', type: 'disjunction' }).format(data.userSetting.value.textbookCheckInQualityPick)}
+  //- Containing table
+  table(style="padding-bottom:0px" role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody 
+      tr 
+        td(align='left')
+          //- Each textbook
+          for textbook in data.textbooks
+            - const notify = pickedTextbook(textbook)
+            table(class=`${userPick && notify ? "text-blue-500" : ""}` style=`padding-bottom:16px` role='presentation', border='0', cellpadding='0', cellspacing='0')
+              tbody
+                tr 
+                  td(align='left')
+                    strong ##{textbook.bookNumber}
+                    | &nbsp;- #{textbook.textbookSet.title} (#{textbook.textbookSet.class})
+                if (textbook.lastUser && textbook.lastUser.fullName)
+                  tr 
+                    td Returned By: #{textbook.lastUser.fullName}
+                tr 
+                  td Quality: #{textbook.quality}
+                    
+
+
+      
