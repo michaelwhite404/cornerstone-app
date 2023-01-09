@@ -1,8 +1,16 @@
-import { DeviceDocument, EmployeeDocument, ErrorLogModel, LeaveDocument } from "@@types/models";
+import {
+  DeviceDocument,
+  EmployeeDocument,
+  ErrorLogModel,
+  LeaveDocument,
+  TextbookDocument,
+  UserSettingDocument,
+} from "@@types/models";
 
 import nodemailer, { SendMailOptions } from "nodemailer";
 import pug from "pug";
 import { htmlToText } from "html-to-text";
+import pluralize from "pluralize";
 
 // new Email(user, url).sendWelcome();
 // new Email(user, url).sendReset();
@@ -95,5 +103,13 @@ export default class Email {
       checkedInBy,
       error,
     });
+  }
+
+  async sendTextbooksCheckInEmail(textbooks: TextbookDocument[], userSetting: UserSettingDocument) {
+    return await this.send(
+      "textbooksCheckedIn",
+      `${pluralize("Textbooks", textbooks.length, true)} Checked In`,
+      { textbooks, userSetting, pluralize }
+    );
   }
 }

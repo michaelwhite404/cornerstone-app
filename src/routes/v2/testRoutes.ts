@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { authController } from "@controllers/v2";
-import { catchAsync, sheets, Email } from "@utils";
-import { Leave } from "@models";
+import { catchAsync, sheets } from "@utils";
 const { protect } = authController;
 
 const router = Router();
@@ -11,18 +10,7 @@ router.use(protect);
 router.get(
   "/idk",
   catchAsync(async (req, res /* , next */) => {
-    // const {
-    //   data: { messages },
-    // } = await gmail.users.messages.list({
-    //   userId: "mwhite1@cornerstone-schools.org",
-    // });
-    // res.sendJson(200, { messages });
-    const leave = await Leave.findOne({ reason: "IDK Yet" }).populate("user sendTo");
-    await new Email(
-      req.employee,
-      `http://localhost:3000/requests/leaves#${leave._id}`
-    ).sendLeaveRequest(leave!);
-    res.sendJson(200, "success");
+    res.json({ success: "success" });
   })
 );
 
