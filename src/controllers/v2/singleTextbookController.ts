@@ -6,6 +6,7 @@ import { Student, Textbook, TextbookLog } from "@models";
 import { AppError, catchAsync } from "@utils";
 import { TextbookModel, TextbookLogModel } from "@@types/models";
 import * as factory from "./handlerFactory";
+import { textbookEvent } from "@events";
 
 const Model = Textbook;
 const key = "book";
@@ -205,6 +206,7 @@ export const checkInTextbookByStudent = catchAsync(
       requestedAt: req.requestTime,
       message: `${student.fullName} checked in ${pluralize("textbook", bodyBooks.length, true)}`,
     });
+    textbookEvent.checkIn(bodyBooks.map(({ id }) => id));
   }
 );
 
@@ -355,6 +357,7 @@ export const checkInTextbooks = catchAsync(
       requestedAt: req.requestTime,
       message: `${pluralize("textbook", data.length, true)} checked in!`,
     });
+    textbookEvent.checkIn(data.map(({ id }) => id));
   }
 );
 

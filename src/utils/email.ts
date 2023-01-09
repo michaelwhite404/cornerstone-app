@@ -98,11 +98,7 @@ export default class Email {
   ) {
     let subject = `${device.name} Checked In`;
     if (error) subject += ` - Broken`;
-    return await this.send("deviceCheckedIn", subject, {
-      device,
-      checkedInBy,
-      error,
-    });
+    return await this.send("deviceCheckedIn", subject, { device, checkedInBy, error });
   }
 
   async sendTextbooksCheckInEmail(textbooks: TextbookDocument[], userSetting: UserSettingDocument) {
