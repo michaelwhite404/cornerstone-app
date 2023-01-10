@@ -1,0 +1,13 @@
+extends baseEmail
+
+block content
+  - const status = data.leave.approval.approved ? "Approved" : "Rejected";
+  table(style="padding-bottom:25px" role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          p Hi #{firstName},
+          p Your leave request for "#{data.leave.reason}" has been 
+            strong #{status}
+  include ./components/leaveInfo.pug
+  +ctaButton View Leave

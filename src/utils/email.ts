@@ -91,6 +91,11 @@ export default class Email {
     });
   }
 
+  async sendLeaveFinalized(leave: LeaveDocument) {
+    const status = leave.approval!.approved ? "approved" : "rejected";
+    return await this.send("leaveFinalized", `Your leave request has been ${status}`, { leave });
+  }
+
   async sendDeviceCheckInEmail(
     device: DeviceDocument,
     checkedInBy: Employee,
