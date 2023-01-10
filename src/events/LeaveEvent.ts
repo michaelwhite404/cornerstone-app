@@ -1,7 +1,7 @@
 import { LeaveDocument } from "@@types/models";
-import { Leave } from "@models";
+import { Leave, UserSetting } from "@models";
 import { io } from "@server";
-import { chat } from "@utils";
+import { chat, Email, formatUrl } from "@utils";
 import { format } from "date-fns";
 
 const URL =
@@ -65,11 +65,13 @@ const generateWidgets = (leave: LeaveDocument) => {
 class LeaveEvent {
   async submit(leave: LeaveDocument) {
     leave = await Leave.populate(leave, "user sendTo");
+    this.sendSubmitInApp(leave);
+    this.sendSubmitChat(leave);
+    this.sendSubmitEmail(leave);
+  }
+
+  private async sendSubmitChat(leave: LeaveDocument) {
     // Do not send submit notifications to self
-    if (leave.sendTo._id.toString() === leave.user._id.toString()) return;
-    const sockets = await io.fetchSockets();
-    const foundSocket = sockets.find((socket) => leave.sendTo.email === socket.data.user?.email);
-    if (foundSocket) io.to(foundSocket.id).emit("submittedLeave", leave);
     if (leave.sendTo.space) {
       const response = await chat.spaces.messages.create({
         parent: leave.sendTo.space,
@@ -137,6 +139,25 @@ class LeaveEvent {
       leave.message = response.data.name!;
       await leave.save();
     }
+  }
+
+  private async sendSubmitEmail(leave: LeaveDocument) {
+    const sendEmail = () => {
+      const email = new Email(leave.sendTo, formatUrl(`/requests/leaves#${leave._id}`));
+      email.sendLeaveRequest(leave);
+    };
+    const userSetting = await UserSetting.findOne({
+      user: leave.sendTo._id,
+      settingName: "setting.user.notification.LeaveRequestEmail",
+    });
+    // If setting is true or settting is not explicitly set, send email
+    if (!userSetting || userSetting.value.leaveRequestEmail) return sendEmail();
+  }
+
+  private async sendSubmitInApp(leave: LeaveDocument) {
+    const sockets = await io.fetchSockets();
+    const foundSocket = sockets.find((socket) => leave.sendTo.email === socket.data.user?.email);
+    if (foundSocket) io.to(foundSocket.id).emit("submittedLeave", leave);
   }
 
   async finalize(leave: LeaveDocument) {
