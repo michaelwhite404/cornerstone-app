@@ -9,37 +9,5 @@ block content
           p 
             strong #{data.leave.user.fullName} 
             | submitted a leave request.
-  table(role='presentation', border='0', cellpadding='0', cellspacing='0')
-    tbody
-      tr
-        td(align='left')
-          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
-            tbody
-              tr
-                td(align='left')
-                  span.stat-label Reason
-                  p #{data.leave.reason}
-              if (data.leave.comments)
-                tr
-                  td(align='left')
-                    span.stat-label Comments
-                    p #{data.leave.comments}
-              tr
-                - const options = { year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'America/New_York'}
-                if !data.leave.allDay
-                  - options.hour = 'numeric'
-                  - options.minute = 'numeric'
-                  - options.hour12 = true
-                td(align='left')
-                  span.stat-label Dates
-                  p #{new Intl.DateTimeFormat('en-US', options).format(data.leave.dateStart) } &rarr; #{new Intl.DateTimeFormat('en-US', options).format(data.leave.dateEnd)}
-
-  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
-    tbody
-      tr
-        td(align='center')
-          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
-            tbody
-              tr
-                td
-                  a(href=`${url}`) View Leave Request
+  include ./components/leaveInfo.pug
+  +ctaButton View Leave Request
