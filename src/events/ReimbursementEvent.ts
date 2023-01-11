@@ -1,8 +1,9 @@
 import { ReimbursementDocument } from "@@types/models";
 import { Reimbursement } from "@models";
 import { io } from "@server";
-import { chat } from "@utils";
+import { chat, Email, formatUrl } from "@utils";
 import { format } from "date-fns";
+import { getUserSetting } from "./helpers";
 
 const URL =
   process.env.NODE_ENV! === "development"
@@ -16,6 +17,7 @@ class ReimbursementEvent {
     if (reimbursement.sendTo._id.toString() === reimbursement.user._id.toString()) return;
     this.sendSubmitInApp(reimbursement);
     this.sendSubmitChat(reimbursement);
+    this.sendSubmitEmail(reimbursement);
   }
   private async sendSubmitInApp(reimbursement: ReimbursementDocument) {
     const sockets = await io.fetchSockets();
@@ -124,6 +126,19 @@ class ReimbursementEvent {
       reimbursement.message = response.data.name!;
       await reimbursement.save();
     }
+  }
+
+  private async sendSubmitEmail(reimbursement: ReimbursementDocument) {
+    const sendEmail = () => {
+      const email = new Email(
+        reimbursement.sendTo,
+        formatUrl(`/requests/reimbursements#${reimbursement._id}`)
+      );
+      email.sendReimbursementRequest(reimbursement);
+    };
+    const userSetting = await getUserSetting(reimbursement.sendTo._id, "ReimbursementRequestEmail");
+    // If setting is true or settting is not explicitly set, send email
+    if (!userSetting || userSetting.value.reimbursementRequestEmail) return sendEmail();
   }
 
   async finalize(reimbursement: ReimbursementDocument) {

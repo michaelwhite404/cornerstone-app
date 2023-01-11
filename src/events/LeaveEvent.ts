@@ -1,8 +1,9 @@
 import { LeaveDocument } from "@@types/models";
-import { Leave, UserSetting } from "@models";
+import { Leave } from "@models";
 import { io } from "@server";
 import { chat, Email, formatUrl } from "@utils";
 import { format } from "date-fns";
+import { getUserSetting } from "./helpers";
 
 const URL =
   process.env.NODE_ENV! === "development"
@@ -60,13 +61,6 @@ const generateWidgets = (leave: LeaveDocument) => {
     }
   );
   return widgets;
-};
-
-const getUserSetting = async (userId: string, setting: string) => {
-  return UserSetting.findOne({
-    user: userId,
-    settingName: `setting.user.notification.${setting}`,
-  });
 };
 
 class LeaveEvent {

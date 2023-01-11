@@ -3,6 +3,7 @@ import {
   EmployeeDocument,
   ErrorLogModel,
   LeaveDocument,
+  ReimbursementDocument,
   TextbookDocument,
   UserSettingDocument,
 } from "@@types/models";
@@ -94,6 +95,14 @@ export default class Email {
   async sendLeaveFinalized(leave: LeaveDocument) {
     const status = leave.approval!.approved ? "approved" : "rejected";
     return await this.send("leaveFinalized", `Your leave request has been ${status}`, { leave });
+  }
+
+  async sendReimbursementRequest(reimbursement: ReimbursementDocument) {
+    return await this.send(
+      "reimbursementRequest",
+      `Reimbursement Request Submission - ${reimbursement.user.fullName}`,
+      { reimbursement }
+    );
   }
 
   async sendDeviceCheckInEmail(

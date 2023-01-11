@@ -1,0 +1,13 @@
+extends baseEmail
+
+block content
+  table(style="padding-bottom:25px" role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          p Hi #{firstName},
+          p 
+            strong #{data.reimbursement.user.fullName} 
+            | submitted a reimbursement request.
+  include ./components/reimbursementInfo.pug
+  +ctaButton View Reimbursement Request
