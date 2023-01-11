@@ -171,7 +171,7 @@ class LeaveEvent {
     this.sendFinalizeEmail(leave);
   }
 
-  async sendFinalizeEmail(leave: LeaveDocument) {
+  private async sendFinalizeEmail(leave: LeaveDocument) {
     const sendEmail = () =>
       new Email(leave.user, formatUrl(`/requests/leaves#${leave._id}`)).sendLeaveFinalized(leave);
     // Get user setting
@@ -194,14 +194,14 @@ class LeaveEvent {
       return sendEmail();
   }
 
-  async sendFinalizeInApp(leave: LeaveDocument) {
+  private async sendFinalizeInApp(leave: LeaveDocument) {
     const sendingEmails: string[] = [leave.sendTo.email, leave.user.email];
     const sockets = await io.fetchSockets();
     const sendSockets = sockets.filter((socket) => sendingEmails.includes(socket.data.user?.email));
     sendSockets.forEach((socket) => io.to(socket.id).emit("finalizeLeave", leave));
   }
 
-  async sendFinalizeChat(leave: LeaveDocument) {
+  private async sendFinalizeChat(leave: LeaveDocument) {
     // Create card
     const card = {
       header: {
