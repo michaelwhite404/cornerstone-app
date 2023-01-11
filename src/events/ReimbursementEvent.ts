@@ -14,11 +14,18 @@ class ReimbursementEvent {
     reimbursement = await Reimbursement.populate(reimbursement, "user sendTo");
     // Do not send submit notifications to self
     if (reimbursement.sendTo._id.toString() === reimbursement.user._id.toString()) return;
+    this.sendSubmitInApp(reimbursement);
+    this.sendSubmitChat(reimbursement);
+  }
+  private async sendSubmitInApp(reimbursement: ReimbursementDocument) {
     const sockets = await io.fetchSockets();
     const foundSocket = sockets.find(
       (socket) => reimbursement.sendTo.email === socket.data.user?.email
     );
     if (foundSocket) io.to(foundSocket.id).emit("submittedReimbursement", reimbursement);
+  }
+
+  private async sendSubmitChat(reimbursement: ReimbursementDocument) {
     if (reimbursement.sendTo.space) {
       const response = await chat.spaces.messages.create({
         parent: reimbursement.sendTo.space,
