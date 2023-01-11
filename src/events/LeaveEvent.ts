@@ -62,6 +62,13 @@ const generateWidgets = (leave: LeaveDocument) => {
   return widgets;
 };
 
+const getUserSetting = async (userId: string, setting: string) => {
+  return UserSetting.findOne({
+    user: userId,
+    settingName: `setting.user.notification.${setting}`,
+  });
+};
+
 class LeaveEvent {
   async submit(leave: LeaveDocument) {
     leave = await Leave.populate(leave, "user sendTo");
@@ -146,10 +153,7 @@ class LeaveEvent {
       const email = new Email(leave.sendTo, formatUrl(`/requests/leaves#${leave._id}`));
       email.sendLeaveRequest(leave);
     };
-    const userSetting = await UserSetting.findOne({
-      user: leave.sendTo._id,
-      settingName: "setting.user.notification.LeaveRequestEmail",
-    });
+    const userSetting = await getUserSetting(leave.sendTo._id, "LeaveRequestEmail");
     // If setting is true or settting is not explicitly set, send email
     if (!userSetting || userSetting.value.leaveRequestEmail) return sendEmail();
   }
@@ -161,12 +165,43 @@ class LeaveEvent {
   }
 
   async finalize(leave: LeaveDocument) {
-    leave = (await Leave.findById(leave).populate("user sendTo").select("+message"))!;
-    if (!leave) return;
+    leave = await Leave.populate(leave, "user sendTo");
+    this.sendFinalizeInApp(leave);
+    this.sendFinalizeChat(leave);
+    this.sendFinalizeEmail(leave);
+  }
+
+  async sendFinalizeEmail(leave: LeaveDocument) {
+    const sendEmail = () =>
+      new Email(leave.user, formatUrl(`/requests/leaves#${leave._id}`)).sendLeaveFinalized(leave);
+    // Get user setting
+    const userSetting = await getUserSetting(leave.user._id, "LeaveFinalizedEmail");
+    // If setting is not explicitly set, send email
+    if (!userSetting) return sendEmail();
+    // If setting has send all emails
+    if (userSetting.value.leaveFinalizedEmail === "LEAVE_FINALIZED_EMAIL_ENUM_ALL")
+      return sendEmail();
+    // If setting has only send approved leave to email and leave is approved
+    if (
+      userSetting.value.leaveFinalizedEmail === "LEAVE_FINALIZED_EMAIL_ENUM_APPROVED" &&
+      leave.approval?.approved
+    )
+      return sendEmail();
+    if (
+      userSetting.value.leaveFinalizedEmail === "LEAVE_FINALIZED_EMAIL_ENUM_REJECTED" &&
+      !leave.approval?.approved
+    )
+      return sendEmail();
+  }
+
+  async sendFinalizeInApp(leave: LeaveDocument) {
     const sendingEmails: string[] = [leave.sendTo.email, leave.user.email];
     const sockets = await io.fetchSockets();
     const sendSockets = sockets.filter((socket) => sendingEmails.includes(socket.data.user?.email));
     sendSockets.forEach((socket) => io.to(socket.id).emit("finalizeLeave", leave));
+  }
+
+  async sendFinalizeChat(leave: LeaveDocument) {
     // Create card
     const card = {
       header: {
