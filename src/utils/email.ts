@@ -105,6 +105,15 @@ export default class Email {
     );
   }
 
+  async sendReimbursementFinalized(reimbursement: ReimbursementDocument) {
+    const status = reimbursement.approval!.approved ? "approved" : "rejected";
+    return await this.send(
+      "reimbursementFinalized",
+      `Your reimbursement request has been ${status}`,
+      { reimbursement }
+    );
+  }
+
   async sendDeviceCheckInEmail(
     device: DeviceDocument,
     checkedInBy: Employee,

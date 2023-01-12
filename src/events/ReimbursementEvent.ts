@@ -147,6 +147,7 @@ class ReimbursementEvent {
       .select("+message"))!;
     this.sendFinalizeInApp(reimbursement);
     this.sendFinalizeChat(reimbursement);
+    this.sendFinalizeEmail(reimbursement);
   }
 
   private async sendFinalizeInApp(reimbursement: ReimbursementDocument) {
@@ -240,6 +241,36 @@ class ReimbursementEvent {
         cards: [card],
       },
     });
+  }
+
+  private async sendFinalizeEmail(reimbursement: ReimbursementDocument) {
+    const sendEmail = () => {
+      const email = new Email(
+        reimbursement.user,
+        formatUrl(`/requests/reimbursements#${reimbursement._id}`)
+      );
+      email.sendReimbursementFinalized(reimbursement);
+    };
+
+    const userSetting = await getUserSetting(reimbursement.user._id, "ReimbursementFinalizedEmail");
+    // If setting is not explicitly set, send email
+    if (!userSetting) return sendEmail();
+    // If setting has send all emails
+    if (userSetting.value.reimbursementFinalizedEmail === "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_ALL")
+      return sendEmail();
+    // If setting has only send approved reimbursement to email and reimbursement is approved
+    if (
+      userSetting.value.reimbursementFinalizedEmail ===
+        "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_APPROVED" &&
+      reimbursement.approval?.approved
+    )
+      return sendEmail();
+    if (
+      userSetting.value.reimbursementFinalizedEmail ===
+        "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_REJECTED" &&
+      !reimbursement.approval?.approved
+    )
+      return sendEmail();
   }
 }
 
