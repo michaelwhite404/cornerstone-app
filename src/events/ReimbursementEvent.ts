@@ -145,11 +145,18 @@ class ReimbursementEvent {
     reimbursement = (await Reimbursement.findById(reimbursement)
       .populate("user sendTo")
       .select("+message"))!;
-    if (!reimbursement) return;
+    this.sendFinalizeInApp(reimbursement);
+    this.sendFinalizeChat(reimbursement);
+  }
+
+  private async sendFinalizeInApp(reimbursement: ReimbursementDocument) {
     const sendingEmails: string[] = [reimbursement.sendTo.email, reimbursement.user.email];
     const sockets = await io.fetchSockets();
     const sendSockets = sockets.filter((socket) => sendingEmails.includes(socket.data.user?.email));
     sendSockets.forEach((socket) => io.to(socket.id).emit("finalizeReimbursement", reimbursement));
+  }
+
+  private async sendFinalizeChat(reimbursement: ReimbursementDocument) {
     //Create card
     const card = {
       header: {
