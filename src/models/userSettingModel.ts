@@ -10,7 +10,7 @@ const userSettingSchema: Schema<UserSettingDocument, Model<UserSettingDocument>>
   },
   type: { type: String, required: true },
   settingName: { type: String, required: true },
-  value: Schema.Types.Mixed,
+  value: { type: Schema.Types.Mixed, required: true },
 });
 
 const UserSetting = model<UserSettingDocument>("UserSetting", userSettingSchema);

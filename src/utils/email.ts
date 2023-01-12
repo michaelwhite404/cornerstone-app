@@ -5,6 +5,7 @@ import {
   LeaveDocument,
   ReimbursementDocument,
   TextbookDocument,
+  TicketDocument,
   UserSettingDocument,
 } from "@@types/models";
 
@@ -130,5 +131,14 @@ export default class Email {
       `${pluralize("Textbooks", textbooks.length, true)} Checked In`,
       { textbooks, userSetting, pluralize }
     );
+  }
+
+  async sendTicketAssign(ticket: TicketDocument, newTicket: boolean) {
+    let subject = newTicket ? "New ticket submission" : "Assigned to new ticket";
+    subject += ` - #${ticket.ticketId}`;
+    return await this.send("assignTicket", subject, {
+      ticket,
+      newTicket,
+    });
   }
 }

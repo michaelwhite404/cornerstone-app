@@ -4,8 +4,8 @@ import {
   TicketCommentUpdateDocument,
   TicketDocument,
 } from "@@types/models";
-import { Ticket } from "@models";
-import { chat } from "@utils";
+import { Ticket, UserSetting } from "@models";
+import { chat, Email, formatUrl } from "@utils";
 import capitalize from "capitalize";
 import { chat_v1 } from "googleapis";
 
@@ -21,7 +21,7 @@ interface AssignMessageData {
   headerTitle: string;
 }
 class TicketEvent {
-  private createAssignMessage(
+  private createAssignChatMessage(
     data: AssignMessageData
   ): chat_v1.Params$Resource$Spaces$Messages$Create {
     const { ticket, parent, text, headerTitle } = data;
@@ -76,16 +76,39 @@ class TicketEvent {
 
   async submit(ticket: TicketDocument) {
     ticket = await Ticket.populate(ticket, { path: "assignedTo submittedBy" });
-    const assignedTo = ticket.assignedTo as EmployeeDocument[];
-    const spaces = assignedTo.filter((e) => e.space).map((e) => e.space) as string[];
+    const assignedUsers = ticket.assignedTo as EmployeeDocument[];
+    this.sendSubmitChatMessages(assignedUsers, ticket);
+    this.sendSubmitEmails(assignedUsers, ticket);
+  }
+
+  private async sendSubmitEmails(users: EmployeeDocument[], ticket: TicketDocument) {
+    const sendEmail = (user: EmployeeDocument) =>
+      new Email(user, formatUrl(`/tickets/${ticket.ticketId}`)).sendTicketAssign(ticket, true);
+    // Get the users' email setting
+    const userSettings = await UserSetting.find({
+      user: { $in: users },
+      settingName: "settings.users.notification.TicketAssignEmail",
+    });
+    users.forEach((user) => {
+      // Get the setting for a specific user
+      const emailSetting = userSettings.find(
+        (setting) => setting.user.toString() === user._id.toString()
+      );
+      // If setting not set or set to true, set email
+      if (!emailSetting || emailSetting.value.ticketAssignEmail) sendEmail(user);
+    });
+  }
+
+  private sendSubmitChatMessages(users: EmployeeDocument[], ticket: TicketDocument) {
+    const spaces = users.filter((e) => e.space).map((e) => e.space) as string[];
     spaces.forEach(async (space) => {
-      const params = this.createAssignMessage({
+      const params = this.createAssignChatMessage({
         ticket,
         parent: space,
         text: `${ticket.submittedBy.fullName} has submitted a ticket`,
         headerTitle: "New Ticket",
       });
-      await chat.spaces.messages.create(params);
+      chat.spaces.messages.create(params).catch();
     });
   }
 
@@ -99,7 +122,7 @@ class TicketEvent {
       (user) => user._id.toString() === update.assign.toString()
     );
     if (!user || !user.space) return;
-    const params = this.createAssignMessage({
+    const params = this.createAssignChatMessage({
       ticket,
       parent: user.space,
       text: "You have been assigned to a ticket",
