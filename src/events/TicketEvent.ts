@@ -263,6 +263,30 @@ class TicketEvent {
     };
 
     this.sendCloseChats(data);
+    this.sendCloseEmails(data);
+  }
+
+  private async sendCloseEmails(data: CloseData) {
+    const { closedBy, usersToNotify, ticket } = data;
+    const sendEmail = (user: EmployeeDocument) =>
+      new Email(user, formatUrl(`/tickets/${ticket.ticketId}`)).sendTicketClose(
+        ticket,
+        user,
+        closedBy
+      );
+
+    const userSettings = await UserSetting.find({
+      user: { $in: usersToNotify },
+      settingName: "setting.user.notification.TicketCloseEmail",
+    });
+    usersToNotify.forEach((user) => {
+      // Get the setting for a specific user
+      const emailSetting = userSettings.find(
+        (setting) => setting.user.toString() === user._id.toString()
+      );
+      // If setting not set or set to true, set email
+      if (!emailSetting || emailSetting.value.ticketCloseEmail) sendEmail(user);
+    });
   }
 
   private sendCloseChats(data: CloseData) {

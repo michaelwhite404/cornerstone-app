@@ -1,8 +1,6 @@
 import { Router } from "express";
 import { authController } from "@controllers/v2";
 import { catchAsync, sheets } from "@utils";
-import { Ticket } from "@models";
-import { ticketEvent } from "@events";
 const { protect } = authController;
 
 const router = Router();
@@ -12,8 +10,6 @@ router.use(protect);
 router.get(
   "/idk",
   catchAsync(async (req, res /* , next */) => {
-    const ticket = await Ticket.findById("632480a518c18575724a19b8");
-    ticketEvent.close(ticket!);
     res.json({ success: "success" });
   })
 );

@@ -1,0 +1,25 @@
+extends baseEmail
+include ./components/infoStat
+
+block content
+  - const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+  table(style="padding-bottom:15px" role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          p Hi #{firstName},
+          p
+            strong #{data.closedBy.fullName} 
+            | has closed ticket ##{data.ticket.ticketId}
+  table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              +infoStat("Title", data.ticket.title)
+              +infoStat("Ticket ID", data.ticket.ticketId)
+              +infoStat("Description", data.ticket.description)
+              +infoStat("Priority", capitalizeFirstLetter(data.ticket.priority))
+              +infoStat("Status", "Closed")
+  +ctaButton View Ticket ##{data.ticket.ticketId}

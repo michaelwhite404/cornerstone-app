@@ -143,10 +143,22 @@ export default class Email {
   }
 
   async sendTicketComment(ticket: TicketDocument, commenter: EmployeeDocument, comment: string) {
-    return await this.send("ticketComment", "Comment left on ticket #106", {
+    return await this.send("ticketComment", `Comment left on ticket #${ticket.ticketId}`, {
       ticket,
       commenter,
       comment,
+    });
+  }
+
+  async sendTicketClose(
+    ticket: TicketDocument,
+    user: EmployeeDocument,
+    closedBy: EmployeeDocument
+  ) {
+    return await this.send("ticketClose", `Ticket #${ticket.ticketId} is now closed`, {
+      ticket,
+      user,
+      closedBy,
     });
   }
 }
