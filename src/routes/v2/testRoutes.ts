@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { authController } from "@controllers/v2";
 import { catchAsync, sheets } from "@utils";
+import { TicketCommentUpdate } from "@models";
+import { ticketEvent } from "@events";
 const { protect } = authController;
 
 const router = Router();
@@ -10,6 +12,8 @@ router.use(protect);
 router.get(
   "/idk",
   catchAsync(async (req, res /* , next */) => {
+    const comment = await TicketCommentUpdate.findById("632b4e619e3f4e45996c8460");
+    if (comment) ticketEvent.comment(comment);
     res.json({ success: "success" });
   })
 );

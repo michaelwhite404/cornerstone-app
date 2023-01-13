@@ -4,7 +4,7 @@ import {
   TicketCommentUpdateDocument,
   TicketDocument,
 } from "@@types/models";
-import { Ticket, TicketAssignUpdate, UserSetting } from "@models";
+import { Ticket, TicketAssignUpdate, TicketCommentUpdate, UserSetting } from "@models";
 import { chat, Email, formatUrl } from "@utils";
 import capitalize from "capitalize";
 import { chat_v1 } from "googleapis";
@@ -20,6 +20,14 @@ interface AssignMessageData {
   text: string;
   headerTitle: string;
 }
+
+interface CommentData {
+  usersToNotify: EmployeeDocument[];
+  commenter: EmployeeDocument;
+  ticket: TicketDocument;
+  comment: string;
+}
+
 class TicketEvent {
   private createAssignChatMessage(
     data: AssignMessageData
@@ -142,34 +150,25 @@ class TicketEvent {
   }
 
   async comment(update: TicketCommentUpdateDocument) {
-    const commenterId = update.createdBy.toString();
-    const ticket = await Ticket.findById(update.ticket).populate({
-      path: "assignedTo submittedBy",
+    const { createdBy, ticket } = await TicketCommentUpdate.populate(update, {
+      path: "ticket createdBy",
+      populate: { path: "assignedTo submittedBy" },
     });
-    if (!ticket) return;
+    const users: EmployeeDocument[] = [...ticket.assignedTo, ticket.submittedBy];
+    const data: CommentData = {
+      comment: update.comment,
+      commenter: createdBy as EmployeeDocument,
+      ticket,
+      usersToNotify: users.filter((user) => user._id.toString() !== createdBy._id.toString()),
+    };
+    this.sendCommentChat(data);
 
-    const users = [...(ticket.assignedTo as EmployeeDocument[])];
-    if (!users.some((user) => user._id.toString() === commenterId)) users.push(ticket.submittedBy);
-
-    const { commenter, rest } = users.reduce(
-      (value, currEmployee) => {
-        currEmployee._id.toString() === commenterId
-          ? (value.commenter = currEmployee)
-          : value.rest.push(currEmployee);
-        return value;
-      },
-      { commenter: undefined, rest: [] } as {
-        commenter?: EmployeeDocument;
-        rest: EmployeeDocument[];
-      }
-    );
-
-    rest.forEach(async (user) => {
+    users.forEach(async (user) => {
       if (!user.space) return;
       await chat.spaces.messages.create({
         parent: user.space,
         requestBody: {
-          text: `${commenter?.fullName} left a comment on ticket #${ticket.ticketId}`,
+          text: `${createdBy.fullName} left a comment on ticket #${ticket.ticketId}`,
           cards: [
             {
               header: {
@@ -182,6 +181,54 @@ class TicketEvent {
                   widgets: [
                     { keyValue: { topLabel: "Title", content: ticket.title } },
                     { keyValue: { topLabel: "Comment", content: update.comment } },
+                  ],
+                },
+                {
+                  widgets: [
+                    {
+                      buttons: [
+                        {
+                          textButton: {
+                            text: "OPEN IN APP",
+                            onClick: {
+                              openLink: {
+                                url: `${URL}/tickets/${ticket.ticketId}`,
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      });
+    });
+  }
+
+  private sendCommentChat(data: CommentData) {
+    const { comment, commenter, ticket, usersToNotify } = data;
+    usersToNotify.forEach(async (user) => {
+      if (!user.space) return;
+      await chat.spaces.messages.create({
+        parent: user.space,
+        requestBody: {
+          text: `${commenter.fullName} left a comment on ticket #${ticket.ticketId}`,
+          cards: [
+            {
+              header: {
+                title: "Ticket Comment",
+                subtitle: `#${ticket.ticketId}`,
+                imageUrl: "https://i.ibb.co/Ypsrycx/Ticket-Blue.png",
+              },
+              sections: [
+                {
+                  widgets: [
+                    { keyValue: { topLabel: "Title", content: ticket.title } },
+                    { keyValue: { topLabel: "Comment", content: comment } },
                   ],
                 },
                 {
