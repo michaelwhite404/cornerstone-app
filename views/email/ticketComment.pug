@@ -1,0 +1,24 @@
+extends baseEmail
+include ./components/infoStat
+
+block content
+  table(style="padding-bottom:15px" role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          p Hi #{firstName},
+          p
+            strong #{data.commenter.fullName} 
+            | left a comment on ticket ##{data.ticket.ticketId}
+  table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              +infoStat("Title", data.ticket.title)
+              +infoStat("Comment", data.comment)
+  +ctaButton View Comment
+  
+
+          

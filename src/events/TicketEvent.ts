@@ -161,99 +161,81 @@ class TicketEvent {
       ticket,
       usersToNotify: users.filter((user) => user._id.toString() !== createdBy._id.toString()),
     };
-    this.sendCommentChat(data);
+    this.sendCommentChats(data);
+    this.sendCommentEmails(data);
+  }
 
-    users.forEach(async (user) => {
-      if (!user.space) return;
-      await chat.spaces.messages.create({
-        parent: user.space,
-        requestBody: {
-          text: `${createdBy.fullName} left a comment on ticket #${ticket.ticketId}`,
-          cards: [
-            {
-              header: {
-                title: "Ticket Comment",
-                subtitle: `#${ticket.ticketId}`,
-                imageUrl: "https://i.ibb.co/Ypsrycx/Ticket-Blue.png",
-              },
-              sections: [
-                {
-                  widgets: [
-                    { keyValue: { topLabel: "Title", content: ticket.title } },
-                    { keyValue: { topLabel: "Comment", content: update.comment } },
-                  ],
-                },
-                {
-                  widgets: [
-                    {
-                      buttons: [
-                        {
-                          textButton: {
-                            text: "OPEN IN APP",
-                            onClick: {
-                              openLink: {
-                                url: `${URL}/tickets/${ticket.ticketId}`,
-                              },
-                            },
-                          },
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      });
+  private async sendCommentEmails(data: CommentData) {
+    const { comment, commenter, ticket, usersToNotify } = data;
+    const sendEmail = (user: EmployeeDocument) => {
+      new Email(user, formatUrl(`/tickets/${ticket.ticketId}`)).sendTicketComment(
+        ticket,
+        commenter,
+        comment
+      );
+    };
+    const userSettings = await UserSetting.find({
+      user: { $in: usersToNotify },
+      settingName: "setting.user.notification.TicketCommentEmail",
+    });
+    usersToNotify.forEach((user) => {
+      // Get the setting for a specific user
+      const emailSetting = userSettings.find(
+        (setting) => setting.user.toString() === user._id.toString()
+      );
+      // If setting not set or set to true, set email
+      if (!emailSetting || emailSetting.value.ticketCommentEmail) sendEmail(user);
     });
   }
 
-  private sendCommentChat(data: CommentData) {
+  private sendCommentChats(data: CommentData) {
     const { comment, commenter, ticket, usersToNotify } = data;
-    usersToNotify.forEach(async (user) => {
-      if (!user.space) return;
-      await chat.spaces.messages.create({
-        parent: user.space,
-        requestBody: {
-          text: `${commenter.fullName} left a comment on ticket #${ticket.ticketId}`,
-          cards: [
-            {
-              header: {
-                title: "Ticket Comment",
-                subtitle: `#${ticket.ticketId}`,
-                imageUrl: "https://i.ibb.co/Ypsrycx/Ticket-Blue.png",
+
+    const params = (space: string): chat_v1.Params$Resource$Spaces$Messages$Create => ({
+      parent: space,
+      requestBody: {
+        text: `${commenter.fullName} left a comment on ticket #${ticket.ticketId}`,
+        cards: [
+          {
+            header: {
+              title: "Ticket Comment",
+              subtitle: `#${ticket.ticketId}`,
+              imageUrl: "https://i.ibb.co/Ypsrycx/Ticket-Blue.png",
+            },
+            sections: [
+              {
+                widgets: [
+                  { keyValue: { topLabel: "Title", content: ticket.title } },
+                  { keyValue: { topLabel: "Comment", content: comment } },
+                ],
               },
-              sections: [
-                {
-                  widgets: [
-                    { keyValue: { topLabel: "Title", content: ticket.title } },
-                    { keyValue: { topLabel: "Comment", content: comment } },
-                  ],
-                },
-                {
-                  widgets: [
-                    {
-                      buttons: [
-                        {
-                          textButton: {
-                            text: "OPEN IN APP",
-                            onClick: {
-                              openLink: {
-                                url: `${URL}/tickets/${ticket.ticketId}`,
-                              },
+              {
+                widgets: [
+                  {
+                    buttons: [
+                      {
+                        textButton: {
+                          text: "OPEN IN APP",
+                          onClick: {
+                            openLink: {
+                              url: `${URL}/tickets/${ticket.ticketId}`,
                             },
                           },
                         },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      });
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    usersToNotify.forEach((user) => {
+      if (!user.space) return;
+      chat.spaces.messages.create(params(user.space)).catch();
     });
   }
 

@@ -141,4 +141,12 @@ export default class Email {
       newTicket,
     });
   }
+
+  async sendTicketComment(ticket: TicketDocument, commenter: EmployeeDocument, comment: string) {
+    return await this.send("ticketComment", "Comment left on ticket #106", {
+      ticket,
+      commenter,
+      comment,
+    });
+  }
 }
