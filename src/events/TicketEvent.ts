@@ -4,7 +4,7 @@ import {
   TicketCommentUpdateDocument,
   TicketDocument,
 } from "@@types/models";
-import { Ticket, UserSetting } from "@models";
+import { Ticket, TicketAssignUpdate, UserSetting } from "@models";
 import { chat, Email, formatUrl } from "@utils";
 import capitalize from "capitalize";
 import { chat_v1 } from "googleapis";
@@ -87,7 +87,7 @@ class TicketEvent {
     // Get the users' email setting
     const userSettings = await UserSetting.find({
       user: { $in: users },
-      settingName: "settings.users.notification.TicketAssignEmail",
+      settingName: "setting.user.notification.TicketAssignEmail",
     });
     users.forEach((user) => {
       // Get the setting for a specific user
@@ -100,8 +100,8 @@ class TicketEvent {
   }
 
   private sendSubmitChatMessages(users: EmployeeDocument[], ticket: TicketDocument) {
-    const spaces = users.filter((e) => e.space).map((e) => e.space) as string[];
-    spaces.forEach(async (space) => {
+    const spaces = users.filter((e) => e.space).map((e) => e.space!);
+    spaces.forEach((space) => {
       const params = this.createAssignChatMessage({
         ticket,
         parent: space,
@@ -113,22 +113,32 @@ class TicketEvent {
   }
 
   async assign(update: TicketAssignUpdateDocument) {
-    const ticket = await Ticket.findById(update.ticket).populate({
-      path: "assignedTo submittedBy",
-    });
-    if (!ticket) return;
+    // Only send if user is being added
+    if (update.op === "REMOVE") return;
+    const { ticket, assign: user } = await TicketAssignUpdate.populate(update, "ticket assign");
+    this.sendAssignChat(user, ticket);
+    this.sendAssignEmail(user, ticket);
+  }
 
-    const user = (ticket.assignedTo as EmployeeDocument[]).find(
-      (user) => user._id.toString() === update.assign.toString()
-    );
-    if (!user || !user.space) return;
+  private async sendAssignEmail(user: EmployeeDocument, ticket: TicketDocument) {
+    const sendEmail = (user: EmployeeDocument) =>
+      new Email(user, formatUrl(`/tickets/${ticket.ticketId}`)).sendTicketAssign(ticket, false);
+    const emailSetting = await UserSetting.findOne({
+      user,
+      settingName: "setting.user.notification.TicketAssignEmail",
+    });
+    if (!emailSetting || emailSetting.value.ticketAssignEmail) sendEmail(user);
+  }
+
+  private sendAssignChat(user: EmployeeDocument, ticket: TicketDocument) {
+    if (!user.space) return;
     const params = this.createAssignChatMessage({
       ticket,
       parent: user.space,
       text: "You have been assigned to a ticket",
       headerTitle: "Assigned Ticket",
     });
-    await chat.spaces.messages.create(params);
+    chat.spaces.messages.create(params).catch();
   }
 
   async comment(update: TicketCommentUpdateDocument) {
