@@ -28,6 +28,12 @@ interface CommentData {
   comment: string;
 }
 
+interface CloseData {
+  closedBy: EmployeeDocument;
+  usersToNotify: EmployeeDocument[];
+  ticket: TicketDocument;
+}
+
 class TicketEvent {
   private createAssignChatMessage(
     data: AssignMessageData
@@ -154,7 +160,9 @@ class TicketEvent {
       path: "ticket createdBy",
       populate: { path: "assignedTo submittedBy" },
     });
-    const users: EmployeeDocument[] = [...ticket.assignedTo, ticket.submittedBy];
+    const users: EmployeeDocument[] = [...ticket.assignedTo];
+    if (!users.find((user) => user._id.toString === ticket.submittedBy._id.toString))
+      users.push(ticket.submittedBy);
     const data: CommentData = {
       comment: update.comment,
       commenter: createdBy as EmployeeDocument,
@@ -240,31 +248,31 @@ class TicketEvent {
   }
 
   async close(ticket: TicketDocument) {
-    await ticket.populate("assignedTo submittedBy closedBy").execPopulate();
-    const closerId = ticket.closedBy!._id.toString();
+    if (ticket.status !== "CLOSED") return;
+    const { assignedTo, closedBy, submittedBy } = await ticket
+      .populate("assignedTo submittedBy closedBy")
+      .execPopulate();
+    // Get all users on ticket
+    const users: EmployeeDocument[] = [...(assignedTo as EmployeeDocument[])];
+    if (!users.find((user) => user._id.toString === submittedBy._id.toString))
+      users.push(submittedBy);
+    const data: CloseData = {
+      closedBy,
+      usersToNotify: users.filter((user) => user._id.toString() !== closedBy._id.toString()),
+      ticket,
+    };
 
-    const users = [...(ticket.assignedTo as EmployeeDocument[])];
-    if (!users.some((user) => user._id.toString() === closerId)) users.push(ticket.submittedBy);
+    this.sendCloseChats(data);
+  }
 
-    const { closer, rest } = users.reduce(
-      (value, currEmployee) => {
-        currEmployee._id.toString() === closerId
-          ? (value.closer = currEmployee)
-          : value.rest.push(currEmployee);
-        return value;
-      },
-      { closer: undefined, rest: [] } as {
-        closer?: EmployeeDocument;
-        rest: EmployeeDocument[];
-      }
-    );
-
-    rest.forEach(async (user) => {
+  private sendCloseChats(data: CloseData) {
+    const { closedBy, usersToNotify, ticket } = data;
+    usersToNotify.forEach(async (user) => {
       if (!user.space) return;
       await chat.spaces.messages.create({
         parent: user.space,
         requestBody: {
-          text: `${closer?.fullName} has closed ticket #${ticket.ticketId}`,
+          text: `${closedBy.fullName} has closed ticket #${ticket.ticketId}`,
           cards: [
             {
               header: {
@@ -295,7 +303,7 @@ class TicketEvent {
                             text: "OPEN IN APP",
                             onClick: {
                               openLink: {
-                                url: `${URL}/tickets/${ticket.ticketId}`,
+                                url: formatUrl(`/tickets/${ticket.ticketId}`),
                               },
                             },
                           },
