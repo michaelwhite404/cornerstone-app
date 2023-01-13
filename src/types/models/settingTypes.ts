@@ -8,29 +8,30 @@ export interface SettingModel {
   description: string;
   name: string;
   settingType: string;
-  type: SettingType;
   fieldDescriptions: FieldDescription[];
 }
 
-interface KnownValueDescription {
-  value: string;
+export interface KnownValueDescription {
+  value: any;
   description: string;
 }
 
-type SettingType =
+export type SettingFieldType =
   | "TYPE_ENUM"
   | "TYPE_BOOL"
   | "TYPE_STRING"
   | "TYPE_DOUBLE"
   | "TYPE_FLOAT"
   | "TYPE_INT32"
-  | "TYPE_INT64";
+  | "TYPE_INT64"
+  | "TYPE_ENUM_ARRAY";
 
 interface FieldDescription {
   field: string;
   fieldDescription?: string;
   name: string;
   defaultValue: any;
+  type: SettingFieldType;
   knownValueDescriptions?: KnownValueDescription[];
 }
 
