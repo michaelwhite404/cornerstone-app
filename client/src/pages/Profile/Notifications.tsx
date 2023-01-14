@@ -50,6 +50,7 @@ export default function Notifications() {
   const [data, setData] = useState<{ [x: string]: any }>(
     constructInitialNotificationData(settings, settingCategories)
   );
+
   const handleChange = (setting: string, field: string, value: string) =>
     setData({ ...data, [setting]: { ...data[setting], [field]: value } });
 

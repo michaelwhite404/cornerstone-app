@@ -14,7 +14,7 @@ const notificationSettings: INotificationCategory[] = [
             type: "TYPE_ENUM",
             description: "Notification to send on device check in",
             defaultValue: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE",
-            disabled: true,
+            disabled: false,
             knownValues: [
               {
                 value: "DEVICE_CHECK_IN_EMAIL_ENUM_ALL",
