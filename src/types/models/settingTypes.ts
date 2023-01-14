@@ -20,10 +20,10 @@ export type SettingFieldType =
   | "TYPE_ENUM"
   | "TYPE_BOOL"
   | "TYPE_STRING"
-  | "TYPE_DOUBLE"
-  | "TYPE_FLOAT"
+  // | "TYPE_DOUBLE"
+  // | "TYPE_FLOAT"
   | "TYPE_INT32"
-  | "TYPE_INT64"
+  // | "TYPE_INT64"
   | "TYPE_ENUM_ARRAY";
 
 interface FieldDescription {

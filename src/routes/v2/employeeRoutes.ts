@@ -21,7 +21,10 @@ employeeRouter.patch("/update-password", v2auth.updatePassword);
 
 employeeRouter.route("/").get(employeeController.getAllEmployees).post(v2auth.createEmployee);
 employeeRouter.route("/me").get(employeeController.getMe, employeeController.getOneEmployee);
-employeeRouter.route("/me/settings").get(userSettingsController.getMySettings);
+employeeRouter
+  .route("/me/settings")
+  .get(userSettingsController.getMySettings)
+  .patch(userSettingsController.updateMySetting);
 employeeRouter.get(
   "/from-google",
   v2auth.restrictTo("Super Admin"),
