@@ -21,9 +21,10 @@ export default function settingValueValid(
 const isBoolean = (value: any) => typeof value === "boolean";
 const isString = (value: any) => typeof value === "string";
 const isValidEnum = (value: any, validValues: KnownValueDescription[]) =>
-  validValues.findIndex((known) => known.value === value) > 0;
+  validValues.findIndex((known) => known.value === value) > -1;
 const isValidEnumArray = (values: any, validValues: KnownValueDescription[]) => {
   if (!Array.isArray(values)) return false;
+  if ([...new Set(values)].length !== values.length) return false;
   return values.every((value) => isValidEnum(value, validValues));
 };
 const isInt32 = (value: any) =>
