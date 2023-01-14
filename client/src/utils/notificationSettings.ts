@@ -1,3 +1,5 @@
+import { EmployeeModel } from "../../../src/types/models";
+
 const notificationSettings: INotificationCategory[] = [
   {
     category: "Devices",
@@ -87,7 +89,7 @@ const notificationSettings: INotificationCategory[] = [
       {
         name: "LeaveRequestEmail",
         label: "Leave Request",
-        roles: ["Super Admin", "Admin"],
+        roles: (user) => user.departments?.some((d) => d.role === "LEADER") || false,
         fields: [
           {
             name: "leaveRequestEmail",
@@ -266,7 +268,7 @@ export interface INotificationSetting {
   label: string;
   /** The fields connected to the setting */
   fields: INotificationSettingField[];
-  roles: string[];
+  roles: string[] | ((user: EmployeeModel) => boolean);
 }
 
 export type INotificationSettingField =
@@ -282,7 +284,7 @@ interface NotificationSettingBaseField {
   description: string;
   defaultValue: any;
   /** Whether the field inputs should be disabled */
-  disabled?: boolean | ((data: any) => boolean);
+  disabled?: boolean | ((state: { [x: string]: any }) => boolean);
   /** How far to shift the inputs in the UI */
   shift?: number;
 }

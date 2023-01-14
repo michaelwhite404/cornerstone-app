@@ -34,9 +34,11 @@ const constructInitialNotificationData = (
 const filterNotificationSettings = (user: EmployeeModel) =>
   notificationSettings.reduce<INotificationCategory[]>((arr, notificationCategory) => {
     const category = { ...notificationCategory };
-    const filteredSettings = category.settings.filter(
-      (setting) => setting.roles.includes(user.role) || setting.roles[0] === "*"
-    );
+    const filteredSettings = category.settings.filter((setting) => {
+      return typeof setting.roles === "function"
+        ? setting.roles(user)
+        : setting.roles.includes(user.role) || setting.roles[0] === "*";
+    });
     if (filteredSettings.length > 0)
       arr.push({ category: category.category, settings: filteredSettings });
     return arr;
