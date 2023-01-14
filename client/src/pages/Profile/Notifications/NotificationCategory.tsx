@@ -4,12 +4,13 @@ import isDeepEqual from "deep-equal";
 import { INotificationCategory } from "../../../utils/notificationSettings";
 import { NotificationContext } from "../Notifications";
 import NotificationSetting from "./NotificationSetting";
-import { useToasterContext } from "../../../hooks";
+import { useAuth, useToasterContext } from "../../../hooks";
 
 export default function NotificationCategory({ notificationCategory }: NotificationCategoryProps) {
   const getCategoryState = (data: { [x: string]: any }) =>
     notificationCategory.settings.map(({ name }) => data[name]);
   const { data } = useContext(NotificationContext);
+  const { setSettings } = useAuth();
   const [stateBeforeUpdate, setStateBeforeUpdate] = useState(getCategoryState(data));
   const { showToaster } = useToasterContext();
   const handleUpdateSetting = async () => {
@@ -22,11 +23,26 @@ export default function NotificationCategory({ notificationCategory }: Notificat
           })
         )
       );
+      updateGlobalSettings();
       setStateBeforeUpdate(getCategoryState(data));
       showToaster("Settings Updated!", "success");
     } catch (err) {
       showToaster("There was an error. Please try again", "danger");
     }
+  };
+
+  const updateGlobalSettings = () => {
+    setSettings((settings) => {
+      const settingsCopy = [...settings];
+      notificationCategory.settings.forEach(({ name }) => {
+        const index = settingsCopy.findIndex(
+          (userSetting) => userSetting.settingName === `setting.user.notification.${name}`
+        );
+        if (index < 0) return;
+        settingsCopy[index].value = data[name];
+      });
+      return settingsCopy;
+    });
   };
 
   const updateable = !isDeepEqual(stateBeforeUpdate, getCategoryState(data));

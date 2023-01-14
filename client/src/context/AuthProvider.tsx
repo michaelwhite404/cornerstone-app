@@ -18,6 +18,7 @@ interface AuthContextType {
   ) => Promise<EmployeeModel | undefined>;
   authLoaded: boolean;
   settings: Omit<UserSettingModel, "user">[];
+  setSettings: React.Dispatch<React.SetStateAction<Omit<UserSettingModel, "user">[]>>;
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -112,6 +113,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     loginFromGoogle,
     authLoaded,
     settings,
+    setSettings,
   };
 
   return (
