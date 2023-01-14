@@ -38,13 +38,13 @@ const notificationSettings: INotificationCategory[] = [
       {
         name: "TextbookCheckInEmail",
         label: "Check In",
-        roles: ["*"],
+        roles: ["Super Admin", "Admin"],
         fields: [
           {
             name: "textbookCheckInEmail",
             type: "TYPE_ENUM",
             description: "Email setting when textbook is checked in",
-            defaultValue: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL",
+            defaultValue: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_NONE",
             knownValues: [
               {
                 value: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL",
