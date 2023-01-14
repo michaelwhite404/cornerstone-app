@@ -1,4 +1,6 @@
 import { createContext, useState } from "react";
+import { EmployeeModel, UserSettingModel } from "../../../../src/types/models";
+import { useAuth } from "../../hooks";
 import notificationSettings from "../../utils/notificationSettings";
 import NotificationCategory from "./Notifications/NotificationCategory";
 
@@ -8,24 +10,37 @@ interface NotificationContextValue {
   data: { [x: string]: any };
 }
 
-export default function Notifications() {
-  const [data, setData] = useState<{ [x: string]: any }>({
-    DeviceCheckInEmail: { deviceCheckInEmail: "DEVICE_CHECK_IN_EMAIL_ENUM_NONE" },
-    TextbookCheckInEmail: {
-      textbookCheckInEmail: "TEXTBOOK_CHECK_IN_EMAIL_ENUM_ALL",
-      textbookCheckInQualityPick: ["Poor", "Lost"],
-    },
-    LeaveRequestEmail: { leaveRequestEmail: true },
-    LeaveFinalizedEmail: { leaveFinalizedEmail: "LEAVE_FINALIZED_EMAIL_ENUM_ALL" },
-    ReimbursementRequestEmail: { reimbursementRequestEmail: true },
-    ReimbursementFinalizedEmail: {
-      reimbursementFinalizedEmail: "REIMBURSEMENT_FINALIZED_EMAIL_ENUM_ALL",
-    },
-    TicketAssignEmail: { ticketAssignEmail: true },
-    TicketCommentEmail: { ticketCommentEmail: true },
-    TicketClosedEmail: { ticketClosedEmail: true },
-  });
+const constructInitialNotificationData = (
+  user: EmployeeModel,
+  userSettings: Omit<UserSettingModel, "user">[]
+) => {
+  const data: { [x: string]: any } = {};
+  notificationSettings.forEach((category) => {
+    category.settings.forEach((setting) => {
+      if (setting.roles.includes(user.role) || setting.roles[0] === "*") {
+        const settingName = setting.name;
+        const userSetting = userSettings.find(
+          (userSetting) => userSetting.settingName === `setting.user.notification.${settingName}`
+        );
+        if (userSetting) data[settingName] = userSetting.value;
+        else {
+          data[settingName] = {};
 
+          setting.fields.forEach((field) => {
+            data[settingName][field.name] = field.defaultValue;
+          });
+        }
+      }
+    });
+  });
+  return data;
+};
+
+export default function Notifications() {
+  const { user, settings } = useAuth();
+  const [data, setData] = useState<{ [x: string]: any }>(
+    constructInitialNotificationData(user!, settings)
+  );
   const handleChange = (setting: string, field: string, value: string) =>
     setData({ ...data, [setting]: { ...data[setting], [field]: value } });
 

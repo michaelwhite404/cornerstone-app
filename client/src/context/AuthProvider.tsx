@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { GoogleLoginResponse, GoogleLoginResponseOffline } from "react-google-login";
 import { useNavigate, useLocation } from "react-router-dom";
+import { UserSettingModel } from "../../../src/types/models";
 import { EmployeeModel } from "../../../src/types/models/employeeTypes";
 import Home from "../pages/Home/Home";
 
@@ -16,6 +17,7 @@ interface AuthContextType {
     googleData: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => Promise<EmployeeModel | undefined>;
   authLoaded: boolean;
+  settings: Omit<UserSettingModel, "user">[];
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -24,6 +26,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<EmployeeModel | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoaded, setAuthLoaded] = useState(false);
+  const [settings, setSettings] = useState<Omit<UserSettingModel, "user">[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,6 +39,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         .then((res) => {
           setUser(res.data.data.user);
           setIsAuthenticated(true);
+          getSettings();
         })
         .catch(() => navigate("/", { replace: true, state: { afterLogin: location.pathname } }))
         .finally(() => setAuthLoaded(true));
@@ -69,6 +73,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     try {
       const res = await axios.post("/api/v2/users/login", { email, password });
       setUser(res.data.data.employee);
+      getSettings();
       handleAuthSuccess();
       return res.data.data.employee as EmployeeModel;
     } catch (err: any) {
@@ -90,6 +95,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
   };
 
+  const getSettings = async () => {
+    try {
+      const res = await axios.get("/api/v2/users/me/settings");
+      setSettings(res.data.data.settings);
+    } catch (err: any) {}
+  };
+
   const value = {
     user,
     isAuthenticated,
@@ -99,6 +111,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     setUser,
     loginFromGoogle,
     authLoaded,
+    settings,
   };
 
   return (
