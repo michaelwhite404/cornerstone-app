@@ -4,6 +4,7 @@ import { chat } from "@utils";
 
 class AftercareEvent {
   async signOut(entry: AftercareAttendanceEntryModel) {
+    if (entry.student.aftercare) return;
     const arrRes = await AftercareAttendanceEntry.aggregate([
       {
         $match: {

@@ -135,7 +135,7 @@ export const getAftercareEntryById = factory.getOneById(AftercareAttendanceEntry
 export const signOutStudent = catchAsync(async (req, res, next) => {
   const entry = await AftercareAttendanceEntry.findById(req.params.id).populate({
     path: "student",
-    select: "fullName schoolEmail",
+    select: "fullName schoolEmail aftercare",
   });
   if (!entry) return next(new AppError("There is no entry with this id", 404));
   if (entry.signOutDate) return next(new AppError("This student has already been signed out", 400));
