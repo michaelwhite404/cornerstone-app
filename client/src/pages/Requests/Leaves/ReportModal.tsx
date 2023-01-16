@@ -2,6 +2,7 @@ import { Dialog, RadioGroup, Transition } from "@headlessui/react";
 import { CheckCircleIcon, XIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
 import { Fragment, useState } from "react";
+import LeaveFields from "./LeaveFields";
 
 export default function ReportModal(props: Props) {
   const { close, isOpen } = props;
@@ -56,7 +57,7 @@ export default function ReportModal(props: Props) {
                     <span className="font-medium text-xl">Generate Report</span>
                     <p className="mt-1">Select the following information to generate a report.</p>
                   </div>
-                  <div className="px-6 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="px-6 pt-5 pb-4 sm:p-6 sm:pb-4 space-y-8">
                     <RadioGroup value={type} onChange={setType}>
                       <RadioGroup.Label className="text-base font-medium text-gray-900">
                         Select an export type
@@ -119,6 +120,7 @@ export default function ReportModal(props: Props) {
                         ))}
                       </div>
                     </RadioGroup>
+                    <LeaveFields />
                   </div>
                 </div>
               </Dialog.Panel>
