@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import { Fragment, useState } from "react";
+import downloadAxiosData from "../../../../utils/downloadAxiosData";
 import FileTypeCards from "./FileTypeCards";
 import LeaveFields from "./LeaveFields";
 
@@ -22,14 +23,16 @@ export function ReportModal(props: Props) {
   const [fields, setFields] = useState(initialFields);
 
   const submit = async () => {
-    // return;
-    const res = await axios.post("/api/v2/leaves/generate-report", {
+    const data = {
       type: "csv",
       fields: initialFields.reduce((arr, field) => {
         if (field.checked) arr.push(field.value);
         return arr;
       }, [] as string[]),
-    });
+    };
+    // return console.log(data);
+    const res = await axios.post("/api/v2/leaves/generate-report", data, { responseType: "blob" });
+    downloadAxiosData(res, `leave-report_${new Date().toISOString()}.csv`);
   };
 
   return (
