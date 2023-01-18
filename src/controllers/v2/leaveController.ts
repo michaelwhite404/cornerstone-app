@@ -3,6 +3,8 @@ import { LeaveDocument } from "@@types/models";
 import { APIFeatures, AppError, catchAsync, getUserLeaders, StaffCalendar } from "@utils";
 import { handlerFactory as factory } from ".";
 import { leaveEvent } from "@events";
+import { ObjectId } from "mongoose";
+import { stringify } from "csv-stringify";
 
 const Model = Leave;
 const key = "leave";
@@ -112,3 +114,122 @@ export const createLeave = catchAsync(async (req, res, next) => {
   res.sendJson(201, { leave });
   leaveEvent.submit(leave);
 });
+
+export const generateReport = catchAsync(async (req, res, next) => {
+  // const { type, fields, dateFormat } = req.body;
+  // TODO: Validate type and fields are correct
+  const leaves = await Leave.aggregate([
+    {
+      $lookup: {
+        from: "employees",
+        localField: "user",
+        foreignField: "_id",
+        as: "submittingUser",
+      },
+    },
+    {
+      $lookup: {
+        from: "employees",
+        localField: "approval.user",
+        foreignField: "_id",
+        as: "finalizedUser",
+      },
+    },
+    {
+      $project: {
+        reason: 1,
+        submittingUser: {
+          $let: {
+            vars: {
+              name: { $arrayElemAt: ["$submittingUser.fullName", 0] },
+              email: { $arrayElemAt: ["$submittingUser.email", 0] },
+            },
+            in: { $concat: ["$$name", " (", "$$email", ")"] },
+          },
+        },
+        dateStart: 1,
+        dateEnd: 1,
+        status: {
+          $cond: {
+            if: { $gt: ["$approval", null] },
+            then: {
+              $cond: {
+                if: "$approval.approved",
+                then: "Approved",
+                else: "Rejected",
+              },
+            },
+            else: "Pending",
+          },
+        },
+        finalizedBy: {
+          $let: {
+            vars: {
+              name: { $arrayElemAt: ["$finalizedUser.fullName", 0] },
+              email: { $arrayElemAt: ["$finalizedUser.email", 0] },
+            },
+            in: { $concat: ["$$name", " (", "$$email", ")"] },
+          },
+        },
+        finalizedAt: "$approval.date",
+        createdAt: 1,
+      },
+    },
+  ]);
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="' + "device-logs" + new Date().toISOString() + '.csv"'
+  );
+  createCsvStringifier(leaves).pipe(res);
+  // res.sendJson(200, { leaves });
+});
+
+const createCsvStringifier = (leaves: AggregatedLeave[]) => {
+  // const headers = [
+  //   "Reason For Leave",
+  //   "Submitting User",
+  //   "Date Start",
+  //   "Date End",
+  //   "Status",
+  //   "Finalized By",
+  //   "Finalized At",
+  //   "Created At",
+  // ];
+
+  const csvHeaders = [
+    "Reason",
+    "Submitting User",
+    "Date Start",
+    "Date End",
+    "Status",
+    "Finalized By",
+    "Finalized At",
+    "Created At",
+  ];
+
+  const values = leaves.map((leave) => [
+    leave.reason,
+    leave.submittingUser,
+    leave.dateStart.toLocaleString() || "",
+    leave.dateEnd.toLocaleString() || "",
+    leave.status,
+    leave.finalizedBy || "",
+    leave.finalizedAt?.toLocaleString() || "",
+    leave.createdAt.toLocaleString(),
+  ]);
+  return stringify([csvHeaders, ...values]);
+};
+
+interface AggregatedLeave {
+  _id: ObjectId;
+  reason: string;
+  dateStart: Date;
+  dateEnd: Date;
+  submittingUser: string;
+  status: "Approved" | "Rejected" | "Pending";
+  createdAt: Date;
+  finalizedBy: string | null;
+  finalizedAt?: Date;
+}

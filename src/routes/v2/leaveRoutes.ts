@@ -7,6 +7,8 @@ leaveRouter.use(v2auth.protect);
 
 leaveRouter.route("/").get(leaveController.getAllLeaves).post(leaveController.createLeave);
 
+leaveRouter.post("/generate-report", leaveController.generateReport);
+
 leaveRouter.post("/:id/approve", leaveController.checkCanApprove, leaveController.approveLeave);
 
 leaveRouter.route("/:id").get(leaveController.getLeave);
