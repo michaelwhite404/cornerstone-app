@@ -25,7 +25,7 @@ export function ReportModal(props: Props) {
   const submit = async () => {
     const data = {
       type: "csv",
-      fields: initialFields.reduce((arr, field) => {
+      fields: fields.reduce((arr, field) => {
         if (field.checked) arr.push(field.value);
         return arr;
       }, [] as string[]),

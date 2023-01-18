@@ -116,7 +116,7 @@ export const createLeave = catchAsync(async (req, res, next) => {
 });
 
 export const generateReport = catchAsync(async (req, res, next) => {
-  // const { type, fields, dateFormat } = req.body;
+  const { type, fields, dateFormat } = req.body;
   // TODO: Validate type and fields are correct
   const leaves = await Leave.aggregate([
     {
@@ -177,49 +177,40 @@ export const generateReport = catchAsync(async (req, res, next) => {
     },
   ]);
 
-  res.setHeader("Content-Type", "text/csv");
-  res.setHeader(
-    "Content-Disposition",
-    'attachment; filename="' + "device-logs" + new Date().toISOString() + '.csv"'
-  );
-  createCsvStringifier(leaves).pipe(res);
-  // res.sendJson(200, { leaves });
+  switch (type) {
+    case "csv":
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader(
+        "Content-Disposition",
+        'attachment; filename="' + "device-logs_" + new Date().toISOString() + '.csv"'
+      );
+      return createCsvStringifier(leaves, fields).pipe(res);
+    default:
+      res.sendJson(200, { leaves });
+  }
 });
 
-const createCsvStringifier = (leaves: AggregatedLeave[]) => {
-  // const headers = [
-  //   "Reason For Leave",
-  //   "Submitting User",
-  //   "Date Start",
-  //   "Date End",
-  //   "Status",
-  //   "Finalized By",
-  //   "Finalized At",
-  //   "Created At",
-  // ];
+const headerMap = {
+  reason: "Reason For Leave",
+  submittingUser: "Submitting User",
+  dateStart: "Date Start",
+  dateEnd: "Date End",
+  status: "Status",
+  finalizedBy: "Finalized By",
+  finalizedAt: "Finalized At",
+  createdAt: "Created At",
+} as const;
 
-  const csvHeaders = [
-    "Reason",
-    "Submitting User",
-    "Date Start",
-    "Date End",
-    "Status",
-    "Finalized By",
-    "Finalized At",
-    "Created At",
-  ];
-
-  const values = leaves.map((leave) => [
-    leave.reason,
-    leave.submittingUser,
-    leave.dateStart.toLocaleString() || "",
-    leave.dateEnd.toLocaleString() || "",
-    leave.status,
-    leave.finalizedBy || "",
-    leave.finalizedAt?.toLocaleString() || "",
-    leave.createdAt.toLocaleString(),
-  ]);
-  return stringify([csvHeaders, ...values]);
+const createCsvStringifier = (leaves: AggregatedLeave[], fields: Array<keyof typeof headerMap>) => {
+  const newHeaders = fields.map((field) => headerMap[field]);
+  const values = leaves.map((leave) => {
+    return fields.map((field) => {
+      const value = leave[field];
+      if (value instanceof Date) return value.toLocaleString();
+      return typeof value === "string" ? value : "";
+    });
+  });
+  return stringify([newHeaders, ...values]);
 };
 
 interface AggregatedLeave {
@@ -233,3 +224,4 @@ interface AggregatedLeave {
   finalizedBy: string | null;
   finalizedAt?: Date;
 }
+type ExportType = "sheets" | "csv" | "excel" | "pdf";
