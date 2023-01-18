@@ -2,6 +2,7 @@ import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
 import React from "react";
+import { ExportType } from "./ReportModal";
 
 const typeOptions = [
   { name: "Google Sheets", value: "sheets", extension: "sheet" },
@@ -69,6 +70,6 @@ export default function FileTypeCards(props: Props) {
 }
 
 interface Props {
-  type: string;
-  setType: React.Dispatch<React.SetStateAction<string>>;
+  type: ExportType;
+  setType: React.Dispatch<React.SetStateAction<ExportType>>;
 }

@@ -8,7 +8,7 @@ import LeaveFields from "./LeaveFields";
 
 const initialFields = [
   { text: "Reason for Leave", value: "reason", checked: true },
-  { text: "Submitting User", value: "user", checked: true },
+  { text: "Submitting User", value: "submittingUser", checked: true },
   { text: "Date Start", value: "dateStart", checked: true },
   { text: "Date End", value: "dateEnd", checked: true },
   { text: "Status", value: "status", checked: true },
@@ -16,23 +16,28 @@ const initialFields = [
   { text: "Finalized At", value: "finalizedAt", checked: true },
   { text: "Created At", value: "createdAt", checked: true },
 ];
+export type ExportType = "sheets" | "csv" | "excel" | "pdf";
 
 export function ReportModal(props: Props) {
   const { close, isOpen } = props;
-  const [type, setType] = useState("sheets");
+  const [type, setType] = useState<ExportType>("sheets");
   const [fields, setFields] = useState(initialFields);
 
   const submit = async () => {
     const data = {
-      type: "csv",
+      type,
       fields: fields.reduce((arr, field) => {
         if (field.checked) arr.push(field.value);
         return arr;
       }, [] as string[]),
     };
-    // return console.log(data);
-    const res = await axios.post("/api/v2/leaves/generate-report", data, { responseType: "blob" });
-    downloadAxiosData(res, `leave-report_${new Date().toISOString()}.csv`);
+    const res = await axios.post("/api/v2/leaves/generate-report", data, {
+      responseType: type !== "sheets" ? "blob" : undefined,
+    });
+    if (type === "sheets") return window.open(res.data.data.spreadsheetUrl, "_blank");
+    if (type === "csv")
+      return downloadAxiosData(res, `leave-report_${new Date().toISOString()}.csv`);
+    close();
   };
 
   return (

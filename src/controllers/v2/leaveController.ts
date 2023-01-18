@@ -1,6 +1,6 @@
 import { Leave } from "@models";
 import { LeaveDocument } from "@@types/models";
-import { APIFeatures, AppError, catchAsync, getUserLeaders, StaffCalendar } from "@utils";
+import { APIFeatures, AppError, catchAsync, getUserLeaders, sheets, StaffCalendar } from "@utils";
 import { handlerFactory as factory } from ".";
 import { leaveEvent } from "@events";
 import { ObjectId } from "mongoose";
@@ -178,6 +178,42 @@ export const generateReport = catchAsync(async (req, res, next) => {
   ]);
 
   switch (type) {
+    case "sheets":
+      const googleSheets = sheets(req.employee.email);
+      const response = await googleSheets.spreadsheets.create({
+        requestBody: {
+          properties: {
+            title: `Leave Report`,
+          },
+        },
+      });
+      const spreadsheetId = response.data.spreadsheetId!;
+      await googleSheets.spreadsheets.values.append({
+        spreadsheetId,
+        range: "Sheet1",
+        valueInputOption: "USER_ENTERED",
+        requestBody: {
+          values: generate2dData(leaves, fields),
+        },
+      });
+      await googleSheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        requestBody: {
+          requests: [
+            {
+              autoResizeDimensions: {
+                dimensions: {
+                  sheetId: 0,
+                  dimension: "COLUMNS",
+                  startIndex: 0,
+                  endIndex: fields.length,
+                },
+              },
+            },
+          ],
+        },
+      });
+      return res.sendJson(200, { spreadsheetUrl: response.data.spreadsheetUrl });
     case "csv":
       res.setHeader("Content-Type", "text/csv");
       res.setHeader(
@@ -201,7 +237,7 @@ const headerMap = {
   createdAt: "Created At",
 } as const;
 
-const createCsvStringifier = (leaves: AggregatedLeave[], fields: Array<keyof typeof headerMap>) => {
+const generate2dData = (leaves: AggregatedLeave[], fields: Array<keyof typeof headerMap>) => {
   const newHeaders = fields.map((field) => headerMap[field]);
   const values = leaves.map((leave) => {
     return fields.map((field) => {
@@ -210,7 +246,12 @@ const createCsvStringifier = (leaves: AggregatedLeave[], fields: Array<keyof typ
       return typeof value === "string" ? value : "";
     });
   });
-  return stringify([newHeaders, ...values]);
+  return [newHeaders, ...values];
+};
+
+const createCsvStringifier = (leaves: AggregatedLeave[], fields: Array<keyof typeof headerMap>) => {
+  const data = generate2dData(leaves, fields);
+  return stringify(data);
 };
 
 interface AggregatedLeave {
@@ -224,4 +265,3 @@ interface AggregatedLeave {
   finalizedBy: string | null;
   finalizedAt?: Date;
 }
-type ExportType = "sheets" | "csv" | "excel" | "pdf";
