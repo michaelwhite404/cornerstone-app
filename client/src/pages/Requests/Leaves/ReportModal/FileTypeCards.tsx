@@ -6,8 +6,8 @@ import React from "react";
 const typeOptions = [
   { name: "Google Sheets", value: "sheets", extension: "sheet" },
   { name: "Comma Seperated", value: "csv", extension: ".csv" },
-  { name: "Microsoft Excel", value: "excel", extension: ".xlsx" },
-  { name: "PDF", value: "pdf", extension: ".pdf" },
+  { name: "Microsoft Excel", value: "excel", extension: ".xlsx", disabled: true },
+  { name: "PDF", value: "pdf", extension: ".pdf", disabled: true },
 ];
 
 export default function FileTypeCards(props: Props) {
@@ -18,30 +18,32 @@ export default function FileTypeCards(props: Props) {
         Select an export type
       </RadioGroup.Label>
       <div className="mt-4 grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-4 sm:gap-x-4">
-        {typeOptions.map((options) => (
+        {typeOptions.map((option) => (
           <RadioGroup.Option
-            key={options.value}
-            value={options.value}
-            className={({ checked, active }) =>
+            key={option.value}
+            value={option.value}
+            className={({ checked, active, disabled }) =>
               classNames(
                 checked ? "border-transparent" : "border-gray-300",
                 active ? "border-indigo-500 ring-2 ring-indigo-500" : "",
-                "relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none"
+                disabled ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer",
+                "relative flex  rounded-lg border bg-white p-4 shadow-sm focus:outline-none"
               )
             }
+            disabled={option.disabled}
           >
             {({ checked, active }) => (
               <>
                 <span className="flex flex-1">
                   <span className="flex flex-col">
                     <RadioGroup.Label as="span" className="block text-sm font-medium text-gray-900">
-                      {options.name}
+                      {option.name}
                     </RadioGroup.Label>
                     <RadioGroup.Description
                       as="span"
                       className="mt-1 flex items-center text-sm text-gray-500"
                     >
-                      {options.extension}
+                      {option.extension}
                     </RadioGroup.Description>
                   </span>
                 </span>
