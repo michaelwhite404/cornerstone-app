@@ -238,7 +238,7 @@ function Leaves() {
           finalizeLeave={finalizeLeave}
           getStatus={getStatus}
         />
-        <ReportModal isOpen={reportOpen} close={() => setReportOpen(false)} />
+        <ReportModal isOpen={reportOpen} closeModal={() => setReportOpen(false)} />
       </div>
     </LeavesSortContext.Provider>
   );

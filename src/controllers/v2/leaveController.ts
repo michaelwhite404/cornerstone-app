@@ -116,9 +116,12 @@ export const createLeave = catchAsync(async (req, res, next) => {
 });
 
 export const generateReport = catchAsync(async (req, res, next) => {
-  const { type, fields, dateFormat } = req.body;
+  const { type, fields, dateFormat, sortBy } = req.body;
   // TODO: Validate type and fields are correct
-  const leaves = await Leave.aggregate([
+  const leaves: AggregatedLeave[] = await Leave.aggregate([
+    // {
+    //   $match: { $or: [{ sendTo: req.employee._id }, { user: req.employee._id }] },
+    // },
     {
       $lookup: {
         from: "employees",
@@ -179,41 +182,8 @@ export const generateReport = catchAsync(async (req, res, next) => {
 
   switch (type) {
     case "sheets":
-      const googleSheets = sheets(req.employee.email);
-      const response = await googleSheets.spreadsheets.create({
-        requestBody: {
-          properties: {
-            title: `Leave Report`,
-          },
-        },
-      });
-      const spreadsheetId = response.data.spreadsheetId!;
-      await googleSheets.spreadsheets.values.append({
-        spreadsheetId,
-        range: "Sheet1",
-        valueInputOption: "USER_ENTERED",
-        requestBody: {
-          values: generate2dData(leaves, fields),
-        },
-      });
-      await googleSheets.spreadsheets.batchUpdate({
-        spreadsheetId,
-        requestBody: {
-          requests: [
-            {
-              autoResizeDimensions: {
-                dimensions: {
-                  sheetId: 0,
-                  dimension: "COLUMNS",
-                  startIndex: 0,
-                  endIndex: fields.length,
-                },
-              },
-            },
-          ],
-        },
-      });
-      return res.sendJson(200, { spreadsheetUrl: response.data.spreadsheetUrl });
+      const { spreadsheetUrl } = await generateSpreadsheet(leaves, fields, req.employee);
+      return res.sendJson(200, { spreadsheetUrl });
     case "csv":
       res.setHeader("Content-Type", "text/csv");
       res.setHeader(
@@ -252,6 +222,48 @@ const generate2dData = (leaves: AggregatedLeave[], fields: Array<keyof typeof he
 const createCsvStringifier = (leaves: AggregatedLeave[], fields: Array<keyof typeof headerMap>) => {
   const data = generate2dData(leaves, fields);
   return stringify(data);
+};
+
+const generateSpreadsheet = async (
+  leaves: AggregatedLeave[],
+  fields: Array<keyof typeof headerMap>,
+  employee: Employee
+) => {
+  const googleSheets = sheets(employee.email);
+  const response = await googleSheets.spreadsheets.create({
+    requestBody: {
+      properties: {
+        title: `Leave Report`,
+      },
+    },
+  });
+  const spreadsheetId = response.data.spreadsheetId!;
+  await googleSheets.spreadsheets.values.append({
+    spreadsheetId,
+    range: "Sheet1",
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: generate2dData(leaves, fields),
+    },
+  });
+  await googleSheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      requests: [
+        {
+          autoResizeDimensions: {
+            dimensions: {
+              sheetId: 0,
+              dimension: "COLUMNS",
+              startIndex: 0,
+              endIndex: fields.length,
+            },
+          },
+        },
+      ],
+    },
+  });
+  return { spreadsheetUrl: response.data.spreadsheetUrl };
 };
 
 interface AggregatedLeave {
