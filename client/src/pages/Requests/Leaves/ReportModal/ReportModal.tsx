@@ -28,7 +28,7 @@ export function ReportModal(props: Props) {
 
   const resetData = () => {
     setType("sheets");
-    setFields(initialFields);
+    setFields([...initialFields]);
   };
 
   const handleClose = async () => {
