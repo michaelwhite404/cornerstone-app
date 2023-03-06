@@ -26,7 +26,7 @@ const Handle = SortableHandle(() => (
 const SortableField = SortableElement(({ field, number }: { field: Field; number: number }) => {
   const { toggleField } = useContext(Context);
   return (
-    <li className="py-3 px-3 flex justify-between fields-center">
+    <li className="py-3 px-3 flex justify-between fields-center relative z-50">
       <div className="flex fields-center">
         <input
           className="mr-3 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
