@@ -137,7 +137,9 @@ function Leaves() {
 
   const isLeader = user.departments?.some((d) => d.role === "LEADER") || false;
   const isInFinance = user.departments?.some((d) => d.name === "Finance") || false;
-  const showTabs = isLeader || isInFinance;
+  const isSuperAdmin = user.role === "Super Admin";
+  const canSeeAll = isInFinance || isSuperAdmin;
+  const showTabs = isLeader || canSeeAll;
   const selected = leaves.find((leave) => leave.selected);
 
   const select = (r: Leave) => {
@@ -162,13 +164,13 @@ function Leaves() {
         value: "APPROVALS",
         count: leaves.filter((r) => r.sendTo._id === user._id && !r.approval).length,
       });
-    isInFinance &&
+    canSeeAll &&
       tabs.push({
         name: "All",
         value: "ALL",
       });
     return tabs;
-  }, [isInFinance, isLeader, leaves, user._id]);
+  }, [isLeader, canSeeAll, leaves, user._id]);
 
   return (
     <LeavesSortContext.Provider value={{ sort, setSort }}>
@@ -206,14 +208,16 @@ function Leaves() {
             >
               Months
             </button> */}
-            <button
-              type="button"
-              className="relative -ml-px inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              onClick={() => setReportOpen(true)}
-            >
-              <DocumentTextIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-              Generate Report
-            </button>
+            {canSeeAll && (
+              <button
+                type="button"
+                className="relative -ml-px inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                onClick={() => setReportOpen(true)}
+              >
+                <DocumentTextIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                Generate Report
+              </button>
+            )}
           </span>
         </div>
         {/* Table Top End */}
@@ -225,7 +229,7 @@ function Leaves() {
             {isLeader && pageState === "APPROVALS" && (
               <MyLeaves leaves={leaves.filter((l) => l.sendTo._id === user._id)} select={select} />
             )}
-            {isInFinance && pageState === "ALL" && <MyLeaves leaves={leaves} select={select} />}
+            {canSeeAll && pageState === "ALL" && <MyLeaves leaves={leaves} select={select} />}
           </>
         )}
         <AddLeave open={modalOpen} setOpen={setModalOpen} setLeaves={setLeaves} />

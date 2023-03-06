@@ -5,13 +5,16 @@ import { handlerFactory as factory } from ".";
 import { leaveEvent } from "@events";
 import { ObjectId } from "mongoose";
 import { stringify } from "csv-stringify";
+import { Request } from "express";
 
 const Model = Leave;
 const key = "leave";
 
+const isInFinance = (req: Request) =>
+  req.employee.departments?.some((d) => d.name === "Finance") || false;
+
 export const getAllLeaves = catchAsync(async (req, res) => {
-  const isInFinance = req.employee.departments?.some((d) => d.name === "Finance") || false;
-  const filter = isInFinance
+  const filter = isInFinance(req)
     ? {}
     : { $or: [{ sendTo: req.employee._id }, { user: req.employee._id }] };
 
@@ -116,12 +119,12 @@ export const createLeave = catchAsync(async (req, res, next) => {
 });
 
 export const generateReport = catchAsync(async (req, res, next) => {
-  const { type, fields, dateFormat, sortBy } = req.body;
   // TODO: Validate type and fields are correct
+  const { type, fields, dateFormat, sortBy } = req.body;
+  const canGenerateReport = req.employee.role === "Super Admin" || isInFinance(req);
+  if (!canGenerateReport)
+    return next(new AppError("You are not authorized to generate leave reports", 403));
   const leaves: AggregatedLeave[] = await Leave.aggregate([
-    // {
-    //   $match: { $or: [{ sendTo: req.employee._id }, { user: req.employee._id }] },
-    // },
     {
       $lookup: {
         from: "employees",
