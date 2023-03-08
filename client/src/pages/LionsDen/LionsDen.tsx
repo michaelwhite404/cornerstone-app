@@ -9,11 +9,12 @@ import { APICurrentSessionResponse } from "../../types/apiResponses";
 
 const tabs = [
   { title: "Current Session", name: "current-session", href: "" },
+  { title: "Overview", name: "overview", href: "/overview" },
   { title: "Sessions", name: "sessions", href: "/sessions" },
   { title: "Students", name: "students", href: "/students" },
 ];
 
-type LionsDenPageState = "current-session" | "sessions" | "students";
+type LionsDenPageState = "current-session" | "sessions" | "students" | "overview";
 
 export default function LionsDen() {
   useDocTitle("Lions Den | Cornerstone App");
