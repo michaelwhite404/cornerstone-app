@@ -1,11 +1,6 @@
-import { useRef } from "react";
-import { Line } from "react-chartjs-2";
-import { Chart } from "chart.js/auto";
-import { CategoryScale } from "chart.js";
-import { format } from "date-fns";
-Chart.register(CategoryScale);
+import LineGraph from "./Overview/LineGraph";
 
-const UserData = [
+const data = [
   {
     _id: {
       $oid: "630cbac8101ddb0016c38027",
@@ -1217,96 +1212,12 @@ const UserData = [
     total: 19,
   },
 ];
-
-const getLabels = () => {
-  let currentMonth = new Date(parseInt(UserData[0].date.$date.$numberLong, 10)).getMonth();
-  const formatDate = (date: Date) => `${date.getMonth() + 1}/${date.getDate()}`;
-
-  return UserData.map((session, index) => {
-    const date = new Date(parseInt(session.date.$date.$numberLong, 10));
-    const month = date.getMonth();
-    if (!index) return formatDate(date);
-    if (month === currentMonth) return "";
-    currentMonth = month;
-    return formatDate(date);
-  });
-};
-
-const userData = {
-  labels: getLabels(),
-  datasets: [
-    {
-      label: "Users Gained",
-      data: UserData.map((data) => data.total),
-      backgroundColor: ["black", "black", "black", "black", "black"],
-      borderColor: "rgb(5,102,195)",
-      borderWidth: 3,
-      pointRadius: 0,
-      pointHoverBorderWidth: 0,
-      pointHoverBackgroundColor: "black",
-      tension: 0.6,
-    },
-  ],
-};
-
-// const options =
+const sessions = data.map((session) => ({
+  _id: session._id.$oid,
+  date: new Date(+session.date.$date.$numberLong),
+  total: session.total,
+}));
 
 export default function Overview() {
-  const ref = useRef<HTMLDivElement | null>(null);
-  // @ts-ignore
-  const startText = `Last session: ${UserData.at(-1)?.total} students`;
-  return (
-    <div className="py-3 px-6 rounded-lg">
-      <div ref={ref} className="mb-3 h-5">
-        {startText}
-      </div>
-      <div className="h-32">
-        <Line
-          height={200}
-          options={{
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
-            hover: { mode: "index", intersect: false },
-            interaction: { intersect: false, mode: "index" },
-            scales: {
-              x: { grid: { display: false }, ticks: { autoSkip: false } },
-              y: { grid: { display: false }, display: false },
-            },
-            maintainAspectRatio: false,
-          }}
-          data={userData}
-          plugins={[
-            {
-              id: "hoverId", //typescript crashes without id
-              afterDraw: function (chart: any, easing: any) {
-                if (chart.tooltip?._active?.length) {
-                  if (ref.current) {
-                    const data = UserData[chart.tooltip._active[0].index];
-                    ref.current.innerHTML = `<b>Students: ${data.total.toString()}</b> Date: ${format(
-                      new Date(+data.date.$date.$numberLong),
-                      "P"
-                    )}`;
-                  }
-                  let x = chart.tooltip._active[0].element.x;
-                  let yAxis = chart.scales.y;
-                  let ctx = chart.ctx;
-                  ctx.save();
-                  ctx.beginPath();
-                  ctx.moveTo(x, yAxis.top);
-                  ctx.lineTo(x, yAxis.bottom);
-                  ctx.lineWidth = 2;
-                  ctx.strokeStyle = "black";
-                  ctx.stroke();
-                  ctx.restore();
-                } else {
-                  if (ref.current) {
-                    ref.current.innerHTML = startText;
-                  }
-                }
-              },
-            },
-          ]}
-        />
-      </div>
-    </div>
-  );
+  return <LineGraph sessions={sessions} />;
 }
