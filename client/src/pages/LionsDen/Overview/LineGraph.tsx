@@ -18,22 +18,37 @@ const getLabels = (sessions: Session[]) => {
   });
 };
 
-const getTotals = (sessions: Session[]) => sessions.map((s) => s.total);
+const getCounts = (sessions: Session[]) => ({
+  late: sessions.map((s) => s.lateCount),
+  total: sessions.map((s) => s.totalCount),
+});
 
-const generateData = (sessions: Session[], totals: number[]) => {
+const generateData = (sessions: Session[], counts: ReturnType<typeof getCounts>) => {
   return {
     labels: getLabels(sessions),
     datasets: [
       {
         label: "Users Gained",
-        data: totals,
-        backgroundColor: ["black", "black", "black", "black", "black"],
+        data: counts.total,
+        backgroundColor: "rgba(5,102,195,0.2)",
         borderColor: "rgb(5,102,195)",
         borderWidth: 3,
         pointRadius: 0,
         pointHoverBorderWidth: 0,
         pointHoverBackgroundColor: "black",
         tension: 0.6,
+        fill: true,
+      },
+      {
+        data: counts.late,
+        borderColor: "rgba(255,0,0,0.2)",
+        backgroundColor: "rgba(255,0,0,0.1)",
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverBorderWidth: 0,
+        pointHoverBackgroundColor: "transparent",
+        tension: 0.6,
+        fill: true,
       },
     ],
   };
@@ -41,9 +56,9 @@ const generateData = (sessions: Session[], totals: number[]) => {
 
 export default function LineGraph({ sessions }: LineGraphProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const totals = getTotals(sessions);
+  const counts = getCounts(sessions);
   // @ts-ignore
-  const startText = `Last session: ${sessions.at(-1)?.total} students`;
+  const startText = `Last session: ${sessions.at(-1)?.totalCount} students`;
   return (
     <div className="py-3 px-6 rounded-lg">
       <div ref={ref} className="mb-3 h-5">
@@ -58,11 +73,11 @@ export default function LineGraph({ sessions }: LineGraphProps) {
             interaction: { intersect: false, mode: "index" },
             scales: {
               x: { grid: { display: false }, ticks: { autoSkip: false } },
-              y: { grid: { display: false }, display: false, max: Math.max(...totals) + 5 },
+              y: { grid: { display: false }, display: false, max: Math.max(...counts.total) + 5 },
             },
             maintainAspectRatio: false,
           }}
-          data={generateData(sessions, totals)}
+          data={generateData(sessions, counts)}
           plugins={[
             {
               id: "hoverId", //typescript crashes without id
@@ -70,10 +85,9 @@ export default function LineGraph({ sessions }: LineGraphProps) {
                 if (chart.tooltip?._active?.length) {
                   if (ref.current) {
                     const data = sessions[chart.tooltip._active[0].index];
-                    ref.current.innerHTML = `<b>Students: ${data.total.toString()}</b> Date: ${format(
-                      data.date,
-                      "P"
-                    )}`;
+                    ref.current.innerHTML = `<b>Students: ${data.totalCount}</b> Late: ${
+                      data.lateCount
+                    } Date: ${format(data.date, "P")} `;
                   }
                   let x = chart.tooltip._active[0].element.x;
                   let yAxis = chart.scales.y;
@@ -107,5 +121,6 @@ interface LineGraphProps {
 interface Session {
   _id: string;
   date: Date;
-  total: number;
+  totalCount: number;
+  lateCount: number;
 }
