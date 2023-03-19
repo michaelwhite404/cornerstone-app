@@ -260,6 +260,7 @@ export const getAttendanceStats = catchAsync(async (_, res) => {
         entriesCount: 1,
         lateCount: 1,
         student: { $arrayElemAt: ["$student", 0] },
+        aftercare: 1,
       },
     },
   ]);

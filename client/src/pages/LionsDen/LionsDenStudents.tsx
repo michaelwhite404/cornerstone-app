@@ -38,12 +38,28 @@ export default function LionsDenStudents() {
     });
     const { stats } = res[1].data.data;
 
-    const studentList: StudentAftercareStat[] = students.map((student) => {
-      const foundStat = stats.find((stat) => stat.student._id === student._id);
-      return foundStat
-        ? { ...student, entriesCount: foundStat.entriesCount, lateCount: foundStat.lateCount }
-        : { ...student, entriesCount: 0, lateCount: 0 };
+    // const studentList: StudentAftercareStat[] = students.map((student) => {
+    //   const foundStat = stats.find((stat) => stat.student._id === student._id);
+    //   return foundStat
+    //     ? { ...student, entriesCount: foundStat.entriesCount, lateCount: foundStat.lateCount }
+    //     : { ...student, entriesCount: 0, lateCount: 0 };
+    // });
+
+    const studentList = stats.map((stat) => ({
+      ...stat.student,
+      entriesCount: stat.entriesCount,
+      lateCount: stat.lateCount,
+      aftercare: stat.student.aftercare,
+    }));
+    students.forEach((student) => {
+      // Not in aftercare
+      if (!student.aftercare) return;
+      // Already has data
+      if (studentList.find((s) => s._id === student._id)) return;
+      // Does not have data
+      studentList.push({ ...student, entriesCount: 0, lateCount: 0, aftercare: false });
     });
+    studentList.sort((a, b) => b.entriesCount - a.entriesCount);
     setData(studentList);
     setNotInA(nonAftercareStudents);
   };
@@ -60,7 +76,7 @@ export default function LionsDenStudents() {
     }
   };
 
-  const removeStudents = async (students: StudentModel[]) => {
+  const removeStudents = async (students: { _id: string }[]) => {
     const data = students.map((s) => ({ id: s._id, op: "remove" }));
     try {
       await axios.patch("/api/v2/aftercare/students", { data });
@@ -83,7 +99,12 @@ export default function LionsDenStudents() {
   );
 }
 
-interface StudentAftercareStat extends StudentModel {
+interface StudentAftercareStat {
   entriesCount: number;
   lateCount: number;
+  _id: any;
+  fullName: string;
+  grade?: number | undefined;
+  schoolEmail: string;
+  aftercare: boolean;
 }

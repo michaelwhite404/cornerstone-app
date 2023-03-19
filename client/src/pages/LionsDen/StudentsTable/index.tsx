@@ -2,7 +2,7 @@ import { Checkbox } from "@mui/material";
 import classNames from "classnames";
 import pluralize from "pluralize";
 import { useEffect, useState } from "react";
-import { StudentModel } from "../../../../../src/types/models";
+import Badge from "../../../components/Badge/Badge";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import TableWrapper from "../../../components/TableWrapper";
 import { numberToGrade } from "../../../utils/grades";
@@ -13,7 +13,11 @@ type CheckboxStates = "unchecked" | "checked" | "indeterminate";
 
 interface StudentTableProps {
   students: StudentAftercareStat[];
-  removeStudents: (students: StudentModel[]) => Promise<any>;
+  removeStudents: (
+    students: {
+      _id: string;
+    }[]
+  ) => Promise<void>;
 }
 
 export default function StudentTable({ students, removeStudents }: StudentTableProps) {
@@ -117,8 +121,11 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
                 <Checkbox checked={student.checked} onChange={() => onCheckboxChange(student)} />
               </td>
               <td>
-                <span style={{ color: student.checked ? "#1976d2" : undefined }}>
-                  {student.fullName}
+                <span style={{ color: student.checked ? "#1976d2" : undefined, marginRight: 4 }}>
+                  <span className={!student.aftercare ? "mr-1" : undefined}>
+                    {student.fullName}
+                  </span>
+                  {!student.aftercare && <Badge color="sky" text="Unenrolled" noDot />}
                 </span>
                 <div className="block sm:hidden sub-td">
                   {student.grade !== undefined && <div>Grade: {numberToGrade(student.grade)}</div>}
@@ -139,7 +146,12 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
   );
 }
 
-interface StudentAftercareStat extends StudentModel {
+interface StudentAftercareStat {
   entriesCount: number;
   lateCount: number;
+  _id: any;
+  fullName: string;
+  grade?: number | undefined;
+  schoolEmail: string;
+  aftercare: boolean;
 }
