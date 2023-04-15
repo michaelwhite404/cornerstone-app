@@ -104,7 +104,6 @@ export default function LionsDenStudents() {
   return (
     <div>
       <div className="session-header">Students ({data.length})</div>
-      <button onClick={() => setModalOpen(true)}>Open</button>
       <div>
         <StudentSearch students={notInA} onSubmit={addStudents} />
         <StudentsTable students={data} removeStudents={removeStudents} openModal={openModal} />
@@ -130,5 +129,5 @@ export interface StudentData {
     fullName: string;
     grade?: number;
   };
-  entries: AftercareAttendanceEntryModel;
+  entries: AftercareAttendanceEntryModel[];
 }
