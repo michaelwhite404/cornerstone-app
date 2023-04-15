@@ -18,9 +18,10 @@ interface StudentTableProps {
       _id: string;
     }[]
   ) => Promise<void>;
+  openModal: (student: StudentAftercareStat) => Promise<void>;
 }
 
-export default function StudentTable({ students, removeStudents }: StudentTableProps) {
+export default function StudentTable({ students, removeStudents, openModal }: StudentTableProps) {
   const [rows, setRows] = useState(students.map((s) => ({ ...s, checked: false })));
   const [main, setMain] = useState<CheckboxStates>("unchecked");
 
@@ -92,6 +93,10 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
 
   const handleRemove = () => removeStudents(rows.filter((r) => r.checked));
 
+  const handleStudentClick = (stat: StudentAftercareStat) => {
+    openModal(stat);
+  };
+
   return (
     <TableWrapper>
       <table className="aftercare-student-table">
@@ -122,7 +127,10 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
               </td>
               <td>
                 <span style={{ color: student.checked ? "#1976d2" : undefined, marginRight: 4 }}>
-                  <span className={!student.aftercare ? "mr-1" : undefined}>
+                  <span
+                    className={!student.aftercare ? "mr-1" : undefined}
+                    onClick={() => handleStudentClick(student)}
+                  >
                     {student.fullName}
                   </span>
                   {!student.aftercare && <Badge color="sky" text="Unenrolled" noDot />}
@@ -146,7 +154,7 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
   );
 }
 
-interface StudentAftercareStat {
+export interface StudentAftercareStat {
   entriesCount: number;
   lateCount: number;
   _id: any;
