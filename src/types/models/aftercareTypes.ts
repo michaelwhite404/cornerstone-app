@@ -1,9 +1,9 @@
-import { Document } from "mongoose";
+import { Document, PopulatedDoc } from "mongoose";
 import { StudentModel } from ".";
 
 export interface AftercareAttendanceEntryModel {
   _id: any;
-  student: StudentModel;
+  student: PopulatedDoc<StudentModel>;
   session: any;
   signOutDate?: Date;
   signature?: string;
