@@ -16,6 +16,7 @@ const {
   addDateToParams,
   getAttendanceStats,
   generateReport,
+  getStudentAftercareData,
 } = aftercareController;
 
 const router = Router();
@@ -40,7 +41,7 @@ router
   .put(putAftercareStudentStatus);
 // .post();
 
-// router.route("/students/:id");
+router.route("/students/:id").get(getStudentAftercareData);
 router.route("/session").get(getAllAftercareSessions).post(createAftercareSession);
 router.get("/session/today", getSessionToday);
 router.get("/session/:id", getAftercareSession);
