@@ -9,7 +9,7 @@ import { APICurrentSessionResponse } from "../../types/apiResponses";
 
 const tabs = [
   { title: "Current Session", name: "current-session", href: "" },
-  { title: "Overview", name: "overview", href: "/overview" },
+  // { title: "Overview", name: "overview", href: "/overview" },
   { title: "Sessions", name: "sessions", href: "/sessions" },
   { title: "Students", name: "students", href: "/students" },
 ];
