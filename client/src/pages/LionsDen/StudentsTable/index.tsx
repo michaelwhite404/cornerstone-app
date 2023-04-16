@@ -3,7 +3,6 @@ import classNames from "classnames";
 import pluralize from "pluralize";
 import { useEffect, useState } from "react";
 import { BanIcon } from "@heroicons/react/solid";
-import Badge from "../../../components/Badge/Badge";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import TableWrapper from "../../../components/TableWrapper";
 import { numberToGrade } from "../../../utils/grades";

@@ -6,6 +6,7 @@ import TableWrapper from "../../components/TableWrapper";
 import { StudentData } from "./LionsDenStudents";
 import { XIcon } from "@heroicons/react/solid";
 import { Dialog } from "@headlessui/react";
+import { numberToGrade } from "../../utils/grades";
 
 const lateImgStyle = {
   filter: "invert(34%) sepia(88%) saturate(6583%) hue-rotate(350deg) brightness(90%) contrast(89%)",
@@ -20,20 +21,28 @@ const Stat = ({ label, children }: { label: string; children: ReactNode }) => (
 
 export default function StudentDataModal(props: Props) {
   const { open, setOpen, studentData } = props;
+
   const handleClose = () => setOpen(false);
   return (
     <Slideover open={open} onOverlayClick={handleClose}>
       <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
         <div className="bg-blue-700 py-4 px-4 sm:px-6">
           <div className="flex justify-between">
-            <div>
-              <Dialog.Title className="text-lg font-medium text-white">
-                {studentData?.studentStat.fullName}
-              </Dialog.Title>
-              <div className="mt-1">
-                <p className="text-sm text-indigo-300">Lions Den Data</p>
+            {studentData && (
+              <div>
+                <Dialog.Title className="text-lg font-medium text-white">
+                  {studentData.studentStat.fullName}
+                </Dialog.Title>
+                <div className="mt-1">
+                  <p className="text-sm text-indigo-300">
+                    {typeof studentData.studentStat.grade === "number"
+                      ? `${numberToGrade(studentData.studentStat.grade)} • `
+                      : null}
+                    {studentData.studentStat.aftercare ? "Enrolled" : "Unenrolled"}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
             <div className="ml-3 flex h-7 items-center">
               <button
                 type="button"
