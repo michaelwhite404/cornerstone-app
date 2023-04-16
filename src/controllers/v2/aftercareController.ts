@@ -260,6 +260,7 @@ export const getAttendanceStats = catchAsync(async (_, res) => {
         entriesCount: 1,
         lateCount: 1,
         student: { $arrayElemAt: ["$student", 0] },
+        aftercare: 1,
       },
     },
   ]);
@@ -660,4 +661,9 @@ export const generateReport = catchAsync(async (req, res, next) => {
   });
 
   res.sendJson(200, { spreadsheetUrl: response.data.spreadsheetUrl });
+});
+
+export const getStudentAftercareData = catchAsync(async (req, res, next) => {
+  const entries = await AftercareAttendanceEntry.find({ student: req.params.id });
+  res.sendJson(200, { entries });
 });

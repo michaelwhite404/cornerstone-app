@@ -2,7 +2,7 @@ import { Checkbox } from "@mui/material";
 import classNames from "classnames";
 import pluralize from "pluralize";
 import { useEffect, useState } from "react";
-import { StudentModel } from "../../../../../src/types/models";
+import { BanIcon } from "@heroicons/react/solid";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import TableWrapper from "../../../components/TableWrapper";
 import { numberToGrade } from "../../../utils/grades";
@@ -13,10 +13,15 @@ type CheckboxStates = "unchecked" | "checked" | "indeterminate";
 
 interface StudentTableProps {
   students: StudentAftercareStat[];
-  removeStudents: (students: StudentModel[]) => Promise<any>;
+  removeStudents: (
+    students: {
+      _id: string;
+    }[]
+  ) => Promise<void>;
+  openModal: (student: StudentAftercareStat) => Promise<void>;
 }
 
-export default function StudentTable({ students, removeStudents }: StudentTableProps) {
+export default function StudentTable({ students, removeStudents, openModal }: StudentTableProps) {
   const [rows, setRows] = useState(students.map((s) => ({ ...s, checked: false })));
   const [main, setMain] = useState<CheckboxStates>("unchecked");
 
@@ -88,6 +93,8 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
 
   const handleRemove = () => removeStudents(rows.filter((r) => r.checked));
 
+  const handleStudentClick = (stat: StudentAftercareStat) => openModal(stat);
+
   return (
     <TableWrapper>
       <table className="aftercare-student-table">
@@ -117,8 +124,24 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
                 <Checkbox checked={student.checked} onChange={() => onCheckboxChange(student)} />
               </td>
               <td>
-                <span style={{ color: student.checked ? "#1976d2" : undefined }}>
-                  {student.fullName}
+                <span
+                  className="flex"
+                  style={{ color: student.checked ? "#1976d2" : undefined, marginRight: 4 }}
+                >
+                  <button
+                    onClick={() => handleStudentClick(student)}
+                    className={classNames("py-1 rounded text-blue-500 font-medium", {
+                      "mr-1": !student.aftercare,
+                    })}
+                  >
+                    {student.fullName}
+                  </button>
+                  {!student.aftercare && (
+                    <>
+                      <span className="sr-only">Unenrolled</span>
+                      <BanIcon className="w-4 text-red-400" aria-hidden />
+                    </>
+                  )}
                 </span>
                 <div className="block sm:hidden sub-td">
                   {student.grade !== undefined && <div>Grade: {numberToGrade(student.grade)}</div>}
@@ -139,7 +162,12 @@ export default function StudentTable({ students, removeStudents }: StudentTableP
   );
 }
 
-interface StudentAftercareStat extends StudentModel {
+export interface StudentAftercareStat {
   entriesCount: number;
   lateCount: number;
+  _id: any;
+  fullName: string;
+  grade?: number | undefined;
+  schoolEmail: string;
+  aftercare: boolean;
 }

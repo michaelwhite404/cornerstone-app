@@ -14,6 +14,7 @@ import Sessions from "./pages/LionsDen/Sessions";
 import TextbooksTest from "./pages/TextbooksTest/TextbooksTest";
 import Tools from "./pages/Tools";
 import * as Page from "./pages";
+import Overview from "./pages/LionsDen/Overview";
 
 export default function Routes() {
   const user = useAuth().user!;
@@ -41,6 +42,7 @@ export default function Routes() {
         {user.departments && user.departments.find((dept) => dept.name === "Lions Den") && (
           <Route path="lions-den" element={<LionsDen />}>
             <Route index element={<CurrentSession />} />
+            <Route path="overview" element={<Overview />} />
             <Route path="sessions" element={<Sessions />} />
             <Route path="students" element={<LionsDenStudents />} />
           </Route>

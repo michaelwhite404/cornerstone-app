@@ -1,25 +1,29 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { StudentModel } from "../../../../src/types/models";
+import { AftercareAttendanceEntryModel, StudentModel } from "../../../../src/types/models";
 import { useToasterContext } from "../../hooks";
 import {
   APIAttendanceStatsResponse,
   APIError,
   APIStudentsResponse,
 } from "../../types/apiResponses";
+import StudentDataModal from "./StudentDataModal";
 import StudentSearch from "./StudentSearch";
 import StudentsTable from "./StudentsTable";
 
 export default function LionsDenStudents() {
   const [data, setData] = useState<StudentAftercareStat[]>([]);
   const [notInA, setNotInA] = useState<StudentModel[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
   const { showToaster } = useToasterContext();
 
+  const [studentData, setStudentData] = useState<StudentData>();
+
   useEffect(() => {
-    getStudentData();
+    getStudentsData();
   }, []);
 
-  const getStudentData = async () => {
+  const getStudentsData = async () => {
     const getAftercareStudents = axios.get<APIStudentsResponse>("/api/v2/students", {
       params: { sort: "-grade", limit: 2000, status: "Active" },
     });
@@ -38,12 +42,18 @@ export default function LionsDenStudents() {
     });
     const { stats } = res[1].data.data;
 
-    const studentList: StudentAftercareStat[] = students.map((student) => {
-      const foundStat = stats.find((stat) => stat.student._id === student._id);
-      return foundStat
-        ? { ...student, entriesCount: foundStat.entriesCount, lateCount: foundStat.lateCount }
-        : { ...student, entriesCount: 0, lateCount: 0 };
+    const studentList = stats.map((stat) => ({
+      ...stat.student,
+      entriesCount: stat.entriesCount,
+      lateCount: stat.lateCount,
+      aftercare: stat.student.aftercare,
+    }));
+    students.forEach((student) => {
+      if (!student.aftercare) return;
+      if (studentList.find((s) => s._id === student._id)) return;
+      studentList.push({ ...student, entriesCount: 0, lateCount: 0, aftercare: false });
     });
+    studentList.sort((a, b) => b.entriesCount - a.entriesCount);
     setData(studentList);
     setNotInA(nonAftercareStudents);
   };
@@ -52,7 +62,7 @@ export default function LionsDenStudents() {
     const data = students.map((s) => ({ id: s.value, op: "add" }));
     try {
       await axios.patch("/api/v2/aftercare/students", { data });
-      getStudentData();
+      getStudentsData();
       showToaster("Students Added!", "success");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
@@ -60,11 +70,11 @@ export default function LionsDenStudents() {
     }
   };
 
-  const removeStudents = async (students: StudentModel[]) => {
+  const removeStudents = async (students: { _id: string }[]) => {
     const data = students.map((s) => ({ id: s._id, op: "remove" }));
     try {
       await axios.patch("/api/v2/aftercare/students", { data });
-      getStudentData();
+      getStudentsData();
       showToaster("Students Removed!", "success");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
@@ -72,18 +82,49 @@ export default function LionsDenStudents() {
     }
   };
 
+  const getStudentData = async (stat: StudentAftercareStat) => {
+    try {
+      const res = await axios.get(`/api/v2/aftercare/students/${stat._id}`);
+      const entries = (res.data.data.entries as AftercareAttendanceEntryModel[])
+        .filter((entry) => entry.signOutDate)
+        .sort((a, b) => new Date(b.signOutDate!).getTime() - new Date(a.signOutDate!).getTime());
+      setStudentData({
+        studentStat: stat,
+        entries,
+      });
+    } catch (err) {
+      showToaster("Could not fetch student data", "danger");
+    }
+  };
+
+  const openModal = async (stat: StudentAftercareStat) => {
+    await getStudentData(stat);
+    setModalOpen(true);
+  };
+
   return (
     <div>
       <div className="session-header">Students ({data.length})</div>
       <div>
         <StudentSearch students={notInA} onSubmit={addStudents} />
-        <StudentsTable students={data} removeStudents={removeStudents} />
+        <StudentsTable students={data} removeStudents={removeStudents} openModal={openModal} />
       </div>
+      <StudentDataModal open={modalOpen} setOpen={setModalOpen} studentData={studentData} />
     </div>
   );
 }
 
-interface StudentAftercareStat extends StudentModel {
+interface StudentAftercareStat {
   entriesCount: number;
   lateCount: number;
+  _id: any;
+  fullName: string;
+  grade?: number | undefined;
+  schoolEmail: string;
+  aftercare: boolean;
+}
+
+export interface StudentData {
+  studentStat: StudentAftercareStat;
+  entries: AftercareAttendanceEntryModel[];
 }

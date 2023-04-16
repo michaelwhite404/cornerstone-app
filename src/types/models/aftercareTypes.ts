@@ -1,9 +1,9 @@
-import { Document } from "mongoose";
+import { Document, PopulatedDoc } from "mongoose";
 import { StudentModel } from ".";
 
 export interface AftercareAttendanceEntryModel {
   _id: any;
-  student: StudentModel;
+  student: PopulatedDoc<StudentModel>;
   session: any;
   signOutDate?: Date;
   signature?: string;
@@ -31,5 +31,5 @@ export interface AftercareSessionDocument extends AftercareSessionModel, Documen
 export interface AttendanceStat {
   entriesCount: number;
   lateCount: number;
-  student: Pick<StudentModel, "_id" | "fullName" | "grade" | "schoolEmail">;
+  student: Pick<StudentModel, "_id" | "fullName" | "grade" | "schoolEmail" | "aftercare">;
 }
