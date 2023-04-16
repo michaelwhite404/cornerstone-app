@@ -85,11 +85,16 @@ export default function LionsDenStudents() {
   const getStudentData = async (stat: StudentAftercareStat) => {
     try {
       const res = await axios.get(`/api/v2/aftercare/students/${stat._id}`);
+      const entries = (res.data.data.entries as AftercareAttendanceEntryModel[])
+        .filter((entry) => entry.signOutDate)
+        .sort((a, b) => new Date(b.signOutDate!).getTime() - new Date(a.signOutDate!).getTime());
       setStudentData({
         studentStat: stat,
-        entries: res.data.data.entries,
+        entries,
       });
-    } catch (err) {}
+    } catch (err) {
+      showToaster("Could not fetch student data", "danger");
+    }
   };
 
   const openModal = async (stat: StudentAftercareStat) => {
