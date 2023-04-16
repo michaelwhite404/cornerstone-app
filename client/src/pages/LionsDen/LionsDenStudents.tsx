@@ -86,11 +86,7 @@ export default function LionsDenStudents() {
     try {
       const res = await axios.get(`/api/v2/aftercare/students/${stat._id}`);
       setStudentData({
-        student: {
-          _id: stat._id,
-          fullName: stat.fullName,
-          grade: stat.grade,
-        },
+        studentStat: stat,
         entries: res.data.data.entries,
       });
     } catch (err) {}
@@ -124,10 +120,6 @@ interface StudentAftercareStat {
 }
 
 export interface StudentData {
-  student: {
-    _id: string;
-    fullName: string;
-    grade?: number;
-  };
+  studentStat: StudentAftercareStat;
   entries: AftercareAttendanceEntryModel[];
 }
