@@ -2,6 +2,7 @@ import { Checkbox } from "@mui/material";
 import classNames from "classnames";
 import pluralize from "pluralize";
 import { useEffect, useState } from "react";
+import { BanIcon } from "@heroicons/react/solid";
 import Badge from "../../../components/Badge/Badge";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import TableWrapper from "../../../components/TableWrapper";
@@ -124,7 +125,10 @@ export default function StudentTable({ students, removeStudents, openModal }: St
                 <Checkbox checked={student.checked} onChange={() => onCheckboxChange(student)} />
               </td>
               <td>
-                <span style={{ color: student.checked ? "#1976d2" : undefined, marginRight: 4 }}>
+                <span
+                  className="flex"
+                  style={{ color: student.checked ? "#1976d2" : undefined, marginRight: 4 }}
+                >
                   <button
                     onClick={() => handleStudentClick(student)}
                     className={classNames("py-1 rounded text-blue-500 font-medium", {
@@ -133,7 +137,12 @@ export default function StudentTable({ students, removeStudents, openModal }: St
                   >
                     {student.fullName}
                   </button>
-                  {!student.aftercare && <Badge color="sky" text="Unenrolled" noDot />}
+                  {!student.aftercare && (
+                    <>
+                      <span className="sr-only">Unenrolled</span>
+                      <BanIcon className="w-4 text-red-400" aria-hidden />
+                    </>
+                  )}
                 </span>
                 <div className="block sm:hidden sub-td">
                   {student.grade !== undefined && <div>Grade: {numberToGrade(student.grade)}</div>}
