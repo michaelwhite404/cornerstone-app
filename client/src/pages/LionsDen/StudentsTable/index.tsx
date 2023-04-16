@@ -93,9 +93,7 @@ export default function StudentTable({ students, removeStudents, openModal }: St
 
   const handleRemove = () => removeStudents(rows.filter((r) => r.checked));
 
-  const handleStudentClick = (stat: StudentAftercareStat) => {
-    openModal(stat);
-  };
+  const handleStudentClick = (stat: StudentAftercareStat) => openModal(stat);
 
   return (
     <TableWrapper>
@@ -127,12 +125,14 @@ export default function StudentTable({ students, removeStudents, openModal }: St
               </td>
               <td>
                 <span style={{ color: student.checked ? "#1976d2" : undefined, marginRight: 4 }}>
-                  <span
-                    className={!student.aftercare ? "mr-1" : undefined}
+                  <button
                     onClick={() => handleStudentClick(student)}
+                    className={classNames("py-1 rounded text-blue-500 font-medium", {
+                      "mr-1": !student.aftercare,
+                    })}
                   >
                     {student.fullName}
-                  </span>
+                  </button>
                   {!student.aftercare && <Badge color="sky" text="Unenrolled" noDot />}
                 </span>
                 <div className="block sm:hidden sub-td">
