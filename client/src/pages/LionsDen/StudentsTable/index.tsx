@@ -2,7 +2,6 @@ import { Checkbox } from "@mui/material";
 import classNames from "classnames";
 import pluralize from "pluralize";
 import { useEffect, useState } from "react";
-import { BanIcon } from "@heroicons/react/solid";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import TableWrapper from "../../../components/TableWrapper";
 import { numberToGrade } from "../../../utils/grades";
@@ -139,7 +138,7 @@ export default function StudentTable({ students, removeStudents, openModal }: St
                   {!student.aftercare && (
                     <>
                       <span className="sr-only">Unenrolled</span>
-                      <BanIcon className="w-4 text-red-400" aria-hidden />
+                      <div className="bg-red-500 mt-1 h-1.5 w-1.5 rounded-2xl" />
                     </>
                   )}
                 </span>
