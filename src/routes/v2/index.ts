@@ -10,6 +10,7 @@ import roomRouter from "./roomRoutes";
 import timesheetRouter from "./timesheetRoutes";
 import departmentRouter from "./departmentRoutes";
 import orgUnitRouter from "./orgUnitRoutes";
+import schoolYearRouter from "./schoolYearRoutes";
 import shortUrlRouter from "./shortUrlRoutes";
 import aftercareRouter from "./aftercareRoutes";
 import groupRouter from "./groupRoutes";
@@ -35,6 +36,7 @@ v2Router.use("/tickets", ticketRouter);
 v2Router.use("/reimbursements", reimbursementRouter);
 v2Router.use("/leaves", leaveRouter);
 v2Router.use("/tests", testRouter);
+v2Router.use("/school-year", schoolYearRouter);
 // v2Router.use("/ideas" /* ,ideaRouter */);
 
 export {

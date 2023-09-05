@@ -12,6 +12,7 @@ export { default as ErrorLog } from "./errorLogModel";
 export { default as Leave } from "./leaveModel";
 export { default as Room } from "./roomModel";
 export { default as Reimbursement } from "./reimbursementModel";
+export { default as SchoolYear } from "./schoolYearModel";
 export { default as Setting } from "./settingModel";
 export { default as ShortUrl } from "./shortUrlModel";
 export { default as Student } from "./studentModel";
