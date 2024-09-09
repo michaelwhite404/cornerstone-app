@@ -28,7 +28,8 @@ export default function LionsDenStudents() {
       params: { sort: "-grade", limit: 2000, status: "Active" },
     });
     const getAftercareData = axios.get<APIAttendanceStatsResponse>(
-      "/api/v2/aftercare/attendance/stats"
+      "/api/v2/aftercare/attendance/stats",
+      { params: { since: "2024-08-01" } }
     );
 
     const res = await Promise.all([getAftercareStudents, getAftercareData]);
@@ -48,10 +49,11 @@ export default function LionsDenStudents() {
       lateCount: stat.lateCount,
       aftercare: stat.student.aftercare,
     }));
+
     students.forEach((student) => {
       if (!student.aftercare) return;
       if (studentList.find((s) => s._id === student._id)) return;
-      studentList.push({ ...student, entriesCount: 0, lateCount: 0, aftercare: false });
+      studentList.push({ ...student, entriesCount: 0, lateCount: 0 });
     });
     studentList.sort((a, b) => b.entriesCount - a.entriesCount);
     setData(studentList);
