@@ -12,38 +12,65 @@ Cornerstone App is a full-stack school management platform for Cornerstone Schoo
 - **Frontend:** React 17 (CRA), TypeScript, Tailwind CSS, SCSS, BlueprintJS, Material-UI
 - **Auth:** Passport.js with Google OAuth 2.0 + JWT
 - **Deployment:** Heroku, AWS S3 for file storage
+- **Package Manager:** pnpm workspaces
+
+## Monorepo Structure
+
+```
+cornerstone-app/
+├── pnpm-workspace.yaml
+├── package.json          (workspace root)
+├── Procfile
+├── packages/
+│   ├── server/           (@cornerstone/server)
+│   │   ├── src/          (app.ts, server.ts, controllers/, models/, routes/, etc.)
+│   │   ├── views/email/  (pug email templates)
+│   │   ├── public/images/
+│   │   ├── config.env
+│   │   ├── tsconfig.json
+│   │   └── dist/         (build output)
+│   └── client/           (@cornerstone/client)
+│       ├── src/
+│       │   └── types/models/  (local copies of shared types, mongoose-free)
+│       ├── public/
+│       └── tsconfig.json
+```
 
 ## Common Commands
 
 ```bash
-# Build TypeScript (compiles to /dist, resolves path aliases, copies GraphQL typedefs)
-npm run build
+# Install all workspace dependencies
+pnpm install
 
 # Development - run server + client concurrently
-npm run dev
+pnpm dev
 
-# Watch TypeScript compilation with alias resolution
-npm run watch
+# Build server TypeScript (compiles to packages/server/dist/)
+pnpm build
 
-# Run server only (nodemon, port 8080)
-npm run server
+# Build client (CRA build)
+pnpm build:client
 
-# Run client only (CRA dev server, port 3000, proxies to :8080)
-npm run client
+# Build both client and server
+pnpm build:all
 
 # Production start
-npm start
+pnpm start
 
 # Deploy to Heroku
-npm run deploy
+pnpm run deploy
 
-# Client tests (from /client)
-cd client && npm test
+# Run commands in specific packages
+pnpm --filter @cornerstone/server <command>
+pnpm --filter @cornerstone/client <command>
+
+# Client tests
+pnpm --filter @cornerstone/client test
 ```
 
 ## Architecture
 
-### Backend (src/)
+### Backend (packages/server/src/)
 
 Layered MVC architecture with versioned APIs:
 
@@ -58,9 +85,11 @@ Layered MVC architecture with versioned APIs:
 - **`utils/`** — Shared utilities (apiFeatures, appError, catchAsync, email, s3, etc.)
 - **`types/`** — TypeScript type definitions for models and custom request/query types
 
-### Frontend (client/)
+### Frontend (packages/client/)
 
-React SPA in `/client`, built with Create React App. Proxies API requests to `localhost:8080` in development.
+React SPA built with Create React App. Proxies API requests to `localhost:8080` in development.
+
+Shared types from the server are duplicated at `packages/client/src/types/models/` with mongoose-specific code stripped out.
 
 ### API Structure
 
@@ -78,9 +107,8 @@ React SPA in `/client`, built with Create React App. Proxies API requests to `lo
 - **`apiFeatures`** utility handles query filtering (gte/gt/lte/lt operators), sorting, field selection, and pagination
 - **`res.sendJson(statusCode, data)`** is a custom response helper added via middleware in `app.ts`
 - **Centralized error handling** in `controllers/errorController.ts` with dev/prod error formatting
-- **Rate limiting**: 300 req/min per IP on API routes
 
-### Path Aliases (tsconfig.json)
+### Path Aliases (packages/server/tsconfig.json)
 
 - `@*` → `src/*` (e.g., `@utils`, `@models`, `@controllers/errorController`)
 - `@@types*` → `src/types/*`
@@ -89,7 +117,7 @@ Aliases are resolved at build time by `tsc-alias`.
 
 ## Environment
 
-Config lives in `config.env` at the project root. Key variables: `DATABASE`, `DATABASE_PASSWORD`, `JWT_SECRET`, `JWT_EXPIRES_IN`, Google OAuth credentials, AWS S3 config, SendGrid/Mailtrap email config, Google Chat webhook.
+Config lives in `packages/server/config.env`. Key variables: `DATABASE`, `DATABASE_PASSWORD`, `JWT_SECRET`, `JWT_EXPIRES_IN`, Google OAuth credentials, AWS S3 config, SendGrid/Mailtrap email config, Google Chat webhook.
 
 ## Employee Roles
 
