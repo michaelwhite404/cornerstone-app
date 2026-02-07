@@ -1,10 +1,9 @@
 import { ReactNode } from "react";
-import "./BasicInfo.sass";
 import BasicInfoCard from "./BasicInfoCard";
 import BasicInfoSkeleton from "./BasicInfoSkeleton";
 
 function BasicInfo({ children }: { children: ReactNode }) {
-  return <div className="basic-info-container">{children}</div>;
+  return <div className="flex flex-wrap">{children}</div>;
 }
 
 BasicInfo.Card = BasicInfoCard;

@@ -5,7 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { GroupMember, GroupModel } from "../../types/models";
 import BackButton from "../../components/BackButton";
-import { Button, Divider } from "@mui/material";
+import { Button } from "../../components/ui";
+import { Divider } from "../../components/ui";
 import { useChecker2, useToasterContext } from "../../hooks";
 import classNames from "classnames";
 import TableWrapper from "../../components/TableWrapper";
@@ -228,7 +229,7 @@ export default function GroupData() {
                   This group doesn't have any members
                 </div>
                 <div className="text-center">
-                  <Button style={{ fontFamily: "inherit" }} onClick={() => setOpenAdd(true)}>
+                  <Button variant="minimal" style={{ fontFamily: "inherit" }} onClick={() => setOpenAdd(true)}>
                     + Add Members
                   </Button>
                   {/* <button className="text-blue-500 font-medium uppercase">Add Members</button> */}

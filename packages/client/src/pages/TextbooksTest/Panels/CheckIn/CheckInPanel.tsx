@@ -1,18 +1,18 @@
-import { Button, Classes, HTMLSelect, OptionProps } from "@blueprintjs/core";
-import { PanelActions } from "@blueprintjs/core/lib/esm/components/panel-stack2/panelTypes";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { TextbookModel } from "../../../../types/models/textbookTypes";
+import { Button, Select } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import { useToasterContext } from "../../../../hooks";
 import useTextbook from "../../../../hooks/useTextbook";
 import { APIError } from "../../../../types/apiResponses";
 
-interface CheckInProps extends PanelActions {
+interface CheckInProps {
   data: TextbookModel[];
+  closePanel: () => void;
 }
 
-export default function CheckInPanel({ data, ...props }: CheckInProps) {
+export default function CheckInPanel({ data, closePanel }: CheckInProps) {
   const { checkinTextbook } = useTextbook();
   const { showToaster } = useToasterContext();
   const [checkinData, setCheckinData] = useState<{ id: string; quality: string }[]>(
@@ -33,22 +33,22 @@ export default function CheckInPanel({ data, ...props }: CheckInProps) {
     checkinTextbook(checkinData)
       .then((message) => {
         showToaster(message, "success");
-        props.closePanel();
+        closePanel();
       })
       .catch((err) => {
         showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
       });
   };
   return (
-    <div className="main-content-inner-wrapper">
-      <div className="main-content-header">
+    <div className="flex flex-col max-h-full">
+      <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
         <div style={{ display: "flex", alignItems: "center" }}>
-          <BackButton onClick={props.closePanel} />
+          <BackButton onClick={closePanel} />
           <span style={{ fontWeight: 500, fontSize: 16 }}>Check In Textbooks</span>
         </div>
       </div>
       <div style={{ overflowY: "scroll" }}>
-        <div className="textbooks-drawer-container">
+        <div className="w-full flex items-center flex-col">
           <div style={{ width: "100%" }}>
             <table style={{ width: "100%" }} id="textbook-checkout-table">
               <colgroup>
@@ -59,7 +59,7 @@ export default function CheckInPanel({ data, ...props }: CheckInProps) {
               <thead>
                 <tr>
                   {["", "Book Name", "#", "Student", "Quality"].map((h, i) => (
-                    <th className="sticky-header" key={"header" + i}>
+                    <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0" key={"header" + i}>
                       {h}
                     </th>
                   ))}
@@ -79,11 +79,11 @@ export default function CheckInPanel({ data, ...props }: CheckInProps) {
           </div>
         </div>
       </div>
-      <div className="main-content-footer">
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+      <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
+        <div className="flex justify-end gap-2 p-4">
           <Button
             text="Check In"
-            intent="primary"
+            variant="primary"
             disabled={!submittable}
             onClick={handleCheckin}
           />
@@ -103,11 +103,11 @@ function CheckinTableRow({
   value: { id: string; quality: string };
 }) {
   const QualityEnum = ["Poor", "Acceptable", "Good", "Excellent"];
-  const options: OptionProps[] = [];
+  const options: { label: string; value: string; disabled?: boolean }[] = [];
   let flag = false;
-  QualityEnum.forEach((value) => {
-    options.unshift({ disabled: flag, value });
-    value === textbook.quality && (flag = true);
+  QualityEnum.forEach((val) => {
+    options.unshift({ disabled: flag, value: val, label: val });
+    if (val === textbook.quality) flag = true;
   });
   return (
     <tr>
@@ -116,11 +116,16 @@ function CheckinTableRow({
       <td>{textbook.bookNumber}</td>
       <td>{textbook.lastUser!.fullName}</td>
       <td>
-        <HTMLSelect
-          options={options}
+        <Select
           value={value.quality}
           onChange={(e) => updateBook(textbook._id, e.target.value)}
-        />
+        >
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
       </td>
     </tr>
   );

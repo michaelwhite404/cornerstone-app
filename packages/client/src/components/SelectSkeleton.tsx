@@ -1,25 +1,24 @@
-import { Icon } from "@blueprintjs/core";
-import { Skeleton } from "@mui/material";
+import { SelectorIcon } from "@heroicons/react/solid";
 import React from "react";
+import { Skeleton } from "./ui";
 
 export default function SelectSkeleton({ width = "130px" }: { width?: string | number }) {
   return (
     <div style={{ position: "relative" }}>
       <Skeleton
+        variant="rectangular"
         width={width}
         height={30}
-        variant="rectangular"
-        sx={{ bgcolor: "grey.200", borderRadius: "6px" }}
+        className="rounded-md"
       />
-      <Icon
-        icon="double-caret-vertical"
+      <SelectorIcon
+        className="h-5 w-5 text-gray-300"
         style={{
           position: "absolute",
           top: "50%",
           right: 5,
           transform: "translateY(-50%)",
         }}
-        color="#cecccc"
       />
     </div>
   );

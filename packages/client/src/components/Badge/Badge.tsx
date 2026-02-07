@@ -1,6 +1,5 @@
 import badgeColors from "./badgeColors";
 import BadgeColor from "./BadgeColor";
-import "./Badge.sass";
 
 export default function Badge({
   color,
@@ -17,10 +16,15 @@ export default function Badge({
   return (
     <span
       style={{ color: getColor(color, 800), backgroundColor: getColor(color, 100) }}
-      className="badge"
+      className="inline-flex items-center py-0.5 px-2.5 rounded-full font-medium text-xs leading-4"
     >
       {!noDot && (
-        <svg style={{ color: getColor(color, 400) }} fill="currentColor" viewBox="0 0 8 8">
+        <svg
+          style={{ color: getColor(color, 400) }}
+          className="mr-1.5 -ml-0.5 w-2 h-2"
+          fill="currentColor"
+          viewBox="0 0 8 8"
+        >
           <circle cx="4" cy="4" r="3" />
         </svg>
       )}

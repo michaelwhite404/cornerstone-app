@@ -1,9 +1,10 @@
-import { Button } from "@blueprintjs/core";
+import { LockClosedIcon, PencilIcon } from "@heroicons/react/solid";
 import { AxiosError } from "axios";
 import pluralize from "pluralize";
 import { useContext, useState } from "react";
 import { TextbookSetModel } from "../../types/models/textbookSetTypes";
 import { TextbookModel } from "../../types/models/textbookTypes";
+import { Button } from "../../components/ui";
 import BackButton from "../../components/BackButton";
 import FadeIn from "../../components/FadeIn";
 import LabeledInput from "../../components/Inputs/LabeledInput";
@@ -177,16 +178,16 @@ export default function AddTextbook(props: AddTextbookProps) {
       .catch((err) => showToaster((err as AxiosError<APIError>).response!.data.message, "danger"));
   };
   return (
-    <div className="main-content-inner-wrapper">
+    <div className="flex flex-col max-h-full">
       <FadeIn>
-        <div className="main-content-header">
+        <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
           <div style={{ display: "flex", alignItems: "center" }}>
             <BackButton onClick={handleBack} />
             <span style={{ fontWeight: 500, fontSize: 16 }}>Create New Textbook</span>
           </div>
         </div>
         <div style={{ overflowY: "scroll" }}>
-          <div className="create-textbook-data">
+          <div className="p-5 border-b border-gray-200 max-[992px]:py-2.5 max-[992px]:px-1">
             <div className="flex flex-wrap">
               {inputs.map(({ label, Component, width, props }) => (
                 <div style={{ width: `${width}%`, padding: "0 15px" }} key={label}>
@@ -194,10 +195,16 @@ export default function AddTextbook(props: AddTextbookProps) {
                   <Component label={label} {...props} />
                 </div>
               ))}
-              <div className="lock-button-wrapper">
+              <div className="self-center w-1/2 h-full mt-[5px] px-[15px]">
                 <Button
-                  intent={dataLocked ? "warning" : "success"}
-                  icon={dataLocked ? "edit" : "lock"}
+                  variant={dataLocked ? "secondary" : "success"}
+                  icon={
+                    dataLocked ? (
+                      <PencilIcon className="h-5 w-5" />
+                    ) : (
+                      <LockClosedIcon className="h-5 w-5" />
+                    )
+                  }
                   onClick={toggleLock}
                   disabled={!dataPassed}
                   fill
@@ -216,12 +223,12 @@ export default function AddTextbook(props: AddTextbookProps) {
             />
           </div>
         </div>
-        <div className="main-content-footer">
-          <div className="bp4-dialog-footer-actions">
+        <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
+          <div className="flex justify-end gap-2 p-4">
             <Button text="Cancel" onClick={handleBack} />
             <Button
               text="Create Textbook"
-              intent="primary"
+              variant="primary"
               disabled={!submittable}
               onClick={handleSubmit}
             />

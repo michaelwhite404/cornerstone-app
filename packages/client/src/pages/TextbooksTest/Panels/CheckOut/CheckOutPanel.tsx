@@ -1,22 +1,22 @@
-import { Button, Classes, ProgressBar } from "@blueprintjs/core";
-import { PanelActions } from "@blueprintjs/core/lib/esm/components/panel-stack2/panelTypes";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { TextbookModel } from "../../../../types/models/textbookTypes";
+import { Button, ProgressBar } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import TableToolbox from "../../../../components/Table/TableToolbox";
 import { useClasses, useToasterContext } from "../../../../hooks";
 import useTextbook from "../../../../hooks/useTextbook";
 import { APIError } from "../../../../types/apiResponses";
 import Class from "../../../../types/class";
-import "./CheckOutPanel.sass";
 
-interface CheckOutProps extends PanelActions {
+
+interface CheckOutProps {
   data: TextbookModel[];
+  closePanel: () => void;
 }
 
-export default function CheckOutPanel({ data, ...props }: CheckOutProps) {
+export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
   const { checkoutTextbook } = useTextbook();
   const { showToaster } = useToasterContext();
   const [checkoutData, setCheckoutData] = useState<{ book: string; student: string }[]>(
@@ -54,22 +54,22 @@ export default function CheckOutPanel({ data, ...props }: CheckOutProps) {
     checkoutTextbook(checkoutData)
       .then((message) => {
         showToaster(message, "success");
-        props.closePanel();
+        closePanel();
       })
       .catch((err) => showToaster((err as AxiosError<APIError>).response!.data.message, "success"));
   };
 
   return (
-    <div className="main-content-inner-wrapper">
-      <div className="main-content-header">
+    <div className="flex flex-col max-h-full">
+      <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
         <div style={{ display: "flex", alignItems: "center" }}>
-          <BackButton onClick={props.closePanel} />
+          <BackButton onClick={closePanel} />
           <span style={{ fontWeight: 500, fontSize: 16 }}>Check Out Textbooks</span>
         </div>
       </div>
       <div style={{ overflowY: "scroll" }}>
         <TableToolbox>
-          <div className="w-h-full flex align-center justify-space-between">
+          <div className="w-full h-full flex items-center justify-between">
             <span style={{ marginLeft: "25px" }}>
               Change All Grades: {"  "}
               <GradeSelect />
@@ -78,13 +78,11 @@ export default function CheckOutPanel({ data, ...props }: CheckOutProps) {
               <ProgressBar
                 value={checkoutsFinished / checkoutData.length}
                 intent="success"
-                animate={false}
-                stripes={false}
               />
             </span>
           </div>
         </TableToolbox>
-        <div className="textbooks-drawer-container">
+        <div className="w-full flex items-center flex-col">
           <div
             style={{
               width: "100%",
@@ -101,11 +99,11 @@ export default function CheckOutPanel({ data, ...props }: CheckOutProps) {
               </colgroup>
               <thead>
                 <tr>
-                  <th className="sticky-header"></th>
-                  <th className="sticky-header">Book Name</th>
-                  <th className="sticky-header">#</th>
-                  <th className="sticky-header">Grade</th>
-                  <th className="sticky-header">Student</th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"></th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Book Name</th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">#</th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Grade</th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Student</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,11 +124,11 @@ export default function CheckOutPanel({ data, ...props }: CheckOutProps) {
           </div>
         </div>
       </div>
-      <div className="main-content-footer">
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+      <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
+        <div className="flex justify-end gap-2 p-4">
           <Button
             text="Check Out"
-            intent="primary"
+            variant="primary"
             disabled={!submittable}
             onClick={handleCheckout}
           />

@@ -1,5 +1,5 @@
-import { Classes, TextArea } from "@blueprintjs/core";
 import React from "react";
+import { Input, Textarea } from "../../../components/ui";
 import FadeIn from "../../../components/FadeIn";
 
 export default function CheckinErrorForm({
@@ -13,11 +13,10 @@ export default function CheckinErrorForm({
     onInputChange && onInputChange(e.currentTarget.name, e.currentTarget.value);
   return (
     <FadeIn>
-      <div className="device-checkin-error-form">
+      <div className="w-3/4">
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
           <label htmlFor="error-title">Title of Issue</label>
-          <input
-            className={Classes.INPUT}
+          <Input
             name="title"
             type="text"
             dir="auto"
@@ -28,7 +27,7 @@ export default function CheckinErrorForm({
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <label htmlFor="error-description">Description of Issue</label>
-          <TextArea
+          <Textarea
             style={{ minWidth: "250px", maxWidth: "250px", minHeight: "175px" }}
             name="description"
             value={value.description}

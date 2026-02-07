@@ -106,13 +106,13 @@ export default function Detail(props: DetailProps) {
                           <div className="mt-10 grid gap-8 grid-cols-2">
                             <div>
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">Date</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Date</div>
                                 <div>{format(new Date(reimbursement.date), "P")}</div>
                               </FadeIn>
                             </div>
                             <div>
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">Amount</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Amount</div>
                                 <div>
                                   {(reimbursement.amount / 100).toLocaleString("en-US", {
                                     style: "currency",
@@ -123,13 +123,13 @@ export default function Detail(props: DetailProps) {
                             </div>
                             <div className="col-span-2">
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">Payee Name</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Payee Name</div>
                                 <div>{reimbursement.payee}</div>
                               </FadeIn>
                             </div>
                             <div className="col-span-2">
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">Payee Address</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Payee Address</div>
                                 <div>{reimbursement.address.street}</div>
                                 <div>
                                   {reimbursement.address.city}, {reimbursement.address.state}{" "}
@@ -140,7 +140,7 @@ export default function Detail(props: DetailProps) {
                             {reimbursement.specialInstructions && (
                               <div className="col-span-2">
                                 <FadeIn delay={125}>
-                                  <div className="show-entry-label">Special Instructions</div>
+                                  <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Special Instructions</div>
                                   <div>{reimbursement.specialInstructions}</div>
                                 </FadeIn>
                               </div>
@@ -148,14 +148,14 @@ export default function Detail(props: DetailProps) {
                             {reimbursement.dateNeeded && (
                               <div className="col-span-2">
                                 <FadeIn delay={125}>
-                                  <div className="show-entry-label">Date Needed</div>
+                                  <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Date Needed</div>
                                   <div>{format(new Date(reimbursement.dateNeeded), "P")}</div>
                                 </FadeIn>
                               </div>
                             )}
                             <div className="col-span-2">
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">Receipt</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Receipt</div>
                                 <div className="w-28">
                                   <img src={reimbursement.receipt} alt="Receipt" />
                                 </div>

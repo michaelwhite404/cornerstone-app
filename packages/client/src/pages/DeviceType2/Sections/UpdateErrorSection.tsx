@@ -1,5 +1,4 @@
-import { Button, HTMLSelect, Label, TextArea } from "@blueprintjs/core";
-import { Chip } from "@mui/material";
+import { Button, Select, Label, Textarea, Chip } from "../../../components/ui";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { DeviceModel } from "../../../types/models/deviceTypes";
@@ -68,23 +67,26 @@ export default function UpdateErrorSection({
   const StatusChips = () => (
     <>
       {statuses.map((s) => (
-        <Chip
-          label={s}
-          variant={status === s ? "filled" : "outlined"}
-          color={status === s ? "info" : "default"}
+        <span
+          key={s}
           onClick={() => {
             setStatus(s);
           }}
-          key={s}
+          className="cursor-pointer"
           style={{ marginRight: 10 }}
-        />
+        >
+          <Chip
+            label={s}
+            color={status === s ? "primary" : "default"}
+          />
+        </span>
       ))}
     </>
   );
 
   const StatusSelect = () => (
-    <HTMLSelect
-      options={[{ label: "Choose a Status", value: "" }, ...statuses]}
+    <Select
+      options={[{ label: "Choose a Status", value: "" }, ...statuses.map((s) => ({ label: s, value: s }))]}
       value={status}
       onChange={(e) => {
         setStatus(e.target.value as ErrorStatus);
@@ -100,27 +102,27 @@ export default function UpdateErrorSection({
         <>
           <div style={{ padding: 15 }}>
             <div>
-              <div className="device-pane-child" style={{ marginBottom: 10 }}>
+              <div className="mb-[25px]" style={{ marginBottom: 10 }}>
                 <span style={{ fontWeight: 500, marginRight: 15 }}>Error To Update</span>
-                <HTMLSelect
+                <Select
                   options={errorOptions}
                   value={errorId}
                   onChange={(e) => setErrorId(e.target.value)}
                 />
               </div>
-              <div className="device-pane-child" style={{ position: "relative" }}>
+              <div className="mb-[25px]" style={{ position: "relative" }}>
                 <span style={{ fontWeight: 500, marginRight: 15 }}>Update Status</span>
                 <StatusPicker />
                 {status && ["Unfixable", "Fixed"].includes(status) && (
-                  <div className="pop-text" style={{ position: "absolute" }}>
+                  <div className="text-[#0d09fe] italic text-xs font-light mt-[7px]" style={{ position: "absolute" }}>
                     * Updating this error to '{status}' will finalize the error
                   </div>
                 )}
               </div>
-              <div className="device-pane-child" style={{ marginTop: 35 }}>
+              <div className="mb-[25px]" style={{ marginTop: 35 }}>
                 <Label style={{ marginBottom: 7 }}>
                   <span style={{ fontWeight: 500 }}>Description of Update</span>
-                  <TextArea
+                  <Textarea
                     fill
                     style={{ marginTop: 10, minHeight: "75px", minWidth: "100%", maxWidth: "100%" }}
                     maxLength={500}
@@ -135,7 +137,7 @@ export default function UpdateErrorSection({
             </div>
           </div>
           <div style={{ textAlign: "right", paddingRight: 15 }}>
-            <Button intent="primary" disabled={!submittable} onClick={handleClick}>
+            <Button variant="primary" disabled={!submittable} onClick={handleClick}>
               Update Error
             </Button>
           </div>

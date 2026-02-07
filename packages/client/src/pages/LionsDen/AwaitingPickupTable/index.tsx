@@ -5,7 +5,7 @@ import { AttendanceEntry } from "../../../types/aftercareTypes";
 export default function index({ entries }: { entries: AttendanceEntry[] }) {
   return (
     <TableWrapper>
-      <table className="aftercare-session-table">
+      <table className="relative">
         <thead>
           <tr>
             <th>Student</th>

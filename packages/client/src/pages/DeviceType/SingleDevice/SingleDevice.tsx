@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { admin_directory_v1 } from "googleapis";
 import DeviceStatusBadge from "../../../components/Badges/DeviceStatusBagde";
@@ -12,11 +12,13 @@ import Checkin from "../Checkin";
 import Checkout from "../Checkout";
 import CheckoutHistory from "../CheckoutHistory";
 import ErrorHistory from "../ErrorHistory";
-import "./SingleDevice.sass";
+
 import Badge from "../../../components/Badge/Badge";
 import UpdateError from "../UpdateError";
-import { Button, Dialog, Menu, MenuItem } from "@blueprintjs/core";
-import { Popover2 } from "@blueprintjs/popover2";
+import { Menu, Transition } from "@headlessui/react";
+import { CogIcon, RefreshIcon } from "@heroicons/react/solid";
+import { Button } from "../../../components/ui";
+import Modal from "../../../components/Modal";
 import ResetBody from "./ResetBody";
 
 type ChromeOsDevice = admin_directory_v1.Schema$ChromeOsDevice;
@@ -111,61 +113,78 @@ export default function SingleDevice() {
     },
   ];
 
-  const ActionsMenu = (
-    <Menu className="custom-pop">
-      {user && user.role === "Super Admin" && (
-        <MenuItem icon="reset" text="Reset" onClick={() => setOpen(true)} />
-      )}
-    </Menu>
-  );
-
   return (
     <div>
       {device && (
         <>
           <PageHeader text={device.name || ""}>
-            <Popover2 content={ActionsMenu} placement="bottom-end" className="menu-popover">
-              <Button icon="settings" text="Actions" large />
-            </Popover2>
+            <Menu as="div" className="relative">
+              <Menu.Button as={Fragment}>
+                <Button icon={<CogIcon className="h-5 w-5" />} text="Actions" size="lg" />
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                    {user && user.role === "Super Admin" && (
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            className={`${active ? "bg-gray-100" : ""} flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                            onClick={() => setOpen(true)}
+                          >
+                            <RefreshIcon className="h-5 w-5 mr-2" />
+                            Reset
+                          </button>
+                        )}
+                      </Menu.Item>
+                    )}
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
           </PageHeader>
           <DeviceStatusBadge status={device.status} />
-          <div className="single-device-pane">
+          <div className="p-[15px]">
             <PaneHeader>Basic Info</PaneHeader>
-            <div className="basic-info-box-wrapper">
+            <div className="flex flex-wrap">
               {values.map((box) => (
                 <DeviceBasicInfo heading={box.heading} value={box.value} key={box.heading} />
               ))}
             </div>
           </div>
           {device.status === "Broken" && updateableErrors.length > 0 && (
-            <div className="single-device-pane">
+            <div className="p-[15px]">
               <UpdateError errors={updateableErrors} updateDeviceError={updateDeviceError} />
             </div>
           )}
           {device.status === "Available" && (
-            <div className="single-device-pane">
+            <div className="p-[15px]">
               <Checkout device={device} checkoutDevice={checkoutDevice} />
             </div>
           )}
           {device.status === "Checked Out" && (
-            <div className="single-device-pane">
+            <div className="p-[15px]">
               <Checkin device={device} checkinDevice={checkinDevice} />
             </div>
           )}
-          <div className="single-device-pane">
+          <div className="p-[15px]">
             <CheckoutHistory checkouts={checkouts} />
           </div>
-          <div className="single-device-pane">
+          <div className="p-[15px]">
             <ErrorHistory errors={errors} createDeviceError={createDeviceError} />
           </div>
-          <Dialog
-            isOpen={open}
-            title={"Reset 1 Device"}
-            onClose={() => setOpen(false)}
-            style={{ width: 400 }}
-          >
+          <Modal open={open} setOpen={setOpen} onClose={() => setOpen(false)}>
+            <div className="text-lg font-medium text-gray-900 mb-4">Reset 1 Device</div>
             <ResetBody close={() => setOpen(false)} resetDevice={resetDevice} />
-          </Dialog>
+          </Modal>
         </>
       )}
     </div>

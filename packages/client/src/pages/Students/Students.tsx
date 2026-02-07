@@ -47,7 +47,7 @@ export default function Students() {
 
   return (
     <div>
-      <div className="page-header">
+      <div className="flex items-center justify-between">
         <h1 style={{ marginBottom: "10px" }}>Students</h1>
       </div>
       <Table columns={columns} data={data} sortBy="grade" />

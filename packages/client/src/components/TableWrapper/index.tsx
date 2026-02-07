@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { ReactNode } from "react";
-import "./TableWrapper.sass";
 
 export default function TableWrapper({
   children,
@@ -10,7 +9,12 @@ export default function TableWrapper({
   overflow?: boolean;
 }) {
   return (
-    <div className={classNames("table-wrapper", overflow ? "overflow-visible" : "overflow-hidden")}>
+    <div
+      className={classNames(
+        "mt-[15px] shadow-[0px_1px_20px_-3px_rgba(0,0,0,0.15)] rounded-lg w-full select-none",
+        overflow ? "overflow-visible" : "overflow-hidden"
+      )}
+    >
       {children}
     </div>
   );

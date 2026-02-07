@@ -1,4 +1,4 @@
-import { Icon } from "@blueprintjs/core";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
 import { ArrowNarrowRightIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
 import { format } from "date-fns";
@@ -40,7 +40,7 @@ const Header = ({
         onClick={handleClick}
       >
         {name}
-        {selected && <Icon icon={order === "desc" ? "caret-down" : "caret-up"} />}
+        {selected && (order === "desc" ? <ChevronDownIcon className="h-5 w-5" /> : <ChevronUpIcon className="h-5 w-5" />)}
       </button>
     </th>
   );

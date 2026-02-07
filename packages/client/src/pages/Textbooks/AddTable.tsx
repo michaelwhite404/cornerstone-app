@@ -1,8 +1,9 @@
-import { Button, HTMLSelect, InputGroup, NumericInput } from "@blueprintjs/core";
 import { XCircleIcon } from "@heroicons/react/solid";
+import { LockClosedIcon, PencilIcon } from "@heroicons/react/solid";
 import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
 import { TextbookModel } from "../../types/models/textbookTypes";
+import { Button, Input, Select } from "../../components/ui";
 import TableToolbox from "../../components/Table/TableToolbox";
 import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
@@ -38,7 +39,9 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
     setData({ ...data, [name]: value });
   };
 
-  const handleNumberChange = (valueAsNumber: number) => {
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueAsNumber = parseInt(e.target.value, 10);
+    if (isNaN(valueAsNumber) || valueAsNumber < 1) return;
     setData({ ...data, num: valueAsNumber });
     setBooks(
       Array.from({ length: valueAsNumber }).map((b, i) => ({
@@ -112,11 +115,11 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
   return (
     <>
       <TableToolbox>
-        <div className="flex justify-space-between" style={{ width: "100%", padding: "0 25px" }}>
-          <div className="w-h-full flex align-center">
-            <div className="table-toolbox-item">
+        <div className="flex justify-between" style={{ width: "100%", padding: "0 25px" }}>
+          <div className="w-full h-full flex items-center">
+            <div className="flex items-center mr-[45px] [&_span]:mr-2.5">
               <span>Name of Textbook</span>
-              <InputGroup
+              <Input
                 type="text"
                 value={data.title}
                 name="title"
@@ -124,9 +127,9 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
                 disabled={dataLocked}
               />
             </div>
-            <div className="table-toolbox-item">
+            <div className="flex items-center mr-[45px] [&_span]:mr-2.5">
               <span>Class</span>
-              <InputGroup
+              <Input
                 type="text"
                 value={data.class}
                 name="class"
@@ -134,9 +137,9 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
                 disabled={dataLocked}
               />
             </div>
-            <div className="table-toolbox-item">
+            <div className="flex items-center mr-[45px] [&_span]:mr-2.5">
               <span>Grade</span>
-              <HTMLSelect
+              <Select
                 options={grades.map((g, i) => ({ label: g, value: i }))}
                 value={data.grade}
                 name="grade"
@@ -145,23 +148,29 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
                 disabled={dataLocked}
               />
             </div>
-            <div className="table-toolbox-item">
+            <div className="flex items-center mr-[45px] [&_span]:mr-2.5">
               <span>Number of Textbooks</span>
-              <NumericInput
-                value={data.num.toString()}
+              <Input
+                type="number"
+                value={data.num}
                 name="num"
-                onValueChange={handleNumberChange}
+                onChange={handleNumberChange}
                 min={1}
                 style={{ width: 50 }}
-                allowNumericCharactersOnly
                 disabled={dataLocked}
               />
             </div>
           </div>
           <div>
             <Button
-              intent={dataLocked ? "warning" : "primary"}
-              icon={dataLocked ? "edit" : "lock"}
+              variant={dataLocked ? "secondary" : "primary"}
+              icon={
+                dataLocked ? (
+                  <PencilIcon className="h-5 w-5" />
+                ) : (
+                  <LockClosedIcon className="h-5 w-5" />
+                )
+              }
               onClick={toggleLock}
               disabled={!dataPassed}
             >
@@ -170,7 +179,7 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
           </div>
         </div>
       </TableToolbox>
-      <div className="textbooks-drawer-container" id="add-table-container">
+      <div className="w-full flex items-center flex-col h-[calc(100%-145px)]" id="add-table-container">
         <div
           style={{
             width: "100%",
@@ -206,8 +215,8 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
           </table>
         </div>
       </div>
-      <div className="checkout-table-footer">
-        <Button intent="primary" disabled={!submittable} onClick={submit}>
+      <div className="justify-end min-h-[50px] shadow-[0_-1px_0_rgba(16,22,26,0.15)] mt-auto bg-white z-[1] flex items-center pr-[25px]">
+        <Button variant="primary" disabled={!submittable} onClick={submit}>
           Add Textbooks
         </Button>
       </div>
@@ -232,7 +241,7 @@ function TableRow({
         {!book.passed && <XCircleIcon color="#c50f0f" width={25} />}
       </td>
       <td>
-        <InputGroup
+        <Input
           value={`${book.bookNumber}`}
           style={{ width: 50 }}
           disabled={!dataLocked}
@@ -240,16 +249,22 @@ function TableRow({
         />
       </td>
       <td>
-        <HTMLSelect
-          options={["Excellent", "Good", "Acceptable", "Poor", "Lost"]}
+        <Select
+          options={["Excellent", "Good", "Acceptable", "Poor", "Lost"].map((q) => ({
+            label: q,
+            value: q,
+          }))}
           disabled={!dataLocked}
           value={book.quality}
           onChange={(e) => changeBook(index, "quality", e.target.value)}
         />
       </td>
       <td>
-        <HTMLSelect
-          options={["Available", "Replaced", "Not Available"]}
+        <Select
+          options={["Available", "Replaced", "Not Available"].map((s) => ({
+            label: s,
+            value: s,
+          }))}
           disabled={!dataLocked}
           value={book.status}
           onChange={(e) => changeBook(index, "status", e.target.value)}

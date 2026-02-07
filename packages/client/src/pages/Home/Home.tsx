@@ -1,4 +1,4 @@
-import { Label } from "@blueprintjs/core";
+import { Label } from "../../components/ui";
 import { useState } from "react";
 import Div100vh from "react-div-100vh";
 import CornerstoneLogo from "../../components/CornerstoneLogo";
@@ -7,7 +7,7 @@ import LabeledInput2 from "../../components/LabeledInput2";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import TextOverLine from "../../components/TextOverLine";
 import { useAuth, useDocTitle, useToasterContext } from "../../hooks";
-import "./Home.sass";
+
 
 export default function Home() {
   useDocTitle("Login Page | Cornerstone App");
@@ -28,9 +28,9 @@ export default function Home() {
 
   return (
     <div>
-      <Div100vh className="home-container">
-        <div className="login-main">
-          <div className="welcome-section">
+      <Div100vh className="flex w-screen">
+        <div className="w-[35%] flex flex-col justify-center relative py-[25px] px-10 overflow-scroll max-[991px]:w-[45%] max-[767px]:w-[55%] max-[640px]:block max-[640px]:w-full">
+          <div className="mb-[30px]">
             <CornerstoneLogo style={{ width: 50 }} />
             <h1 style={{ fontWeight: 600, margin: "5px 0" }}>Welcome Back!!</h1>
             <p>Sign into your account</p>
@@ -69,10 +69,10 @@ export default function Home() {
               <PrimaryButton text="Sign In" type="submit" fill />
             </form>
           </div>
-          <span className="motto-text">Love. Integrity. Opportunity. Nobilty. Strength.</span>
+          <span className="absolute text-[10px] bottom-2 mx-auto left-0 right-0 text-center font-[cursive]">Love. Integrity. Opportunity. Nobilty. Strength.</span>
         </div>
         <div
-          className="login-image-banner"
+          className="w-[65%] h-full bg-center contrast-50 max-[991px]:w-[55%] max-[767px]:w-[45%] max-[640px]:hidden"
           style={{ backgroundImage: "url(/Lions+Den_18.jpeg)" }}
         />
       </Div100vh>

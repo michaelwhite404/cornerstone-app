@@ -1,6 +1,4 @@
-import { Icon } from "@blueprintjs/core";
-import { ClockIcon } from "@heroicons/react/solid";
-import { IconButton } from "@mui/material";
+import { ExclamationIcon, ChartBarIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon } from "@heroicons/react/solid";
 import { format } from "date-fns";
 import { ErrorLogModel } from "../../../types/models/errorLogTypes";
 import DeviceErrorStatusBadge from "../../../components/Badges/DeviceErrorStatusBadge";
@@ -9,27 +7,27 @@ import { useToggle } from "../../../hooks";
 export default function ErrorLogRow({ error }: { error: ErrorLogModel }) {
   const [open, toggle] = useToggle(false);
   return (
-    <div className="device-checkout-history-row">
+    <div className="p-5 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-[#d4d4d4]">
       <div>
-        <div className="dchr-top">
-          <div className="student-name">{error.title}</div>
+        <div className="flex justify-between mb-2.5">
+          <div className="text-indigo-600 font-medium">{error.title}</div>
           <DeviceErrorStatusBadge status={error.status} />
         </div>
-        <div className="dchr-bottom">
+        <div className="flex justify-between text-[#bcc0d6]">
           <div>
             <div style={{ marginBottom: 5 }}>
-              <Icon icon="warning-sign" style={{ marginRight: 10 }} />
+              <ExclamationIcon className="h-5 w-5 mr-2.5" />
               {new Date(error.createdAt).toLocaleDateString()}
             </div>
             <div style={{ alignSelf: "center" }}>
-              <Icon icon="horizontal-bar-chart-desc" style={{ marginRight: 10 }} />
+              <ChartBarIcon className="h-5 w-5 mr-2.5" />
               {error.description}
             </div>
           </div>
           <div style={{ alignSelf: "center" }}>
-            <IconButton>
-              <Icon icon={open ? "chevron-up" : "chevron-down"} onClick={toggle} />
-            </IconButton>
+            <button onClick={toggle} className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500">
+              {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
+            </button>
           </div>
         </div>
       </div>

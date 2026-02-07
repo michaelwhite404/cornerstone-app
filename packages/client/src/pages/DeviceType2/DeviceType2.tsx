@@ -1,4 +1,4 @@
-import { Dialog, Icon } from "@blueprintjs/core";
+import { PlusIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import capitalize from "capitalize";
 import pluralize from "pluralize";
@@ -7,6 +7,7 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import DeviceStatusBadge from "../../components/Badges/DeviceStatusBagde";
 import MainContent from "../../components/MainContent";
+import Modal from "../../components/Modal";
 import PageHeader from "../../components/PageHeader";
 import SideTable from "../../components/SideTable/SideTable";
 import SideTableFilter from "../../components/SideTable/SideTableFilter";
@@ -107,17 +108,17 @@ export default function DeviceType2() {
           selected={selected?._id || ""}
           filterValue={filter}
         >
-          <div className="side-table-top">
+          <div className="pt-6 px-6 pb-4 border-b border-gray-200">
             <PageHeader text={deviceType!} />
             <div style={{ display: "flex", marginTop: 5 }}>
               <SideTableFilter value={filter} onChange={(value) => setFilter(value)} />
               {["Super Admin", "Admin"].includes(user!.role) && (
                 <button
-                  className="create-textbook-button"
+                  className="flex items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-50 cursor-pointer"
                   style={{ marginTop: 0, padding: "0 10px", marginLeft: 10 }}
                   onClick={handleAddClick}
                 >
-                  <Icon icon="plus" color="#0566c3" />
+                  <PlusIcon className="h-5 w-5 text-blue-600" />
                 </button>
               )}
             </div>
@@ -139,14 +140,14 @@ export default function DeviceType2() {
           }}
         />
       </MainContent>
-      <Dialog
-        isOpen={dialogState.open}
-        title={dialogState.title}
+      <Modal
+        open={dialogState.open}
+        setOpen={() => dialogControls.close()}
         onClose={dialogControls.close}
-        style={{ width: dialogState.width }}
       >
+        <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">{dialogState.title}</h3>
         {dialogState.Component}
-      </Dialog>
+      </Modal>
     </div>
   );
 }

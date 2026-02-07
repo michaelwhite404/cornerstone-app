@@ -1,4 +1,4 @@
-import { Label } from "@blueprintjs/core";
+import { Label } from "../../../components/ui";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
@@ -43,7 +43,7 @@ export default function AddStudents({
     <div>
       <FadeIn>
         <div ref={ref} className="flex align-center space-between">
-          <div className="session-header">
+          <div className="text-lg font-medium mb-3">
             <BackButton onClick={() => setPageState("empty")} />
             Add Students
           </div>
@@ -52,7 +52,7 @@ export default function AddStudents({
         <div style={{ marginBottom: 50 }}>
           {rows.map(({ Checkbox, original, rowId }) => (
             <div key={rowId}>
-              <Label style={{ marginBottom: 0, fontWeight: 500 }}>
+              <Label className="flex items-center gap-2 mb-0 font-medium">
                 <Checkbox />
                 {original.fullName}
               </Label>

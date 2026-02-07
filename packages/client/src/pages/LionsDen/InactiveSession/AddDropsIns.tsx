@@ -1,4 +1,5 @@
-import { Button, Icon } from "@blueprintjs/core";
+import { TrashIcon } from "@heroicons/react/solid";
+import { Button } from "../../../components/ui";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ActionMeta } from "react-select";
@@ -80,8 +81,8 @@ export default function AddDropIns({ setPageState, studentsToAdd, startSession }
 
   const StudentRow = ({ student }: { student: StudentModel }) => (
     <div className="flex align-center" style={{ padding: 10, paddingLeft: 0 }}>
-      <Button onClick={() => handleDelete(student._id)}>
-        <Icon icon="trash" color="#ca1b1b" />
+      <Button variant="minimal" onClick={() => handleDelete(student._id)}>
+        <TrashIcon className="h-5 w-5" style={{ color: "#ca1b1b" }} />
       </Button>
       <div style={{ marginLeft: 10, fontWeight: 500 }}>{student.fullName}</div>
     </div>
@@ -90,12 +91,12 @@ export default function AddDropIns({ setPageState, studentsToAdd, startSession }
   return (
     <FadeIn>
       <div className="flex">
-        <div className="session-header">
+        <div className="text-lg font-medium mb-3">
           <BackButton onClick={() => setPageState("students")} />
           Add Drop Ins
         </div>
       </div>
-      <div className="add-student-container">
+      <div className="grid grid-cols-[1fr_auto] gap-[15px] max-[480px]:grid-cols-1 max-[480px]:gap-2.5">
         <Select
           isMulti
           options={options}

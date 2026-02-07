@@ -5,8 +5,8 @@ import ErrorLogSkeleton from "./ErrorLogSkeleton";
 
 function ErrorLog({ children, length }: { children: ReactNode; length: number }) {
   return (
-    <div className="device-checkout-history-container">
-      <div className={classNames("device-checkout-history-wrapper", { none: !length })}>
+    <div className="p-[15px]">
+      <div className={classNames("shadow-[#d4d4d4_0px_0px_2px_1px] rounded-lg", { "shadow-none": !length })}>
         {children}
       </div>
     </div>

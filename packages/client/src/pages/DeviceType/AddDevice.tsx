@@ -1,4 +1,3 @@
-import { Button, InputGroup, Label } from "@blueprintjs/core";
 import axios, { AxiosError } from "axios";
 import capitalize from "capitalize";
 import { singular } from "pluralize";
@@ -6,6 +5,7 @@ import React, { useState } from "react";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import { useToasterContext } from "../../hooks";
 import { APIDeviceResponse, APIError } from "../../types/apiResponses";
+import { Button, Input, Label } from "../../components/ui";
 
 interface AddDeviceProps {
   deviceType: string;
@@ -100,7 +100,7 @@ export default function AddDevice({
                   {input.label}
                   {input.required && <span style={{ marginLeft: 5, color: "red" }}>*</span>}
                 </span>
-                <InputGroup name={input.name} onChange={handleInput} />
+                <Input name={input.name} onChange={handleInput} fill />
               </Label>
             </div>
           ))}
@@ -110,13 +110,13 @@ export default function AddDevice({
                 Device Type
                 <span style={{ marginLeft: 5, color: "red" }}>*</span>
               </span>
-              <InputGroup value={singular(deviceType)} disabled />
+              <Input value={singular(deviceType)} disabled fill />
             </Label>
           </div>
         </div>
       </div>
-      <div className="bp4-drawer-footer" style={{ textAlign: "right" }}>
-        <Button intent="primary" onClick={handleClick} disabled={!submittable}>
+      <div className="mt-4 flex justify-end gap-2" style={{ padding: "0 20px" }}>
+        <Button variant="primary" onClick={handleClick} disabled={!submittable}>
           Create {capitalize(singular(deviceType))}
         </Button>
       </div>

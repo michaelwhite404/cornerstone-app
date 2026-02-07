@@ -1,5 +1,5 @@
 import { Brand, Model, Totals } from "../../../types/brand";
-import "./StatsTable.sass";
+
 
 /* eslint-disable jsx-a11y/no-redundant-roles */
 export default function StatsTable({ brands, totals }: { brands: Brand[]; totals: Totals }) {
@@ -17,7 +17,7 @@ export default function StatsTable({ brands, totals }: { brands: Brand[]; totals
   ));
 
   return (
-    <table className="table-wrapper table-expanded device-stats-table">
+    <table className="mt-[15px] shadow-[0px_1px_20px_-3px_rgba(0,0,0,0.15)] rounded-lg overflow-hidden w-full select-none [&_thead_th:first-child]:pl-5 [&_td]:py-1.5 [&_td]:px-0 [&_td]:max-w-0 [&_td]:overflow-hidden [&_td]:text-ellipsis [&_td]:whitespace-nowrap [&_td:first-child]:pl-5 [&_tbody[role='rowgroup']_tr:last-child]:border-b-0 [&_tbody[role='rowgroup']_tr.expanded-row:hover]:bg-transparent text-[15px]">
       <colgroup>
         <col width="40%"></col>
         <col width="15%"></col>
@@ -39,9 +39,9 @@ export default function StatsTable({ brands, totals }: { brands: Brand[]; totals
 
 const BrandRow = ({ brand }: { brand: Brand }) => {
   return (
-    <tr className="brand-row">
+    <tr className="bg-[#f6fbff] font-semibold text-black">
       <td>
-        <div className="brand-title">
+        <div className="flex flex-row items-center">
           <img
             src={`/device-logos/${brand.brand}-Logo.png`}
             alt={brand.brand + " Logo"}
@@ -61,8 +61,8 @@ const BrandRow = ({ brand }: { brand: Brand }) => {
 
 const ModelRow = ({ model }: { model: Model }) => {
   return (
-    <tr className="model-row">
-      <td>{model.model}</td>
+    <tr>
+      <td className="pl-[35px]">{model.model}</td>
       <td>{model.count}</td>
       <td>{getModelStatusCount(model.statuses, "Available")}</td>
       <td>{getModelStatusCount(model.statuses, "Checked Out")}</td>
@@ -74,7 +74,7 @@ const ModelRow = ({ model }: { model: Model }) => {
 
 const TotalsRow = ({ totals }: { totals: Totals }) => {
   return (
-    <tr className="totals-row">
+    <tr className="bg-[#f6fbff] font-semibold text-black border-t border-gray-300">
       <td>Total</td>
       <td>{totals.count}</td>
       <td>{getModelStatusCount(totals.statuses, "Available")}</td>

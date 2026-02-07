@@ -1,13 +1,13 @@
 //@ts-nocheck
 
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import { Checkbox, IconButton } from "@mui/material";
 import React, { ReactNode, useEffect } from "react";
 import { useGroupBy, useRowSelect, useTable } from "react-table";
+import { Checkbox } from "../../../components/ui";
 import { TextbookModel } from "../../../types/models/textbookTypes";
 import FadeIn from "../../../components/FadeIn";
 import { useWindowSize } from "../../../hooks";
-import "./BooksTable.sass";
+
 
 export default function BooksTable({
   columns,
@@ -42,14 +42,14 @@ export default function BooksTable({
           // The header can use the table's getToggleAllRowsSelectedProps method
           // to render a checkbox
           Header: ({ getToggleAllRowsSelectedProps }) => (
-            <div className="selection-wrapper">
+            <div className="flex">
               <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
             </div>
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           Cell: ({ row }) => (
-            <div className="selection-wrapper" style={{ alignSelf: "center" }}>
+            <div className="flex" style={{ alignSelf: "center" }}>
               <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
             </div>
           ),
@@ -59,11 +59,9 @@ export default function BooksTable({
           id: "menu",
           Header: "",
           Cell: (
-            // <div style={{ padding: "0 5px" }}>
-            <IconButton aria-label="more">
-              <DotsVerticalIcon color="#a1a1a1" width={20} />
-            </IconButton>
-            // </div>
+            <button className="p-1 rounded hover:bg-gray-100" aria-label="more">
+              <DotsVerticalIcon className="h-5 w-5 text-gray-400" />
+            </button>
           ),
         },
       ]);
@@ -105,7 +103,7 @@ export default function BooksTable({
                   // Loop over the headers in each row
                   headerGroup.headers.map((column) => (
                     // Apply the header cell props
-                    <th {...column.getHeaderProps()} className="sticky-header">
+                    <th {...column.getHeaderProps()} className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
                       {
                         // Render the header
                         column.render("Header")
@@ -139,8 +137,8 @@ export default function BooksTable({
   const mobileTable = (
     <>
       <div
-        className="textbook-mobile-row-header"
-        style={{ padding: "2px 10px", backgroundColor: "#f9f9fb" }}
+        className="py-0.5 px-2.5 bg-gray-100 top-0 sticky border-b border-gray-200 z-10"
+        style={{ backgroundColor: "#f9f9fb" }}
       >
         {headerGroups.map((headerGroup) => {
           const columnArray = headerGroup.headers.map((column) => column.render("Header"));
@@ -159,14 +157,7 @@ export default function BooksTable({
 }
 
 const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) => {
-  const defaultRef = React.useRef();
-  const resolvedRef = ref || defaultRef;
-
-  React.useEffect(() => {
-    resolvedRef.current.indeterminate = indeterminate;
-  }, [resolvedRef, indeterminate]);
-
-  return <Checkbox ref={resolvedRef} {...rest} size="small" />;
+  return <Checkbox ref={ref} indeterminate={indeterminate} size="sm" {...rest} />;
 });
 
 const MobileHeader = ([checkbox]: ReactNode[]) => {
@@ -176,11 +167,11 @@ const MobileHeader = ([checkbox]: ReactNode[]) => {
 const MobileRow = ([checkbox, bookNumber, status, quality, student, dots]: ReactNode[]) => {
   return (
     <FadeIn>
-      <div className="textbook-mobile-row">
+      <div className="flex p-2.5 border-b border-gray-200">
         <div style={{ display: "flex" }}>{checkbox}</div>
-        <div className="textbook-mobile-row-data">
-          <div className="textbook-mobile-row-title">Book Number {bookNumber}</div>
-          <div className="textbook-mobile-row-badges">
+        <div className="flex flex-col ml-2.5 text-gray-500">
+          <div className="font-medium mb-[7px]">Book Number {bookNumber}</div>
+          <div className="mb-[5px] [&_.badge]:mr-[5px]">
             {status} {quality}
           </div>
           <div style={{ fontStyle: "italic" }}>{student}</div>

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Classes, Radio, RadioGroup } from "@blueprintjs/core";
+import { Button, Checkbox, RadioGroup } from "../../../components/ui";
 import React, { useState } from "react";
 import { useToasterContext } from "../../../hooks";
 
@@ -11,9 +11,6 @@ export default function Reset({ close, resetDevice }: ResetBodyProps) {
   const [radio, setRadio] = useState<"wipe" | "powerwash">();
   const [checked, setChecked] = useState(false);
   const { showToaster } = useToasterContext();
-
-  const handleRadioChange = (event: React.FormEvent<HTMLInputElement>) =>
-    setRadio(event.currentTarget.value as "wipe" | "powerwash");
 
   const handleCheckboxChange = () => setChecked(!checked);
   const submittable = Boolean(radio) && checked;
@@ -28,39 +25,43 @@ export default function Reset({ close, resetDevice }: ResetBodyProps) {
     }
   };
 
+  const radioOptions = [
+    {
+      label: "Clear User Profiles — to remove all user profile data, but keep device policy and enrollment (RECOMMENDED)",
+      value: "wipe",
+    },
+    {
+      label: "Factory Reset — to remove all data including user profiles, device policies, and enrollment data. Warning: This will revert the device back to factory state with no enrollment, unless the device is subject to forced or auto re-enrollment.",
+      value: "powerwash",
+    },
+  ];
+
   return (
     <>
-      <div className={Classes.DIALOG_BODY}>
+      <div>
         <p>
           Resetting your device will remove data. Please select what type of device reset you would
           like to perform.
         </p>
         <div style={{ margin: "40px 0" }}>
-          <RadioGroup onChange={handleRadioChange} selectedValue={radio}>
-            <Radio className="radio" value="wipe" large>
-              <strong>Clear User Profiles</strong> to remove all user profile data, but keep device
-              policy and enrollment <strong>(RECOMMENDED)</strong>
-            </Radio>
-            <br />
-            <Radio className="radio" value="powerwash" large>
-              <strong>Factory Reset</strong> to remove all data including user profiles, device
-              policies, and enrollment data. {/* <span style={{ color: "red" }}> */}Warning:
-              {/* </span> */} This will revert the device back to factory state with no enrollment,
-              unless the device is subject to forced or auto re-enrollment.
-            </Radio>
-          </RadioGroup>
+          <RadioGroup
+            name="reset-action"
+            options={radioOptions}
+            value={radio}
+            onChange={(value) => setRadio(value as "wipe" | "powerwash")}
+          />
         </div>
         <div>
-          <Checkbox large onChange={handleCheckboxChange}>
-            I understand this will remove data from the device and cannot be undone.
-          </Checkbox>
+          <Checkbox
+            size="lg"
+            onChange={handleCheckboxChange}
+            label="I understand this will remove data from the device and cannot be undone."
+          />
         </div>
       </div>
-      <div className={Classes.DIALOG_FOOTER}>
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          <Button text="Cancel" onClick={close} />
-          <Button text="Reset" intent="primary" onClick={handleSubmit} disabled={!submittable} />
-        </div>
+      <div className="mt-4 flex justify-end gap-2">
+        <Button text="Cancel" onClick={close} />
+        <Button text="Reset" variant="primary" onClick={handleSubmit} disabled={!submittable} />
       </div>
     </>
   );

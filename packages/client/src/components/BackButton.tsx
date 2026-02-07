@@ -1,8 +1,16 @@
-import { Button, ButtonProps } from "@blueprintjs/core";
-import React from "react";
+import { ChevronLeftIcon } from "@heroicons/react/solid";
+import { Button, ButtonProps } from "./ui";
 
-interface BackButtonProps extends Omit<ButtonProps, "small" | "large" | "minimal" | "icon"> {}
+interface BackButtonProps extends Omit<ButtonProps, "size" | "icon"> {}
 
 export default function BackButton(props: BackButtonProps) {
-  return <Button icon="chevron-left" minimal style={{ marginRight: 10 }} small {...props} />;
+  return (
+    <Button
+      variant="minimal"
+      size="sm"
+      icon={<ChevronLeftIcon className="h-5 w-5" />}
+      style={{ marginRight: 10 }}
+      {...props}
+    />
+  );
 }

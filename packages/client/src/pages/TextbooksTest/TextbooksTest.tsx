@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { createContext, useEffect, useMemo, useState } from "react";
 import { TextbookSetModel } from "../../types/models/textbookSetTypes";
 import { APITextbookSetsResponse } from "../../types/apiResponses";
-import "./TextbooksTest.sass";
 import ContentPanels from "./ContentPanels";
 import AddTextbook from "./AddTextbook";
 import { useDocTitle, useWindowSize } from "../../hooks";
@@ -11,7 +10,6 @@ import CreateTextbookButton from "./CreateTextbookButton";
 import SideTable from "../../components/SideTable/SideTable";
 import TextbookSetRow from "./TextbookSetRow/TextbookSetRow";
 import PageHeader from "../../components/PageHeader";
-import "../Textbooks/Table.sass";
 import { Row } from "react-table";
 
 interface TextbookContextProps {
@@ -92,7 +90,7 @@ export default function TextbooksTest() {
             selected={selected?._id || ""}
             customMethod={customMethod}
           >
-            <div className="side-table-top">
+            <div className="pt-6 px-6 pb-4 border-b border-gray-200">
               <PageHeader text="Textbooks" />
               <p>Search directory of many books</p>
               <CreateTextbookButton
@@ -103,7 +101,7 @@ export default function TextbooksTest() {
             </div>
           </SideTable>
         )}
-        <main className="main-content">
+        <main className="flex-grow overflow-auto bg-white">
           {pageState === "view" && selected && (
             <ContentPanels
               textbook={selected}
@@ -115,9 +113,9 @@ export default function TextbooksTest() {
             <AddTextbook setPageState={setPageState} setSelected={setSelected} />
           )}
           {pageState === "blank" && (
-            <div className="empty-state-container">
+            <div className="w-full h-full flex flex-col items-center justify-center">
               <FadeIn>
-                <div className="empty-state-border">
+                <div className="py-16 px-24 border-2 border-gray-200 border-dashed rounded-2xl">
                   <div style={{ fontWeight: 500, textAlign: "center" }}>Select a textbook OR</div>
                   <CreateTextbookButton onClick={handleAddTextbookClick} />
                 </div>

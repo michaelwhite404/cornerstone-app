@@ -1,7 +1,8 @@
-import { InputGroup, InputGroupProps2, Label } from "@blueprintjs/core";
 import React from "react";
+import { Input, Label } from "../ui";
+import type { InputProps } from "../ui";
 
-interface LabeledInputProps extends InputGroupProps2 {
+interface LabeledInputProps extends InputProps {
   label: string;
   required?: boolean;
 }
@@ -13,7 +14,7 @@ export default function LabeledInput({ label, required, ...props }: LabeledInput
         {label}
         {required && <span style={{ marginLeft: 5, color: "red" }}>*</span>}
       </span>
-      <InputGroup {...props} />
+      <Input {...props} />
     </Label>
   );
 }

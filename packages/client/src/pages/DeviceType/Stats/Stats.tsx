@@ -29,7 +29,7 @@ export default function Stats() {
 
   return (
     <>
-      <div className="page-header">
+      <div className="flex items-center justify-between">
         <h1
           style={{ textTransform: "capitalize", marginBottom: "10px" }}
         >{`${deviceType} Stats`}</h1>

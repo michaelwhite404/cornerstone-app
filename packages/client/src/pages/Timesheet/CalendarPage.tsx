@@ -1,6 +1,6 @@
-import { Dialog } from "@blueprintjs/core";
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
+import Modal from "../../components/Modal";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useAuth, useToasterContext } from "../../hooks";
 import { APIError } from "../../types/apiResponses";
@@ -29,24 +29,23 @@ export default function CalendarPage(props: Props) {
   return (
     <div className="sm:px-6 px-5 pt-2.5 pb-6">
       {/* Header */}
-      <div className="page-header flex justify-between align-center">
+      <div className="flex items-center justify-between">
         <h1 style={{ marginBottom: "10px" }}>Timesheet</h1>
         <PrimaryButton text="+ Add Entry" onClick={() => setModalOpen(true)} />
       </div>
       <Calendar showTimesheetEntry={showTimesheetEntry} date={date} setDate={setDate} />
-      <Dialog
-        isOpen={modalOpen}
+      <Modal
+        open={modalOpen}
+        setOpen={setModalOpen}
         onClose={() => setModalOpen(false)}
-        style={{ width: 400, background: "white", borderRadius: 12, padding: 0 }}
-        canOutsideClickClose={false}
-        portalClassName="z-40"
+        disableOverlayClick
       >
         <AddEntry
           user={user}
           closeModal={() => setModalOpen(false)}
           addTimesheetEntry={addTimesheetEntry}
         />
-      </Dialog>
+      </Modal>
     </div>
   );
 }

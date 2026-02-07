@@ -4,7 +4,7 @@ import React, { ReactNode, useState } from "react";
 import { Dialog, RadioGroup } from "@headlessui/react";
 import classNames from "classnames";
 import { grades } from "../../../utils/grades";
-import { Divider, Switch } from "@mui/material";
+import { Divider, Switch } from "../../../components/ui";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import { AddOnInput } from "../../../components/Inputs";
 import { CreateUserArgs } from "../Users";
@@ -252,7 +252,7 @@ export default function CreateUser(props: CreateUserProps) {
                 </label>
                 <Switch
                   checked={user.timesheetEnabled}
-                  onChange={(_, checked) => setUser({ ...user, timesheetEnabled: checked })}
+                  onChange={(checked) => setUser({ ...user, timesheetEnabled: checked })}
                 />
               </div>
             </div>

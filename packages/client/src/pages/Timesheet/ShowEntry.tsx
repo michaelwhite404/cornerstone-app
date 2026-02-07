@@ -2,7 +2,7 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { format } from "date-fns";
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import { TimesheetModel } from "../../types/models";
-import "./ShowEntry.sass";
+
 import "react-circular-progressbar/dist/styles.css";
 import CircularProgressProvider from "../../components/CircularProgressProvider";
 import FadeIn from "../../components/FadeIn";
@@ -26,36 +26,36 @@ export default function ShowEntry(props: ShowEntryProps) {
       <div className="sm:mt-10 mt-6 grid gap-8">
         <div className="col-span-2">
           <FadeIn>
-            <div className="show-entry-label">Description</div>
+            <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Description</div>
             <div>{props.entry.description}</div>
           </FadeIn>
         </div>
         <div className="col-span-2">
           <FadeIn>
-            <div className="show-entry-label">Date</div>
+            <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Date</div>
             <div>{format(new Date(props.entry.timeStart), "PPPP")}</div>
           </FadeIn>
         </div>
         <div>
           <FadeIn>
-            <div className="show-entry-label">Time Start</div>
+            <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Time Start</div>
             <div>{format(new Date(props.entry.timeStart), "p")}</div>
           </FadeIn>
         </div>
         <div>
           <FadeIn>
-            <div className="show-entry-label">Time End</div>
+            <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Time End</div>
             <div>{format(new Date(props.entry.timeEnd), "p")}</div>
           </FadeIn>
         </div>
         <div className="col-span-2">
           <FadeIn>
-            <div className="show-entry-label">Department</div>
+            <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Department</div>
             <div>{props.entry.department.name}</div>
           </FadeIn>
         </div>
         <div className="col-span-2">
-          <div className="show-entry-label">
+          <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">
             <FadeIn>Hours</FadeIn>
           </div>
           <div className="w-28 h-28 mt-3">
@@ -81,13 +81,13 @@ export default function ShowEntry(props: ShowEntryProps) {
           <>
             <div className="col-span-2">
               <FadeIn>
-                <div className="show-entry-label">{props.entry.status} At</div>
+                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">{props.entry.status} At</div>
                 <div>{format(new Date(props.entry.finalizedAt), "PPPp")}</div>
               </FadeIn>
             </div>
             <div className="col-span-2">
               <FadeIn>
-                <div className="show-entry-label">{props.entry.status} By</div>
+                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">{props.entry.status} By</div>
                 <div>{props.entry.finalizedBy?.fullName}</div>
               </FadeIn>
             </div>

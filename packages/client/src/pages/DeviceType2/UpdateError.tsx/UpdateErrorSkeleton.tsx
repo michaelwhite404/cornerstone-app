@@ -1,5 +1,4 @@
-import { Label } from "@blueprintjs/core";
-import { Skeleton } from "@mui/material";
+import { Label, Skeleton } from "../../../components/ui";
 import SelectSkeleton from "../../../components/SelectSkeleton";
 import { useWindowSize } from "../../../hooks";
 
@@ -7,12 +6,12 @@ export default function UpdateErrorSkeleton() {
   const [width] = useWindowSize();
   const Chips = () => (
     <>
-      {[70, 80, 60, 75].map((width, i) => (
+      {[70, 80, 60, 75].map((chipWidth, i) => (
         <Skeleton
           variant="rectangular"
-          width={`${width}px`}
+          width={`${chipWidth}px`}
           height="32px"
-          sx={{ borderRadius: "16px", marginRight: "10px" }}
+          className="rounded-full mr-2.5 bg-gray-300"
           key={`skeleton-chip-${i}`}
         />
       ))}
@@ -23,35 +22,25 @@ export default function UpdateErrorSkeleton() {
     <>
       <div style={{ padding: 15 }}>
         <div>
-          <div className="device-pane-child">
+          <div className="mb-[25px]">
             <span style={{ display: "flex" }}>
               <Skeleton
                 variant="rectangular"
                 width="100px"
                 height="10px"
-                sx={{
-                  bgcolor: "grey.400",
-                  marginRight: "15px",
-                  borderRadius: "4px",
-                  alignSelf: "center",
-                }}
+                className="bg-gray-300 mr-4 rounded self-center"
               />
               <SelectSkeleton />
             </span>
           </div>
-          <div className="device-pane-child" style={{ position: "relative" }}>
+          <div className="mb-[25px]" style={{ position: "relative" }}>
             <div style={{ display: "flex" }}>
               <span style={{ fontWeight: 500, marginRight: 15, alignSelf: "center" }}>
                 <Skeleton
                   variant="rectangular"
                   width="100px"
                   height="10px"
-                  sx={{
-                    bgcolor: "grey.400",
-                    marginRight: "10px",
-                    borderRadius: "4px",
-                    alignSelf: "center",
-                  }}
+                  className="bg-gray-300 mr-2.5 rounded self-center"
                 />
               </span>
               <div style={{ display: "flex" }}>
@@ -59,23 +48,23 @@ export default function UpdateErrorSkeleton() {
               </div>
             </div>
           </div>
-          <div className="device-pane-child" style={{ marginTop: 35 }}>
+          <div className="mb-[25px]" style={{ marginTop: 35 }}>
             <Label style={{ marginBottom: 7 }}>
               <span style={{ fontWeight: 500 }}>
-                <Skeleton width="125px" sx={{ bgcolor: "grey.400", marginBottom: "4px" }} />
+                <Skeleton width="125px" className="bg-gray-300 mb-1" />
               </span>
               <Skeleton
                 variant="rectangular"
                 width="100%"
                 height="75px"
-                sx={{ borderRadius: "8px", textAlign: "right" }}
+                className="rounded-lg"
               />
               <div style={{ display: "flex", justifyContent: "end", marginTop: "10px" }}>
                 <Skeleton
                   variant="rectangular"
                   width={60}
                   height={15}
-                  sx={{ borderRadius: "5px", bgcolor: "grey.500" }}
+                  className="rounded bg-gray-400"
                 />
               </div>
             </Label>
@@ -83,7 +72,7 @@ export default function UpdateErrorSkeleton() {
         </div>
       </div>
       <div style={{ paddingRight: 15, display: "flex", justifyContent: "end" }}>
-        <Skeleton variant="rectangular" width={110} height={30} sx={{ borderRadius: "8px" }} />
+        <Skeleton variant="rectangular" width={110} height={30} className="rounded-lg" />
       </div>
     </>
   );

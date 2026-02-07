@@ -7,7 +7,6 @@ import {
   useTable,
 } from "react-table";
 import PaginationNumbers from "./PaginationNumbers";
-import "./TablePaginate.sass";
 
 interface Column {
   Header: string;
@@ -84,16 +83,16 @@ export default function TablePaginate<T>({
   return (
     <div className="pagination-table">
       <div
-        className="pagination-table-wrapper"
+        className="w-full flex items-center flex-col"
         style={{ height: height ? height - 37 : undefined }}
       >
-        <div className="table-wrapper" style={{ width: "100%", overflow: "auto" }} ref={ref}>
-          <table className="table-paginate" {...getTableProps()} id={id}>
+        <div className="mt-[15px] shadow-[0px_1px_20px_-3px_rgba(0,0,0,0.15)] rounded-lg overflow-hidden w-full select-none" style={{ width: "100%", overflow: "auto" }} ref={ref}>
+          <table className="[&_th:first-child]:pl-5 [&_td]:py-1.5 [&_td]:px-0 [&_td:first-child]:pl-5 [&_tr[role='row']:last-child]:border-b-0" {...getTableProps()} id={id}>
             <thead>
               {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map((column) => (
-                    <th {...column.getHeaderProps()} className="sticky-header">
+                    <th {...column.getHeaderProps()} className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
                       {column.render("Header")}
                     </th>
                   ))}
@@ -116,8 +115,8 @@ export default function TablePaginate<T>({
         </div>
       </div>
 
-      <div className="table-pagination-toolbar">
-        <div className="pagination-toolbar-item">
+      <div className="flex flex-row justify-between mt-[15px] px-[7px] font-medium text-[#9ca3af] uppercase [&_select]:border-none [&_select]:outline-none [&_select]:text-[#9ca3af] [&_select]:ml-[5px] [&_select]:bg-transparent">
+        <div className="w-1/3">
           {enableRowsPicker && (
             <>
               Rows per page:
@@ -129,7 +128,7 @@ export default function TablePaginate<T>({
             </>
           )}
         </div>
-        <span className="showing-text pagination-toolbar-item">{showingText()}</span>
+        <span className="text-center w-1/3">{showingText()}</span>
         <PaginationNumbers
           currentPage={cState.pageIndex + 1}
           pageCount={pageCount}

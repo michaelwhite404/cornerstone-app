@@ -16,7 +16,7 @@ export default function Modal(props: ModalProps) {
       <Dialog
         as="div"
         className="relative z-10"
-        onClose={props.disableOverlayClick ? () => {} : props.onClose?.() || (() => {})}
+        onClose={props.disableOverlayClick ? () => {} : props.onClose || (() => {})}
       >
         <Transition.Child
           as={Fragment}

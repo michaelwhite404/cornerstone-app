@@ -15,13 +15,13 @@ export default function ActiveSession({ attendance }: { attendance: AttendanceEn
     <div>
       {awaitingPickup.length > 0 && (
         <div style={{ marginBottom: 25 }}>
-          <div className="session-header">Awaiting Pickup ({awaitingPickup.length})</div>
+          <div className="text-lg font-medium mb-3">Awaiting Pickup ({awaitingPickup.length})</div>
           <AwaitingPickupTable entries={awaitingPickup} />
         </div>
       )}
       {pickedUp.length > 0 && (
         <div>
-          <div className="session-header">Picked Up ({pickedUp.length})</div>
+          <div className="text-lg font-medium mb-3">Picked Up ({pickedUp.length})</div>
           <SessionsTable entries={pickedUp as SignedOutEntry[]} />
         </div>
       )}

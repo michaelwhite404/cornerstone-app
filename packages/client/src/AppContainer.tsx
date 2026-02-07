@@ -50,7 +50,7 @@ export default function AppContainer() {
   }, [showToaster, socket, user._id]);
 
   return (
-    <Div100vh className="app-container">
+    <Div100vh className="flex overflow-hidden max-lg:flex-col">
       {width > 992 ? <Sidebar /> : <Topbar />}
       <div
         className="main-area-container"

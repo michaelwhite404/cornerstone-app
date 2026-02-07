@@ -7,26 +7,31 @@ import TextbookQualityBadge from "../../../components/Badges/TextbookQualityBadg
 import { APITextbooksResponse } from "../../../types/apiResponses";
 import { numberToGrade } from "../../../utils/grades";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import { PanelActions } from "@blueprintjs/core/lib/esm/components/panel-stack2/panelTypes";
-import AddBookPanel from "./AddBook/AddBookPanel";
-import { Button, Classes } from "@blueprintjs/core";
+import { Button } from "../../../components/ui";
 import BooksTable from "../BooksTable/BooksTable";
 import pluralize from "pluralize";
 import BackButton from "../../../components/BackButton";
-import CheckOutPanel from "./CheckOut/CheckOutPanel";
-import CheckInPanel from "./CheckIn/CheckInPanel";
 import FadeIn from "../../../components/FadeIn";
+
+type PanelView =
+  | { type: "main" }
+  | { type: "addBook"; textbook: TextbookSetModel; books: TextbookModel[] }
+  | { type: "checkOut"; data: TextbookModel[] }
+  | { type: "checkIn"; data: TextbookModel[] };
 
 export default function TextbooksTestContent({
   textbook,
   setSelected,
   setPageState,
-  ...props
+  openPanel,
+  closePanel,
 }: {
   textbook: TextbookSetModel;
   setSelected: React.Dispatch<React.SetStateAction<TextbookSetModel | undefined>>;
   setPageState: React.Dispatch<React.SetStateAction<"blank" | "view" | "add">>;
-} & PanelActions) {
+  openPanel: (panel: PanelView) => void;
+  closePanel: () => void;
+}) {
   const [books, setBooks] = useState<TextbookModel[]>([]);
   const [selectedBooks, setSelectedBooks] = useState<TextbookModel[]>([]);
 
@@ -74,22 +79,13 @@ export default function TextbooksTestContent({
   const data = useMemo(() => books, [books]);
 
   const addBookPanel = () =>
-    props.openPanel({
-      props: { textbook, books },
-      renderPanel: AddBookPanel,
-    });
+    openPanel({ type: "addBook", textbook, books });
 
   const checkOutBooksPanel = () =>
-    props.openPanel({
-      props: { data: canCheckOut },
-      renderPanel: CheckOutPanel,
-    });
+    openPanel({ type: "checkOut", data: canCheckOut });
 
   const checkInBooksPanel = () =>
-    props.openPanel({
-      props: { data: canCheckIn },
-      renderPanel: CheckInPanel,
-    });
+    openPanel({ type: "checkIn", data: canCheckIn });
 
   const showFooter = canCheckOut.length > 0 || canCheckIn.length > 0;
   const handleBack = () => {
@@ -98,9 +94,9 @@ export default function TextbooksTestContent({
   };
 
   return (
-    <div className="main-content-inner-wrapper">
-      <div className="main-content-header">
-        <div className="content-header-text">
+    <div className="flex flex-col max-h-full">
+      <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="flex items-center w-[68%] max-[379px]:w-full">
           <BackButton onClick={handleBack} />
           <span
             style={{
@@ -114,7 +110,7 @@ export default function TextbooksTestContent({
             {textbook.title}
           </span>
         </div>
-        <div className="button-wrapper">
+        <div className="max-[379px]:mt-2.5">
           <PrimaryButton onClick={addBookPanel}>+ Add Book</PrimaryButton>
         </div>
       </div>
@@ -124,8 +120,8 @@ export default function TextbooksTestContent({
         </FadeIn>
       </div>
       {showFooter && (
-        <div className="main-content-footer">
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+        <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
+          <div className="flex justify-end gap-2 p-4">
             {canCheckIn.length > 0 && (
               <Button onClick={checkInBooksPanel}>
                 Check In {pluralize("Book", canCheckIn.length, true)}

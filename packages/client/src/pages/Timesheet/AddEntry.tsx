@@ -6,7 +6,7 @@ import { EmployeeModel } from "../../types/models";
 import DateSelector from "../../components/DateSelector";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import getTimes from "../../utils/getTimes";
-import "./AddEntry.sass";
+
 
 export default function AddEntry(props: AddEntryProps) {
   const [entry, setEntry] = useState({
@@ -56,7 +56,7 @@ export default function AddEntry(props: AddEntryProps) {
           <label>Description</label>
           <div className="mt-1">
             <input
-              className="entry-input px-3 py-2.5 w-full rounded"
+              className="border border-[#ccc] focus:border-[#2684FF] focus:shadow-[0px_0px_0px_1px_#2684FF] px-3 py-2.5 w-full rounded"
               value={entry.description}
               name="description"
               onChange={handleTextChange}
@@ -83,7 +83,7 @@ export default function AddEntry(props: AddEntryProps) {
             onChange={(newValue) => handleSelectChange(newValue, "department")}
           />
         </div>
-        <div className="col-span-2 date-selector">
+        <div className="col-span-2 [&_.bp4-label]:w-full">
           <DateSelector label="Date" onChange={handleDateChange} />
         </div>
         <div>

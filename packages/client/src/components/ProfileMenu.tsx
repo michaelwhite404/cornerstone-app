@@ -1,4 +1,3 @@
-import { Menu, MenuItem } from "@blueprintjs/core";
 import { useNavigate } from "react-router-dom";
 import { useAuth, useSocket, useToasterContext } from "../hooks";
 
@@ -16,9 +15,19 @@ export default function ProfileMenu() {
       .catch(() => showToaster("There was an error logging out", "danger"));
   };
   return (
-    <Menu className="custom-pop">
-      <MenuItem text="Profile" onClick={() => navigate("/profile")} />
-      <MenuItem text="Log Out" onClick={handleLogout} />
-    </Menu>
+    <div className="py-1">
+      <button
+        className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        onClick={() => navigate("/profile")}
+      >
+        Profile
+      </button>
+      <button
+        className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        onClick={handleLogout}
+      >
+        Log Out
+      </button>
+    </div>
   );
 }

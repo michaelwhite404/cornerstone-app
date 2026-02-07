@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, HTMLSelect } from "@blueprintjs/core";
+import { Button, Select } from "../../components/ui";
 import { TextbookModel } from "../../types/models/textbookTypes";
 import axios, { AxiosError } from "axios";
 import { APIError } from "../../types/apiResponses";
@@ -57,7 +57,7 @@ export default function CheckinTable({
 
   return (
     <>
-      <div className="textbooks-drawer-container" id="checkin-table-container">
+      <div className="w-full flex items-center flex-col h-[calc(100%-90px)]" id="checkin-table-container">
         <div
           style={{
             width: "100%",
@@ -74,11 +74,11 @@ export default function CheckinTable({
             </colgroup>
             <thead>
               <tr>
-                <th className="sticky-header"></th>
-                <th className="sticky-header">Book Name</th>
-                <th className="sticky-header">Number</th>
-                <th className="sticky-header">Student</th>
-                <th className="sticky-header">Quality</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"></th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Book Name</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Number</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Student</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Quality</th>
               </tr>
             </thead>
             <tbody>
@@ -94,8 +94,8 @@ export default function CheckinTable({
           </table>
         </div>
       </div>
-      <div className="checkout-table-footer">
-        <Button intent="primary" disabled={!submittable} onClick={completeCheckout}>
+      <div className="justify-end min-h-[50px] shadow-[0_-1px_0_rgba(16,22,26,0.15)] mt-auto bg-white z-[1] flex items-center pr-[25px]">
+        <Button variant="primary" disabled={!submittable} onClick={completeCheckout}>
           Check In
         </Button>
       </div>
@@ -120,8 +120,8 @@ function CheckinTableRow({
       <td>{textbook.bookNumber}</td>
       <td>{textbook.lastUser!.fullName}</td>
       <td>
-        <HTMLSelect
-          options={QualityEnum}
+        <Select
+          options={QualityEnum.map((q) => ({ label: q, value: q }))}
           value={value.quality}
           onChange={(e) => updateBookData(textbook._id, e.target.value)}
         />

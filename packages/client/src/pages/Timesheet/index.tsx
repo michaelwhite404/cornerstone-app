@@ -1,8 +1,8 @@
-import { Drawer } from "@blueprintjs/core";
 import axios from "axios";
 import { useState } from "react";
 import { TimesheetModel } from "../../types/models";
-import { useAuth, useDocTitle, useWindowSize } from "../../hooks";
+import { useAuth, useDocTitle } from "../../hooks";
+import Slideover from "../../components/Slideover";
 import Admin from "./Admin";
 import CalendarPage from "./CalendarPage";
 import ShowEntry from "./ShowEntry";
@@ -17,7 +17,6 @@ export default function Timesheet() {
   );
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<TimesheetModel>();
-  const [width] = useWindowSize();
 
   const showTimesheetEntry = async (entryId: string) => {
     const res = await axios.get(`/api/v2/timesheets/${entryId}`);
@@ -34,18 +33,11 @@ export default function Timesheet() {
     <>
       {pageState === "CALENDAR" && <CalendarPage showTimesheetEntry={showTimesheetEntry} />}
       {pageState === "ADMIN" && <Admin showTimesheetEntry={showTimesheetEntry} />}
-      <Drawer
-        // portalClassName="z-40"
-        size={width >= 640 ? 480 : "90%"}
-        isOpen={drawerOpen}
-        onClose={handleDrawerClose}
-        canOutsideClickClose
-        className="sm:w-[480px] w-72"
-      >
+      <Slideover open={drawerOpen} onOverlayClick={handleDrawerClose}>
         {selectedEntry && (
           <ShowEntry entry={selectedEntry} closeDrawer={() => setDrawerOpen(false)} />
         )}
-      </Drawer>
+      </Slideover>
     </>
   );
 }

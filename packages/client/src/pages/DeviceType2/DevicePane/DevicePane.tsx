@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import "./DevicePane.sass";
+
 
 export default function DevicePane({
   heading,
@@ -9,8 +9,8 @@ export default function DevicePane({
   children: ReactNode;
 }) {
   return (
-    <div className="device-pane">
-      <h3 className="device-pane-heading">{heading}</h3>
+    <div className="p-5 max-[767px]:p-2.5">
+      <h3 className="pl-[15px]">{heading}</h3>
       {children}
     </div>
   );

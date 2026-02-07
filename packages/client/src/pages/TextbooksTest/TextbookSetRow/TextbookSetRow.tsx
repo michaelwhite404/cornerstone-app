@@ -1,5 +1,4 @@
 import Badge from "../../../components/Badge/Badge";
-import "./TextbookSetRow.sass";
 
 interface Props {
   class: string;
@@ -10,7 +9,7 @@ interface Props {
 
 export default function TextbookSetRow(values: Props) {
   return (
-    <div className="book-set">
+    <div className="py-5 px-6">
       <span className="flex">
         <span
           style={{
@@ -26,7 +25,7 @@ export default function TextbookSetRow(values: Props) {
         </span>
         <Badge text={String(values.count)} color="blue" noDot />
       </span>
-      <div className="book-subject">{values.class}</div>
+      <div className="text-gray-400 text-[13px]">{values.class}</div>
     </div>
   );
 }

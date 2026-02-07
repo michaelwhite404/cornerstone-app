@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, HTMLSelect } from "@blueprintjs/core";
+import { Button, Select, Skeleton } from "../../../components/ui";
 import { useClasses, useToasterContext } from "../../../hooks";
 import DevicePane from "../DevicePane";
 import capitalize from "capitalize";
 import { DeviceModel } from "../../../types/models/deviceTypes";
 import Checkout from "../Checkout";
-import { Skeleton } from "@mui/material";
 
 interface CheckOutSectionProps {
   device?: DeviceModel;
@@ -87,14 +86,13 @@ export default function CheckOutSection({
         {showData ? (
           <Checkout.Box>
             <span style={{ fontWeight: 500, marginBottom: "6px" }}>Action</span>
-            <HTMLSelect
+            <Select
               value={action}
-              options={[
-                { disabled: false, value: "Check Out" },
-                { value: "Assign", disabled: device?.status === "Assigned" },
-              ]}
               onChange={(e) => setAction(e.target.value)}
-            />
+            >
+              <option value="Check Out">Check Out</option>
+              <option value="Assign" disabled={device?.status === "Assigned"}>Assign</option>
+            </Select>
           </Checkout.Box>
         ) : (
           <Checkout.Skeleton />
@@ -102,7 +100,7 @@ export default function CheckOutSection({
         {showData ? (
           <Checkout.Box className="button">
             <Button
-              intent="primary"
+              variant="primary"
               disabled={studentPicked === "-1"}
               onClick={action === "Check Out" ? handleCheckout : handleAssign}
               fill
@@ -112,9 +110,7 @@ export default function CheckOutSection({
           </Checkout.Box>
         ) : (
           <Checkout.Box className="button">
-            <Skeleton variant="rectangular" height={40} width="100%" sx={{ borderRadius: "5px" }}>
-              <Button text="Check Out Device" />
-            </Skeleton>
+            <Skeleton variant="rectangular" height={40} width="100%" className="rounded" />
           </Checkout.Box>
         )}
       </Checkout>

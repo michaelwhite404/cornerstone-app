@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { Icon } from "@blueprintjs/core";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/solid";
 import React, { useEffect } from "react";
 import { useExpanded, useGroupBy, useRowSelect, useTable } from "react-table";
+import { Checkbox } from "../../components/ui";
 import { TextbookModel } from "../../types/models/textbookTypes";
 
 export default function TextbooksTable({
@@ -37,14 +38,14 @@ export default function TextbooksTable({
           // The header can use the table's getToggleAllRowsSelectedProps method
           // to render a checkbox
           Header: ({ getToggleAllRowsSelectedProps }) => (
-            <div className="selection-wrapper">
+            <div className="pl-[15px]">
               <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
             </div>
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           Cell: ({ row }) => (
-            <div className="selection-wrapper">
+            <div className="pl-[15px]">
               <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
             </div>
           ),
@@ -97,7 +98,7 @@ export default function TextbooksTable({
                     // Loop over the headers in each row
                     headerGroup.headers.map((column) => (
                       // Apply the header cell props
-                      <th {...column.getHeaderProps()} className="sticky-header">
+                      <th {...column.getHeaderProps()} className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
                         {
                           // Render the header
                           column.render("Header")
@@ -130,12 +131,11 @@ export default function TextbooksTable({
                           // If it's a grouped cell, add an expander and row count
                           <>
                             <span {...row.getToggleRowExpandedProps()}>
-                              <Icon
-                                icon={`chevron-${row.isExpanded ? "down" : "right"}`}
-                                color="black"
-                                style={{ marginRight: 10 }}
-                              />
-                              {/* {row.isExpanded ? "👇" : "👉"} */}
+                              {row.isExpanded ? (
+                                <ChevronDownIcon className="h-5 w-5 text-black mr-2.5 inline" />
+                              ) : (
+                                <ChevronRightIcon className="h-5 w-5 text-black mr-2.5 inline" />
+                              )}
                             </span>{" "}
                             {cell.render("Cell")} ({row.subRows.length})
                           </>
@@ -165,16 +165,5 @@ export default function TextbooksTable({
 }
 
 const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) => {
-  const defaultRef = React.useRef();
-  const resolvedRef = ref || defaultRef;
-
-  React.useEffect(() => {
-    resolvedRef.current.indeterminate = indeterminate;
-  }, [resolvedRef, indeterminate]);
-
-  return (
-    <>
-      <input type="checkbox" ref={resolvedRef} {...rest} />
-    </>
-  );
+  return <Checkbox ref={ref} indeterminate={indeterminate} {...rest} />;
 });

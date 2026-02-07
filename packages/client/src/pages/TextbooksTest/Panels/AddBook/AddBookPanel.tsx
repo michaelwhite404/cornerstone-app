@@ -1,16 +1,16 @@
-import { Button } from "@blueprintjs/core";
-import { PanelActions } from "@blueprintjs/core/lib/esm/components/panel-stack2/panelTypes";
+import { PlusIcon } from "@heroicons/react/solid";
 import axios, { AxiosError } from "axios";
 import pluralize from "pluralize";
 import { useContext, useState } from "react";
 import { TextbookSetModel } from "../../../../types/models/textbookSetTypes";
 import { TextbookModel } from "../../../../types/models/textbookTypes";
+import { Button } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import { useToasterContext } from "../../../../hooks";
 import { APIError, APITextbooksResponse } from "../../../../types/apiResponses";
 import AddBooksTable from "../../AddBooksTable";
 import { TextbookContext } from "../../TextbooksTest";
-import "./AddBookPanel.sass";
+
 
 interface PreBook {
   passed: boolean;
@@ -19,9 +19,10 @@ interface PreBook {
   status: "Available" | "Checked Out" | "Replaced" | "Not Available";
 }
 
-interface AddBookProps extends PanelActions {
+interface AddBookProps {
   textbook: TextbookSetModel;
   books: TextbookModel[];
+  closePanel: () => void;
 }
 
 const defaultPreBook = (bookNumber: number, passed = true): PreBook => ({
@@ -31,7 +32,7 @@ const defaultPreBook = (bookNumber: number, passed = true): PreBook => ({
   status: "Available",
 });
 
-export default function AddBookPanel({ textbook, books, ...props }: AddBookProps) {
+export default function AddBookPanel({ textbook, books, closePanel }: AddBookProps) {
   const { showToaster } = useToasterContext();
   const { getTextbookSets } = useContext(TextbookContext);
   const [booksToAdd, setBooksToAdd] = useState<PreBook[]>([
@@ -85,7 +86,7 @@ export default function AddBookPanel({ textbook, books, ...props }: AddBookProps
         }
       );
       showToaster(pluralize("book", res.data.data.books.length, true) + " added", "success");
-      props.closePanel();
+      closePanel();
       getTextbookSets();
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
@@ -93,10 +94,10 @@ export default function AddBookPanel({ textbook, books, ...props }: AddBookProps
   };
 
   return (
-    <div className="main-content-inner-wrapper">
-      <div className="main-content-header">
+    <div className="flex flex-col max-h-full">
+      <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
         <div style={{ display: "flex", alignItems: "center" }}>
-          <BackButton onClick={props.closePanel} />
+          <BackButton onClick={closePanel} />
           <span style={{ fontWeight: 500, fontSize: 16 }}>Add {textbook.title} Book</span>
         </div>
       </div>
@@ -111,16 +112,20 @@ export default function AddBookPanel({ textbook, books, ...props }: AddBookProps
       >
         <AddBooksTable booksToAdd={booksToAdd} changeBook={changeBook} deleteBook={deleteBook} />
         <div style={{ padding: 20 }}>
-          <Button onClick={addRow} icon="add" text="Add Another Book" />
+          <Button
+            onClick={addRow}
+            icon={<PlusIcon className="h-5 w-5" />}
+            text="Add Another Book"
+          />
         </div>
       </div>
 
-      <div className="main-content-footer">
-        <div className="bp4-dialog-footer-actions">
-          <Button text="Cancel" onClick={props.closePanel} />
+      <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
+        <div className="flex justify-end gap-2 p-4">
+          <Button text="Cancel" onClick={closePanel} />
           <Button
             text={`Add ${pluralize("Book", booksToAdd.length, true)}`}
-            intent="primary"
+            variant="primary"
             disabled={!submittable}
             onClick={handleSubmit}
           />

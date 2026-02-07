@@ -1,10 +1,9 @@
 import { ReactNode } from "react";
 import CheckoutBox from "./CheckoutBox";
-import "./Checkout.sass";
 import CheckoutSkeleton from "./CheckoutSkeleton";
 
 function Checkout({ children }: { children: ReactNode }) {
-  return <div className="device-checkout-container">{children}</div>;
+  return <div className="flex flex-wrap">{children}</div>;
 }
 
 Checkout.Box = CheckoutBox;

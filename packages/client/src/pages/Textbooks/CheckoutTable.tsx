@@ -1,13 +1,13 @@
-import { Button, HTMLSelect, ProgressBar } from "@blueprintjs/core";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import { TextbookModel } from "../../types/models/textbookTypes";
+import { Button, Select, ProgressBar } from "../../components/ui";
 import TableToolbox from "../../components/Table/TableToolbox";
 import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
 import Class from "../../types/class";
-import "./Table.sass";
+
 
 const gradeValues = grades.map((value, i) => ({
   value: `${i}`,
@@ -92,22 +92,20 @@ export default function CheckoutTable({
   return (
     <>
       <TableToolbox>
-        <div className="w-h-full flex align-center justify-space-between">
+        <div className="w-full h-full flex items-center justify-between">
           <span style={{ marginLeft: "25px" }}>
             Change All Grades: {"  "}
-            <HTMLSelect options={gradeValues} onChange={changeAllGrades} />
+            <Select options={gradeValues} onChange={changeAllGrades} />
           </span>
           <span className="flex" style={{ width: "25%", marginRight: "25px" }}>
             <ProgressBar
               value={checkoutsFinished / checkoutData.length}
               intent="success"
-              animate={false}
-              stripes={false}
             />
           </span>
         </div>
       </TableToolbox>
-      <div className="textbooks-drawer-container" id="checkout-table-container">
+      <div className="w-full flex items-center flex-col h-[calc(100%-145px)]" id="checkout-table-container">
         <div
           style={{
             width: "100%",
@@ -124,11 +122,11 @@ export default function CheckoutTable({
             </colgroup>
             <thead>
               <tr>
-                <th className="sticky-header"></th>
-                <th className="sticky-header">Book Name</th>
-                <th className="sticky-header">Number</th>
-                <th className="sticky-header">Grade</th>
-                <th className="sticky-header">Student</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"></th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Book Name</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Number</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Grade</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Student</th>
               </tr>
             </thead>
             <tbody>
@@ -148,8 +146,8 @@ export default function CheckoutTable({
           </table>
         </div>
       </div>
-      <div className="checkout-table-footer">
-        <Button intent="primary" disabled={!submittable} onClick={completeCheckout}>
+      <div className="justify-end min-h-[50px] shadow-[0_-1px_0_rgba(16,22,26,0.15)] mt-auto bg-white z-[1] flex items-center pr-[25px]">
+        <Button variant="primary" disabled={!submittable} onClick={completeCheckout}>
           Check Out
         </Button>
       </div>
@@ -205,11 +203,11 @@ function CheckoutTableRow({
       <td>{textbook.textbookSet.title}</td>
       <td>{textbook.bookNumber}</td>
       <td>
-        <HTMLSelect options={gradeValues} value={gradeSelect[index]} onChange={changeGrade} />
+        <Select options={gradeValues} value={gradeSelect[index]} onChange={changeGrade} />
       </td>
       <td>
-        {gradeSelect[index] !== -1 && (
-          <HTMLSelect
+        {gradeSelect[index] !== -1 && studentOptions && (
+          <Select
             options={studentOptions}
             onChange={(e) =>
               updateBookData(textbook._id, e.target.value === "-1" ? null : e.target.value)

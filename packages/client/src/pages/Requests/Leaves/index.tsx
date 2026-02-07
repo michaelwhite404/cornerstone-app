@@ -176,7 +176,7 @@ function Leaves() {
     <LeavesSortContext.Provider value={{ sort, setSort }}>
       <div className="relative h-[100vh]" style={{ padding: "10px 25px 25px" }}>
         <div className="sm:flex sm:justify-between  sm:align-center">
-          <div className="page-header">
+          <div className="flex items-center justify-between">
             <h1 style={{ textTransform: "capitalize", marginBottom: "10px" }}>Leave Requests</h1>
             <p>View and create leave requests</p>
           </div>

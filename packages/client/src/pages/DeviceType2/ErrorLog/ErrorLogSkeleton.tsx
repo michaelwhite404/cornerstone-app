@@ -1,12 +1,12 @@
-import { Icon } from "@blueprintjs/core";
-import { Skeleton } from "@mui/material";
+import { ExclamationIcon, ChartBarIcon } from "@heroicons/react/solid";
+import { Skeleton } from "../../../components/ui";
 import React from "react";
 import BadgeSkeleton from "../../../components/BadgeSkeleton";
 
 export default function ErrorLogSkeleton({ rows = 1 }: { rows?: number }) {
   return (
-    <div className="device-checkout-history-container">
-      <div className="device-checkout-history-wrapper">
+    <div className="p-[15px]">
+      <div className="shadow-[#d4d4d4_0px_0px_2px_1px] rounded-lg">
         {Array.from({ length: rows }).map((_, i) => (
           <ErrorSkeletonRow key={`skeleton-${i}`} />
         ))}
@@ -16,22 +16,22 @@ export default function ErrorLogSkeleton({ rows = 1 }: { rows?: number }) {
 }
 
 const ErrorSkeletonRow = () => (
-  <div className="device-checkout-history-row">
+  <div className="p-5 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-[#d4d4d4]">
     <div>
-      <div className="dchr-top">
-        <div className="student-name">
-          <Skeleton width="110px" sx={{ bgcolor: "#4f46e5" }} />
+      <div className="flex justify-between mb-2.5">
+        <div className="text-indigo-600 font-medium">
+          <Skeleton width="110px" className="bg-indigo-600" />
         </div>
         <BadgeSkeleton />
       </div>
-      <div className="dchr-bottom">
+      <div className="flex justify-between text-[#bcc0d6]">
         <div style={{ width: "100%" }}>
           <div style={{ marginBottom: 5, display: "flex" }}>
-            <Icon icon="warning-sign" style={{ marginRight: 10 }} />
+            <ExclamationIcon className="h-5 w-5 mr-2.5" />
             <Skeleton width="75px" />
           </div>
           <div style={{ alignSelf: "center", display: "flex" }}>
-            <Icon icon="horizontal-bar-chart-desc" style={{ marginRight: 10 }} />
+            <ChartBarIcon className="h-5 w-5 mr-2.5" />
             <Skeleton width="40%" />
           </div>
         </div>

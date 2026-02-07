@@ -1,6 +1,6 @@
-import { Button } from "@blueprintjs/core";
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Button } from "../../components/ui";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import { ErrorLogModel } from "../../types/models/errorLogTypes";
 import PaneHeader from "../../components/PaneHeader/PaneHeader";
@@ -9,7 +9,7 @@ import { grades } from "../../utils/grades";
 import Checkin from "./Checkin";
 import Checkout from "./Checkout";
 import CheckoutHistory from "./CheckoutHistory";
-import "./DeviceContent.sass";
+
 import ErrorHistory from "./ErrorHistory";
 import UpdateError from "./UpdateError";
 
@@ -73,16 +73,16 @@ export default function DeviceContent({
   return (
     <>
       <div style={{ height: "100%", overflow: "scroll" }}>
-        <div className="device-pane">
+        <div className="py-[15px] pr-[25px] pb-[35px] pl-[50px] border-b border-gray-200">
           <PaneHeader>Basic Info</PaneHeader>
-          <div className="basic-info-box-wrapper">
+          <div className="flex flex-wrap">
             {values.map((box) => (
               <DeviceBasicInfo heading={box.heading} value={box.value} key={box.heading} />
             ))}
           </div>
         </div>
         {device.status === "Available" && (
-          <div className="device-pane">
+          <div className="py-[15px] pr-[25px] pb-[35px] pl-[50px] border-b border-gray-200">
             <Checkout
               device={device}
               checkoutDevice={checkoutDevice}
@@ -91,7 +91,7 @@ export default function DeviceContent({
           </div>
         )}
         {device.status === "Checked Out" && (
-          <div className="device-pane">
+          <div className="py-[15px] pr-[25px] pb-[35px] pl-[50px] border-b border-gray-200">
             <Checkin
               device={device}
               checkinDevice={checkinDevice}
@@ -100,7 +100,7 @@ export default function DeviceContent({
           </div>
         )}
         {device.status === "Broken" && updateableErrors.length > 0 && (
-          <div className="device-pane">
+          <div className="py-[15px] pr-[25px] pb-[35px] pl-[50px] border-b border-gray-200">
             <UpdateError
               errors={updateableErrors}
               updateDeviceError={updateDeviceError}
@@ -108,10 +108,10 @@ export default function DeviceContent({
             />
           </div>
         )}
-        <div className="device-pane">
+        <div className="py-[15px] pr-[25px] pb-[35px] pl-[50px] border-b border-gray-200">
           <CheckoutHistory checkouts={checkouts} />
         </div>
-        <div className="device-pane">
+        <div className="py-[15px] pr-[25px] pb-[35px] pl-[50px] border-b border-gray-200">
           <ErrorHistory
             errors={errors}
             createDeviceError={createDeviceError}
@@ -120,9 +120,9 @@ export default function DeviceContent({
         </div>
       </div>
       {user && ["Super Admin", "Admin"].includes(user.role) && (
-        <div className="drawer-footer">
-          <div className="drawer-footer-inner">
-            <Button intent="warning" onClick={() => navigate(`${pathname}/${device.slug}`)}>
+        <div className="h-10 py-[5px] px-2.5 shadow-[inset_0_1px_0_rgba(16,22,26,0.15)]">
+          <div className="flex justify-end items-center h-full">
+            <Button variant="primary" onClick={() => navigate(`${pathname}/${device.slug}`)}>
               {"See All Data >"}
             </Button>
           </div>

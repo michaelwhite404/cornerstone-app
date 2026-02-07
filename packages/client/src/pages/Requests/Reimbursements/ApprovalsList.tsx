@@ -13,8 +13,8 @@ export default function ApprovalsList(props: Props) {
   const { reimbursements, select } = props;
   return (
     <TableWrapper>
-      <div className="sticky-header px-4 py-2">
-        <span className="show-entry-label">Requests</span>
+      <div className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0 px-4 py-2">
+        <span className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Requests</span>
       </div>
       <div className="divide-y divide-gray-200">
         {reimbursements.map((reimbursement) => (

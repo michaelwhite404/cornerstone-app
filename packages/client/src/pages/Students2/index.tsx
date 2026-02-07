@@ -92,13 +92,13 @@ function Students2() {
           customMethod={customMethod}
           onSelectionChange={handleSelection}
         >
-          <div className="side-table-top">
+          <div className="pt-6 px-6 pb-4 border-b border-gray-200">
             <PageHeader text="Students" />
             <SideTableFilter value={filter} onChange={(value) => setFilter(value)} />
           </div>
         </SideTable>
       )}
-      <main className="main-content">
+      <main className="flex-grow overflow-auto bg-white">
         <Outlet
           context={{
             student: selected,

@@ -1,8 +1,8 @@
-import { Button } from "@blueprintjs/core";
 import capitalize from "capitalize";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import PaneHeader from "../../components/PaneHeader/PaneHeader";
 import { useClasses } from "../../hooks";
+import { Button } from "../../components/ui";
 
 interface DeviceCheckoutProps {
   /** The device to checkout */
@@ -29,16 +29,16 @@ export default function Checkout({
     <div>
       <PaneHeader>Check Out</PaneHeader>
       <div className="flex space-between">
-        <div className="device-checkout-box">
+        <div className="w-1/3 p-[15px] flex flex-col items-start">
           <span style={{ fontWeight: 500, marginBottom: "6px" }}>Grade</span>
           <GradeSelect />
         </div>
-        <div className="device-checkout-box">
+        <div className="w-1/3 p-[15px] flex flex-col items-start">
           <span style={{ fontWeight: 500, marginBottom: "6px" }}>Student</span>
           <StudentSelect />
         </div>
-        <div className="device-checkout-box button">
-          <Button intent="primary" disabled={studentPicked === "-1"} onClick={handleCheckout}>
+        <div className="w-1/3 p-[15px] flex flex-col items-start button">
+          <Button variant="primary" disabled={studentPicked === "-1"} onClick={handleCheckout}>
             Check Out {capitalize(device.deviceType)}
           </Button>
         </div>

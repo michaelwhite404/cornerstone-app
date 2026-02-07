@@ -1,5 +1,5 @@
-import { Radio, RadioGroup } from "@blueprintjs/core";
 import React from "react";
+import { RadioGroup } from "../../../components/ui";
 import { DeviceModel } from "../../../types/models/deviceTypes";
 
 export default function CheckinForm({
@@ -11,24 +11,28 @@ export default function CheckinForm({
   radioValue?: string;
   onRadioChange?: (value: string) => void;
 }) {
-  const handleRadioChange = (e: React.FormEvent<HTMLInputElement>) =>
-    onRadioChange && onRadioChange(e.currentTarget.value);
+  const options = [
+    {
+      label: `${device?.lastUser!.fullName} has returned the ${device?.deviceType} in working condition`,
+      value: "passed",
+    },
+    {
+      label: `Check in ${device?.deviceType} and assign to ${device?.lastUser!.fullName}`,
+      value: "assign",
+    },
+    {
+      label: `There is an issue with the ${device?.deviceType}`,
+      value: "error",
+    },
+  ];
 
   return (
     <RadioGroup
-      className="device-checkin-radio-container"
-      selectedValue={radioValue}
-      onChange={handleRadioChange}
-    >
-      <Radio className="radio" name="checkin-device" value="passed">
-        {device?.lastUser!.fullName} has returned the {device?.deviceType} in working condition
-      </Radio>
-      <Radio className="radio" name="checkin-device" value="assign">
-        Check in {device?.deviceType} and assign to {device?.lastUser!.fullName}
-      </Radio>
-      <Radio className="radio" name="checkin-device" value="error">
-        There is an issue with the {device?.deviceType}
-      </Radio>
-    </RadioGroup>
+      className="mb-5"
+      name="checkin-device"
+      options={options}
+      value={radioValue}
+      onChange={(value) => onRadioChange && onRadioChange(value)}
+    />
   );
 }
