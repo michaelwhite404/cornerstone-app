@@ -6,7 +6,7 @@ export default function Slideover(props: SlideoverProps) {
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onOverlayClick}>
+      <Dialog as="div" className="relative z-[100]" onClose={onOverlayClick}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"

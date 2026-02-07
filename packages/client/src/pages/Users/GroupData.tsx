@@ -126,7 +126,7 @@ export default function GroupData() {
                 ))}
               </div>
             </div>
-            <div className="mt-3 sm:w-60 flex align-start justify-end">
+            <div className="mt-3 sm:w-60 flex items-start justify-end">
               <button
                 className="flex items-center rounded-md border border-gray-300 bg-white py-2 pl-3 pr-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                 onClick={() => setOpenEdit(true)}

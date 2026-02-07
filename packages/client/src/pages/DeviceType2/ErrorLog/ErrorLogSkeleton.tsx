@@ -26,11 +26,11 @@ const ErrorSkeletonRow = () => (
       </div>
       <div className="flex justify-between text-[#bcc0d6]">
         <div style={{ width: "100%" }}>
-          <div style={{ marginBottom: 5, display: "flex" }}>
+          <div className="flex items-center mb-1">
             <ExclamationIcon className="h-5 w-5 mr-2.5" />
             <Skeleton width="75px" />
           </div>
-          <div style={{ alignSelf: "center", display: "flex" }}>
+          <div className="flex items-center">
             <ChartBarIcon className="h-5 w-5 mr-2.5" />
             <Skeleton width="40%" />
           </div>

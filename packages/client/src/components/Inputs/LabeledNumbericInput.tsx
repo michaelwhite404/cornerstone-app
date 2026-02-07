@@ -37,7 +37,7 @@ export default function LabeledNumbericInput({
         {label}
         {required && <span style={{ marginLeft: 5, color: "red" }}>*</span>}
       </span>
-      <Input type="number" onChange={handleChange} {...props} />
+      <Input type="number" onChange={handleChange} fill {...props} />
     </Label>
   );
 }

@@ -11,7 +11,6 @@ import { APIError, APITextbooksResponse } from "../../../../types/apiResponses";
 import AddBooksTable from "../../AddBooksTable";
 import { TextbookContext } from "../../TextbooksTest";
 
-
 interface PreBook {
   passed: boolean;
   bookNumber: number;
@@ -94,7 +93,7 @@ export default function AddBookPanel({ textbook, books, closePanel }: AddBookPro
   };
 
   return (
-    <div className="flex flex-col max-h-full">
+    <div className="flex flex-col h-full">
       <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
         <div style={{ display: "flex", alignItems: "center" }}>
           <BackButton onClick={closePanel} />
@@ -121,7 +120,7 @@ export default function AddBookPanel({ textbook, books, closePanel }: AddBookPro
       </div>
 
       <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
-        <div className="flex justify-end gap-2 p-4">
+        <div className="flex justify-end gap-2">
           <Button text="Cancel" onClick={closePanel} />
           <Button
             text={`Add ${pluralize("Book", booksToAdd.length, true)}`}

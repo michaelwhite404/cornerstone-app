@@ -40,7 +40,7 @@ export default function CheckInPanel({ data, closePanel }: CheckInProps) {
       });
   };
   return (
-    <div className="flex flex-col max-h-full">
+    <div className="flex flex-col h-full">
       <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
         <div style={{ display: "flex", alignItems: "center" }}>
           <BackButton onClick={closePanel} />
@@ -59,7 +59,10 @@ export default function CheckInPanel({ data, closePanel }: CheckInProps) {
               <thead>
                 <tr>
                   {["", "Book Name", "#", "Student", "Quality"].map((h, i) => (
-                    <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0" key={"header" + i}>
+                    <th
+                      className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"
+                      key={"header" + i}
+                    >
                       {h}
                     </th>
                   ))}
@@ -80,7 +83,7 @@ export default function CheckInPanel({ data, closePanel }: CheckInProps) {
         </div>
       </div>
       <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
-        <div className="flex justify-end gap-2 p-4">
+        <div className="flex justify-end gap-2">
           <Button
             text="Check In"
             variant="primary"
@@ -116,10 +119,7 @@ function CheckinTableRow({
       <td>{textbook.bookNumber}</td>
       <td>{textbook.lastUser!.fullName}</td>
       <td>
-        <Select
-          value={value.quality}
-          onChange={(e) => updateBook(textbook._id, e.target.value)}
-        >
+        <Select value={value.quality} onChange={(e) => updateBook(textbook._id, e.target.value)}>
           {options.map((opt) => (
             <option key={opt.value} value={opt.value} disabled={opt.disabled}>
               {opt.label}

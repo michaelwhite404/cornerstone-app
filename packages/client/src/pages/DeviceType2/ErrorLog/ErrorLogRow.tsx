@@ -15,12 +15,12 @@ export default function ErrorLogRow({ error }: { error: ErrorLogModel }) {
         </div>
         <div className="flex justify-between text-[#bcc0d6]">
           <div>
-            <div style={{ marginBottom: 5 }}>
-              <ExclamationIcon className="h-5 w-5 mr-2.5" />
+            <div className="flex items-center mb-1">
+              <ExclamationIcon className="h-5 w-5 mr-2.5 inline" />
               {new Date(error.createdAt).toLocaleDateString()}
             </div>
-            <div style={{ alignSelf: "center" }}>
-              <ChartBarIcon className="h-5 w-5 mr-2.5" />
+            <div className="flex items-center">
+              <ChartBarIcon className="h-5 w-5 mr-2.5 inline" />
               {error.description}
             </div>
           </div>

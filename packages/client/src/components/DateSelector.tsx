@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
 import DatePicker from "sassy-datepicker";
 import LabeledInput from "./Inputs/LabeledInput";
+import LabeledInput2 from "./LabeledInput2";
 
 interface DateSelectorProps {
   onChange?: (date: Date) => void;
@@ -42,23 +43,6 @@ export default function DateSelector(props: DateSelectorProps) {
     props.onChange?.(date);
   };
 
-  const DateInput = forwardRef((props, ref) => {
-    return (
-      <LabeledInput
-        label={label || "Change Date"}
-        value={date.toLocaleDateString()}
-        onFocus={() => setOpen(true)}
-        readOnly
-        style={{
-          cursor: "pointer",
-          boxShadow: open ? "inset 0 0 0 2px #2196f3" : undefined,
-          padding: "20px 15px",
-          borderRadius: 8,
-        }}
-      />
-    );
-  });
-
   const a = align === "left" ? { left: 0 } : { right: 0 };
 
   return (
@@ -67,13 +51,22 @@ export default function DateSelector(props: DateSelectorProps) {
       style={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "flex-end",
         justifyContent: "flex-end",
         position: "relative",
         zIndex: 10,
       }}
     >
-      <DateInput ref={inputRef} />
+      <LabeledInput2
+        label={label || "Change Date"}
+        value={date.toLocaleDateString()}
+        onFocus={() => setOpen(true)}
+        readOnly
+        className="w-full"
+        style={{
+          cursor: "pointer",
+          boxShadow: open ? "inset 0 0 0 2px #2196f3" : "0px 0px 2px #aeaeae",
+        }}
+      />
       {open && (
         <DatePicker
           ref={pickerRef}

@@ -14,7 +14,7 @@ export default function LabeledInput({ label, required, ...props }: LabeledInput
         {label}
         {required && <span style={{ marginLeft: 5, color: "red" }}>*</span>}
       </span>
-      <Input {...props} />
+      <Input fill {...props} />
     </Label>
   );
 }

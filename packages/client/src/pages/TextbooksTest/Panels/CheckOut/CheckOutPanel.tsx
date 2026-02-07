@@ -10,7 +10,6 @@ import useTextbook from "../../../../hooks/useTextbook";
 import { APIError } from "../../../../types/apiResponses";
 import Class from "../../../../types/class";
 
-
 interface CheckOutProps {
   data: TextbookModel[];
   closePanel: () => void;
@@ -60,7 +59,7 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
   };
 
   return (
-    <div className="flex flex-col max-h-full">
+    <div className="flex flex-col h-full">
       <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
         <div style={{ display: "flex", alignItems: "center" }}>
           <BackButton onClick={closePanel} />
@@ -75,10 +74,7 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
               <GradeSelect />
             </span>
             <span className="flex" style={{ width: "25%", marginRight: "25px" }}>
-              <ProgressBar
-                value={checkoutsFinished / checkoutData.length}
-                intent="success"
-              />
+              <ProgressBar value={checkoutsFinished / checkoutData.length} intent="success" />
             </span>
           </div>
         </TableToolbox>
@@ -100,10 +96,16 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
               <thead>
                 <tr>
                   <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"></th>
-                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Book Name</th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                    Book Name
+                  </th>
                   <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">#</th>
-                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Grade</th>
-                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Student</th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                    Grade
+                  </th>
+                  <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                    Student
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -125,7 +127,7 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
         </div>
       </div>
       <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
-        <div className="flex justify-end gap-2 p-4">
+        <div className="flex justify-end gap-2">
           <Button
             text="Check Out"
             variant="primary"

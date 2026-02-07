@@ -14,7 +14,7 @@ export default function LabeledSelect({ label, required, ...props }: LabeledSele
         {label}
         {required && <span style={{ marginLeft: 5, color: "red" }}>*</span>}
       </span>
-      <Select {...props} />
+      <Select fill {...props} />
     </Label>
   );
 }

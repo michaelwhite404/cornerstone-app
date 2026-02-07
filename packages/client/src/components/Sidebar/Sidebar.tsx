@@ -30,10 +30,10 @@ export default function Sidebar(props: SidebarProps) {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex no-underline w-auto py-2 px-2.5 rounded-lg mt-1 text-sm font-medium text-gray-500 ${
+                    className={`flex no-underline w-auto py-2 px-2.5 rounded-lg mt-1 text-sm font-medium ${
                       matchesURL(item.href)
-                        ? "bg-blue-50 text-[#4d8ac3]"
-                        : "hover:bg-white"
+                        ? "bg-blue-50 !text-blue-500"
+                        : "!text-gray-500 hover:bg-white"
                     }`}
                     aria-current={matchesURL(item.href)}
                     onClick={props.closeMenu}

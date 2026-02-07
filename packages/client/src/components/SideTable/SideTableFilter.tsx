@@ -19,11 +19,12 @@ export default function SideTableFilter({ value, onChange }: FilterProps) {
 
   return (
     <Input
-      className="flex-grow [&_input]:rounded-lg [&_input]:shadow-[0px_0px_2px_1px_#c6c6c6] [&_input:focus]:shadow-[0_0_0px_2px_#3b82f6]"
+      className="rounded-lg shadow-[0px_0px_2px_1px_#d4d4d4] focus:shadow-[0_0_0px_2px_#3b82f6]"
       leftIcon={<SearchIcon className="h-5 w-5" />}
       placeholder="Search"
       value={value}
       onChange={handleChange}
+      fill
     />
   );
 }

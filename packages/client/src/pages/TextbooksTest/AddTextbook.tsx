@@ -178,7 +178,7 @@ export default function AddTextbook(props: AddTextbookProps) {
       .catch((err) => showToaster((err as AxiosError<APIError>).response!.data.message, "danger"));
   };
   return (
-    <div className="flex flex-col max-h-full">
+    <div className="flex flex-col h-full">
       <FadeIn>
         <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -190,7 +190,7 @@ export default function AddTextbook(props: AddTextbookProps) {
           <div className="p-5 border-b border-gray-200 max-[992px]:py-2.5 max-[992px]:px-1">
             <div className="flex flex-wrap">
               {inputs.map(({ label, Component, width, props }) => (
-                <div style={{ width: `${width}%`, padding: "0 15px" }} key={label}>
+                <div style={{ width: `${width}%` }} className="px-4 py-2" key={label}>
                   {/**@ts-ignore */}
                   <Component label={label} {...props} />
                 </div>
@@ -224,7 +224,7 @@ export default function AddTextbook(props: AddTextbookProps) {
           </div>
         </div>
         <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
-          <div className="flex justify-end gap-2 p-4">
+          <div className="flex justify-end gap-2">
             <Button text="Cancel" onClick={handleBack} />
             <Button
               text="Create Textbook"

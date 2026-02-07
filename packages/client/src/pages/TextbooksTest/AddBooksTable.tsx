@@ -66,19 +66,19 @@ function TableRow({
 
   return (
     <tr key={`book-index-${index}`}>
-      <td style={{ textAlign: "center" }} className="py-0.5">
+      <td style={{ textAlign: "center" }} className="py-2">
         {!book.passed && <XCircleIcon color="#c50f0f" width={25} />}
       </td>
-      <td className="py-0.5">
+      <td className="py-2">
         <Input
           value={`${book.bookNumber}`}
           style={{ width: 50 }}
           onChange={(e) => changeBook(index, "bookNumber", e.target.value)}
-          className="py-0.5"
+          className="py-2"
           disabled={!dataLocked}
         />
       </td>
-      <td className="py-0.5">
+      <td className="py-2">
         <Select
           options={["Excellent", "Good", "Acceptable", "Poor", "Lost"].map((q) => ({
             label: q,
@@ -86,11 +86,11 @@ function TableRow({
           }))}
           value={book.quality}
           onChange={(e) => changeBook(index, "quality", e.target.value)}
-          className="py-0.5"
+          className="py-2"
           disabled={!dataLocked}
         />
       </td>
-      <td className="py-0.5">
+      <td className="py-2">
         <Select
           options={["Available", "Replaced", "Not Available"].map((s) => ({
             label: s,
@@ -98,11 +98,11 @@ function TableRow({
           }))}
           value={book.status}
           onChange={(e) => changeBook(index, "status", e.target.value)}
-          className="py-0.5"
+          className="py-2"
           disabled={!dataLocked}
         />
       </td>
-      <td className="py-0.5">
+      <td className="py-2">
         {index > 0 && (
           <Button
             icon={<TrashIcon className="h-5 w-5" />}

@@ -78,14 +78,11 @@ export default function TextbooksTestContent({
   );
   const data = useMemo(() => books, [books]);
 
-  const addBookPanel = () =>
-    openPanel({ type: "addBook", textbook, books });
+  const addBookPanel = () => openPanel({ type: "addBook", textbook, books });
 
-  const checkOutBooksPanel = () =>
-    openPanel({ type: "checkOut", data: canCheckOut });
+  const checkOutBooksPanel = () => openPanel({ type: "checkOut", data: canCheckOut });
 
-  const checkInBooksPanel = () =>
-    openPanel({ type: "checkIn", data: canCheckIn });
+  const checkInBooksPanel = () => openPanel({ type: "checkIn", data: canCheckIn });
 
   const showFooter = canCheckOut.length > 0 || canCheckIn.length > 0;
   const handleBack = () => {
@@ -94,7 +91,7 @@ export default function TextbooksTestContent({
   };
 
   return (
-    <div className="flex flex-col max-h-full">
+    <div className="flex flex-col h-full">
       <div className="py-3 px-6 items-center flex justify-between bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="flex items-center w-[68%] max-[379px]:w-full">
           <BackButton onClick={handleBack} />
@@ -111,7 +108,9 @@ export default function TextbooksTestContent({
           </span>
         </div>
         <div className="max-[379px]:mt-2.5">
-          <PrimaryButton onClick={addBookPanel}>+ Add Book</PrimaryButton>
+          <PrimaryButton onClick={addBookPanel} className="leading-4">
+            + Add Book
+          </PrimaryButton>
         </div>
       </div>
       <div style={{ overflowY: "scroll" }}>
@@ -121,7 +120,7 @@ export default function TextbooksTestContent({
       </div>
       {showFooter && (
         <div className="mt-auto py-3 px-6 items-center flex justify-end bg-white border-t border-[#e5e7eb]">
-          <div className="flex justify-end gap-2 p-4">
+          <div className="flex justify-end gap-2">
             {canCheckIn.length > 0 && (
               <Button onClick={checkInBooksPanel}>
                 Check In {pluralize("Book", canCheckIn.length, true)}

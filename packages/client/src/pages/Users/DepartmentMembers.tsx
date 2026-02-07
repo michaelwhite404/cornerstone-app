@@ -100,7 +100,7 @@ export default function DepartmentMembers(props: Props) {
         </div>
       </div>
       <TableWrapper overflow>
-        <table className="table-auto rounded">
+        <table className="table-auto rounded [&_td]:p-0 [&_th]:px-0">
           <thead>
             <tr>
               <th scope="col" className="relative w-12 px-6 sm:w-16 sm:px-8 border-b">

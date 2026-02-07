@@ -19,7 +19,7 @@ const status = {
   },
   Pending: {
     Component: ExclamationCircleIcon,
-    color: "amber",
+    color: "gray",
   },
 };
 
@@ -37,7 +37,7 @@ export default function EntriesTable(props: Props) {
 
   return (
     <TableWrapper>
-      <table>
+      <table className="[&_td]:p-0 [&_tbody_tr:hover]:!bg-transparent">
         <thead>
           <tr>
             <th scope="col" className="relative w-12 px-6 sm:w-16 sm:px-8">
@@ -50,7 +50,9 @@ export default function EntriesTable(props: Props) {
               />
             </th>
             {headers.map((header) => (
-              <th key={header}>{header}</th>
+              <th className="px-0" key={header}>
+                {header}
+              </th>
             ))}
           </tr>
         </thead>
@@ -83,26 +85,26 @@ export default function EntriesTable(props: Props) {
                   <td rowSpan={2} className="font-medium">
                     {new Date(entry.timeStart).getDate()}
                   </td>
-                  <td className="text-[16px] font-medium text-indigo-600 pb-0.5 pt-2">
+                  <td className="text-[16px] font-medium text-indigo-600 !border-b-0 !pt-2">
                     <span className="cursor-pointer" onClick={() => showTimesheetEntry(entry._id)}>
                       {entry.description}
                     </span>
                   </td>
                   <td rowSpan={2}>
-                    <div className="flex">
+                    <div className="flex text-gray-400">
                       {format(new Date(entry.timeStart), "p")}
                       <ArrowNarrowRightIcon className="mx-2 w-4" />
                       {format(new Date(entry.timeEnd), "p")}
                     </div>
                   </td>
-                  <td rowSpan={2} className="w-5 pr-4">
+                  <td rowSpan={2} className="w-5 !pr-4">
                     <div className=" flex items-center justify-center w-5 h-5">
                       <info.Component className={`text-${info.color}-500`} />
                     </div>
                   </td>
                 </tr>
                 <tr>
-                  <td colSpan={4} className="flex text-[11.5px]">
+                  <td colSpan={4} className="flex text-[11.5px] !border-b-0 !pt-0 text-gray-400">
                     <span className="mt-0.5 mb-2">{approvalText}</span>
                   </td>
                 </tr>

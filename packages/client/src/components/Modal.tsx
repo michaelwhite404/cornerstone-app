@@ -15,7 +15,7 @@ export default function Modal(props: ModalProps) {
     <Transition.Root show={props.open} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-[100]"
         onClose={props.disableOverlayClick ? () => {} : props.onClose || (() => {})}
       >
         <Transition.Child
@@ -27,10 +27,10 @@ export default function Modal(props: ModalProps) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-[100]" />
         </Transition.Child>
 
-        <div className="fixed z-10 inset-0 overflow-y-auto">
+        <div className="fixed z-[100] inset-0 overflow-y-auto">
           <div className="flex items-center sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
             <Transition.Child
               as={Fragment}

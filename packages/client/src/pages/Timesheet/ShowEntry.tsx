@@ -10,7 +10,7 @@ import ApprovalBadge from "../../components/Badges/ApprovalBadge";
 
 export default function ShowEntry(props: ShowEntryProps) {
   return (
-    <div className="px-7 pb-7 h-full overflow-scroll">
+    <div className="px-7 pb-7 h-full overflow-scroll bg-white">
       <div className="block sm:flex justify-between align-center sticky top-0 bg-white pt-7 pb-2">
         <div className="mb-4 sm:mb-0 flex align-center">
           <span

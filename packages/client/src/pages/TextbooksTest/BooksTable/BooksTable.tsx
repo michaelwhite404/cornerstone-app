@@ -8,7 +8,6 @@ import { TextbookModel } from "../../../types/models/textbookTypes";
 import FadeIn from "../../../components/FadeIn";
 import { useWindowSize } from "../../../hooks";
 
-
 export default function BooksTable({
   columns,
   data,
@@ -42,14 +41,14 @@ export default function BooksTable({
           // The header can use the table's getToggleAllRowsSelectedProps method
           // to render a checkbox
           Header: ({ getToggleAllRowsSelectedProps }) => (
-            <div className="flex">
+            <div className="flex pl-2">
               <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
             </div>
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           Cell: ({ row }) => (
-            <div className="flex" style={{ alignSelf: "center" }}>
+            <div className="flex pl-2" style={{ alignSelf: "center" }}>
               <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
             </div>
           ),
@@ -103,7 +102,10 @@ export default function BooksTable({
                   // Loop over the headers in each row
                   headerGroup.headers.map((column) => (
                     // Apply the header cell props
-                    <th {...column.getHeaderProps()} className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                    <th
+                      {...column.getHeaderProps()}
+                      className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0 bg-[#f9f9fb]"
+                    >
                       {
                         // Render the header
                         column.render("Header")
@@ -157,7 +159,7 @@ export default function BooksTable({
 }
 
 const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) => {
-  return <Checkbox ref={ref} indeterminate={indeterminate} size="sm" {...rest} />;
+  return <Checkbox ref={ref} indeterminate={indeterminate} size="md" {...rest} />;
 });
 
 const MobileHeader = ([checkbox]: ReactNode[]) => {

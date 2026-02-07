@@ -11,7 +11,10 @@ interface Props {
 export default function CreateTextbookButton({ onClick, disabled, fill }: Props) {
   return (
     <button
-      className={classnames("border-none bg-white py-2.5 px-5 shadow-[0px_0px_2.5px_0px_#999999] rounded-[9px] cursor-pointer mt-2.5 text-[#797979] hover:bg-[#f2faff] active:bg-[#d8eefc] active:shadow-[0px_0px_4px_0px_#999999] disabled:bg-gray-200 disabled:shadow-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center", { "w-full": fill })}
+      className={classnames(
+        "border-none bg-white py-2.5 px-5 justify-center shadow-[0px_0px_2.5px_0px_#999999] rounded-[9px] cursor-pointer mt-2.5 text-[#797979] hover:bg-[#f2faff] active:bg-[#d8eefc] active:shadow-[0px_0px_4px_0px_#999999] disabled:bg-gray-200 disabled:shadow-none disabled:cursor-not-allowed disabled:opacity-50 flex items-center",
+        { "w-full": fill }
+      )}
       onClick={onClick}
       disabled={disabled}
     >

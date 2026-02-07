@@ -12,7 +12,7 @@ export default function PrimaryButton({ children, text, fill, ...props }: Primar
   return (
     <button
       className={classNames(
-        "bg-[#2972e7] text-white border-none py-2.5 px-4 cursor-pointer rounded hover:bg-[#1a64db] focus:outline-none focus:ring-2 focus:ring-[#1a64db] focus:ring-offset-2 active:bg-[#1253bb] disabled:bg-[#c4c4c4]",
+        "bg-[#2972e7] text-white text-sm font-medium border-none py-2.5 px-4 cursor-pointer rounded hover:bg-[#1a64db] focus:outline-none focus:ring-2 focus:ring-[#1a64db] focus:ring-offset-2 active:bg-[#1253bb] disabled:bg-[#c4c4c4]",
         { "w-full": fill },
         className
       )}
