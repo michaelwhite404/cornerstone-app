@@ -2,7 +2,8 @@ import axios, { AxiosError } from "axios";
 import { Divider, Switch } from "../../components/ui";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { DepartmentModel, EmployeeModel, UserGroup } from "../../types/models";
+import { EmployeeModel, UserGroup } from "../../types/models";
+import { useUser, useDepartments, useGroups } from "../../api";
 import BackButton from "../../components/BackButton";
 import LabeledInput2 from "../../components/LabeledInput2";
 import { AddOnInput } from "../../components/Inputs";
@@ -15,37 +16,29 @@ import { APIError, APIUserResponse } from "../../types/apiResponses";
 import { useToasterContext } from "../../hooks";
 
 export default function UserData() {
-  const [user, setUser] = useState<EmployeeModel>();
-  const [userEdit, setUserEdit] = useState<EmployeeModel>();
-  const [departments, setDepartments] = useState<DepartmentModel[]>([]);
-  const [groups, setGroups] = useState<admin_directory_v1.Schema$Group[]>([]);
-  // const [pageState, setPageState] = useState<"loading" | "display" | "edit">("display");
   const { slug } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const { showToaster } = useToasterContext();
 
+  // Fetch data with TanStack Query
+  const { data: fetchedUser } = useUser(slug || "", { projection: "FULL" });
+  const { data: departments = [] } = useDepartments();
+  const { data: groups = [] } = useGroups();
+
+  // Local state for editing
+  const [user, setUser] = useState<EmployeeModel>();
+  const [userEdit, setUserEdit] = useState<EmployeeModel>();
+
   const locationState = location.state as any;
 
+  // Sync fetched user to local state when it changes
   useEffect(() => {
-    const getUser = async () => {
-      const res = await axios.get(`/api/v2/users/${slug}`, { params: { projection: "FULL" } });
-      setUser(res.data.data.user);
-      setUserEdit(res.data.data.user);
-    };
-
-    const getDepartments = async () => {
-      const res = await axios.get("/api/v2/departments");
-      setDepartments(res.data.data.departments);
-    };
-    const getGroups = async () => {
-      const res = await axios.get("/api/v2/groups");
-      setGroups(res.data.data.groups);
-    };
-    getUser();
-    getDepartments();
-    getGroups();
-  }, [slug]);
+    if (fetchedUser) {
+      setUser(fetchedUser);
+      setUserEdit(fetchedUser);
+    }
+  }, [fetchedUser]);
 
   const goToUsersPage = () => (locationState.fromUsersPage ? navigate(-1) : navigate("/users"));
 

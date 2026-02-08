@@ -1,16 +1,18 @@
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import axios from "axios";
+import { AxiosError } from "axios";
 import { useState } from "react";
+import { useUpdatePassword } from "../../api";
 import LabeledInput2 from "../../components/LabeledInput2";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useToasterContext } from "../../hooks";
+import { APIError } from "../../types/apiResponses";
 
 const initialData = { password: "", passwordConfirm: "" };
 
 export default function Password() {
   const [data, setData] = useState(initialData);
-  const [submitting, setSubmitting] = useState(false);
   const { showToaster, showError } = useToasterContext();
+  const updatePasswordMutation = useUpdatePassword();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setData({ ...data, [e.target.name]: e.target.value });
@@ -20,20 +22,14 @@ export default function Password() {
 
   const submittable = validPassword && confirmedPassword;
 
-  const updatePassword = async () => {
-    const res = await axios.patch("/api/v2/users/update-password", data);
-    return res.data.data;
-  };
-
   const submitPasswordChange = async () => {
-    setSubmitting(true);
-    await updatePassword()
-      .then(() => {
-        showToaster("Password changed", "success");
-        setData(initialData);
-      })
-      .catch(showError);
-    setSubmitting(false);
+    try {
+      await updatePasswordMutation.mutateAsync(data);
+      showToaster("Password changed", "success");
+      setData(initialData);
+    } catch (err) {
+      showError(err as AxiosError<APIError>);
+    }
   };
   return (
     <div className="mt-10 divide-y divide-gray-200">
@@ -78,7 +74,7 @@ export default function Password() {
           <div className="py-4 flex justify-end">
             <PrimaryButton
               text="Save Password"
-              disabled={submitting || !submittable}
+              disabled={updatePasswordMutation.isPending || !submittable}
               onClick={submitPasswordChange}
             />
           </div>

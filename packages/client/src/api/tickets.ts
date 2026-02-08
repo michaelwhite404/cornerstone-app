@@ -59,3 +59,52 @@ export const useCreateTicket = () => {
     },
   });
 };
+
+// Update ticket (comment or assign)
+interface UpdateTicketData {
+  ticketId: string;
+  type: "COMMENT" | "ASSIGN";
+  comment?: string;
+  assign?: string;
+  op?: "ADD" | "REMOVE";
+}
+
+const updateTicket = async ({ ticketId, ...data }: UpdateTicketData) => {
+  const response = await apiClient.post<{ data: { ticket: TicketModel } }>(
+    `/tickets/${ticketId}/update`,
+    data
+  );
+  return extractData(response).ticket;
+};
+
+export const useUpdateTicket = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateTicket,
+    onSuccess: (ticket, variables) => {
+      queryClient.setQueryData(ticketKeys.detail(variables.ticketId), ticket);
+      queryClient.invalidateQueries({ queryKey: ticketKeys.lists() });
+    },
+  });
+};
+
+// Close ticket
+const closeTicket = async (ticketId: number) => {
+  const response = await apiClient.post<{ data: { ticket: TicketModel } }>(
+    `/tickets/${ticketId}/close`
+  );
+  return extractData(response).ticket;
+};
+
+export const useCloseTicket = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: closeTicket,
+    onSuccess: (ticket, ticketId) => {
+      queryClient.setQueryData(ticketKeys.detail(String(ticketId)), ticket);
+      queryClient.invalidateQueries({ queryKey: ticketKeys.lists() });
+    },
+  });
+};

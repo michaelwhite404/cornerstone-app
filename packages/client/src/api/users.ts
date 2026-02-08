@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { admin_directory_v1 } from "googleapis";
 import { apiClient, extractData } from "./client";
 import { EmployeeModel, UserGroup } from "../types/models";
 
@@ -16,8 +17,10 @@ export const userKeys = {
 // Types
 interface FetchUsersParams {
   status?: string;
+  active?: boolean;
   sort?: string;
   limit?: number;
+  timesheetEnabled?: boolean;
 }
 
 interface UserWithGroups extends EmployeeModel {
@@ -36,8 +39,14 @@ const fetchUsers = async (params: FetchUsersParams = {}) => {
   return extractData(response).users;
 };
 
-const fetchUser = async (id: string) => {
-  const response = await apiClient.get<{ data: { user: EmployeeModel } }>(`/users/${id}`);
+interface FetchUserOptions {
+  projection?: "FULL";
+}
+
+const fetchUser = async (id: string, options: FetchUserOptions = {}) => {
+  const response = await apiClient.get<{ data: { user: EmployeeModel } }>(`/users/${id}`, {
+    params: options.projection ? { projection: options.projection } : undefined,
+  });
   return extractData(response).user;
 };
 
@@ -82,10 +91,10 @@ export const useUsers = (params: FetchUsersParams = {}) => {
   });
 };
 
-export const useUser = (id: string) => {
+export const useUser = (id: string, options: FetchUserOptions = {}) => {
   return useQuery({
-    queryKey: userKeys.detail(id),
-    queryFn: () => fetchUser(id),
+    queryKey: [...userKeys.detail(id), options],
+    queryFn: () => fetchUser(id, options),
     enabled: !!id,
   });
 };
@@ -114,5 +123,55 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
+  });
+};
+
+// Update password
+interface UpdatePasswordData {
+  password: string;
+  passwordConfirm: string;
+}
+
+const updatePassword = async (data: UpdatePasswordData) => {
+  const response = await apiClient.patch("/users/update-password", data);
+  return response.data;
+};
+
+export const useUpdatePassword = () => {
+  return useMutation({
+    mutationFn: updatePassword,
+  });
+};
+
+// Fetch Google Directory users
+const fetchGoogleUsers = async (active?: boolean) => {
+  const response = await apiClient.get<{ data: { users: admin_directory_v1.Schema$User[] } }>(
+    "/users/from-google",
+    { params: active !== undefined ? { active } : undefined }
+  );
+  return extractData(response).users;
+};
+
+export const useGoogleUsers = (active?: boolean) => {
+  return useQuery({
+    queryKey: [...userKeys.all, "google", { active }] as const,
+    queryFn: () => fetchGoogleUsers(active),
+  });
+};
+
+// Update user settings
+interface UpdateSettingData {
+  settingName: string;
+  value: boolean;
+}
+
+const updateUserSetting = async (data: UpdateSettingData) => {
+  const response = await apiClient.patch("/users/me/settings", data);
+  return response.data;
+};
+
+export const useUpdateUserSetting = () => {
+  return useMutation({
+    mutationFn: updateUserSetting,
   });
 };

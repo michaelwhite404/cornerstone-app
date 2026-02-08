@@ -1,12 +1,40 @@
 // API Client
 export { apiClient, extractData } from "./client";
 
+// Aftercare
+export {
+  aftercareKeys,
+  useAftercareSession,
+  useAftercareStats,
+  useStudentAftercareEntries,
+  useUpdateStudentAftercare,
+} from "./aftercare";
+
+// Departments
+export {
+  departmentKeys,
+  useDepartments,
+  useDepartment,
+  useDepartmentsAllowingTickets,
+  useCreateDepartment,
+  useAddDepartmentMembers,
+} from "./departments";
+
+// Short URLs
+export {
+  shortUrlKeys,
+  useShortUrls,
+  useCreateShortUrl,
+} from "./shortUrls";
+
 // Devices
 export {
   deviceKeys,
   useDevices,
   useDevice,
   useCreateDeviceError,
+  useDeviceLogs,
+  useDeviceStats,
 } from "./devices";
 
 // Groups (Google Directory)
@@ -32,6 +60,7 @@ export {
   useStudents,
   useStudent,
   useCreateStudent,
+  useUpdateStudentPasswords,
 } from "./students";
 
 // Textbooks
@@ -48,7 +77,17 @@ export {
   useTickets,
   useTicket,
   useCreateTicket,
+  useUpdateTicket,
+  useCloseTicket,
 } from "./tickets";
+
+// Timesheets
+export {
+  timesheetKeys,
+  useTimesheet,
+  useCreateTimesheet,
+  useUpdateTimesheet,
+} from "./timesheets";
 
 // Users
 export {
@@ -58,4 +97,7 @@ export {
   useCurrentUser,
   useCurrentUserWithGroups,
   useUpdateUser,
+  useUpdatePassword,
+  useGoogleUsers,
+  useUpdateUserSetting,
 } from "./users";

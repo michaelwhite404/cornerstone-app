@@ -1,31 +1,21 @@
 import axios from "axios";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { EmployeeModel } from "../../../types/models";
+import { useUsers } from "../../../api";
 import MainContent from "../../../components/MainContent";
 import PageHeader from "../../../components/PageHeader";
 import SideTable from "../../../components/SideTable/SideTable";
 import SideTableFilter from "../../../components/SideTable/SideTableFilter";
 import { useWindowSize } from "../../../hooks";
-import { APIUsersResponse } from "../../../types/apiResponses";
 import PendingPage from "./PendingPage";
 import UserPage from "./UserPage";
 
 export default function Admin(props: Props) {
   const [viewState, setViewState] = useState("pending");
-  const [users, setUsers] = useState<EmployeeModel[]>([]);
+  const { data: users = [] } = useUsers({ timesheetEnabled: true });
   const [selected, setSelected] = useState<EmployeeModel>();
   const width = useWindowSize()[0];
   const [filter, setFilter] = useState("");
-
-  useEffect(() => {
-    const getTimesheetUsers = async () => {
-      const res = await axios.get<APIUsersResponse>("/api/v2/users", {
-        params: { timesheetEnabled: true },
-      });
-      setUsers(res.data.data.users);
-    };
-    getTimesheetUsers();
-  }, []);
 
   const data = useMemo(() => users, [users]);
   const columns = useMemo(

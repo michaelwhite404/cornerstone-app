@@ -1,39 +1,21 @@
-import axios, { AxiosError } from "axios";
 import capitalize from "capitalize";
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { CheckoutLogModel } from "../../../types/models/checkoutLogTypes";
+import { useDeviceLogs } from "../../../api";
 import DeviceCheckoutStatusBadge, {
   CheckOutStatus,
 } from "../../../components/Badges/DeviceCheckoutStatusBadge";
 import PageHeader from "../../../components/PageHeader";
 import TablePaginate from "../../../components/TablePaginate/TablePaginate";
 import { useDocTitle, useWindowSize } from "../../../hooks";
-import { APICheckoutLogResponse, APIError } from "../../../types/apiResponses";
 
 
 export default function DeviceLogs() {
   const { deviceType } = useParams<{ deviceType: string }>();
   useDocTitle(`${capitalize(deviceType!)} Logs | Cornerstone App`);
   const windowHeight = useWindowSize()[1];
-  const [deviceLogs, setDeviceLogs] = useState<CheckoutLogModel[]>([]);
-  useEffect(() => {
-    getDeviceLogs();
-  }, []);
-
-  async function getDeviceLogs() {
-    try {
-      const res = await axios.get<APICheckoutLogResponse>("/api/v2/devices/logs", {
-        params: {
-          sort: "-checkOutDate -checkInDate",
-          limit: 10000,
-        },
-      });
-      setDeviceLogs(res.data.data.deviceLogs);
-    } catch (err) {
-      console.log((err as AxiosError<APIError>).response!.data);
-    }
-  }
+  const { data: deviceLogs = [] } = useDeviceLogs();
 
   const columns = useMemo(
     () => [
@@ -84,8 +66,6 @@ export default function DeviceLogs() {
     []
   );
 
-  const data = useMemo(() => deviceLogs, [deviceLogs]);
-
   // const getCsv = async () => {
   //   await axios.get("http://localhost:8080/csv/device-logs");
   // };
@@ -104,7 +84,7 @@ export default function DeviceLogs() {
         </Popover2> */}
       </PageHeader>
       <TablePaginate
-        data={data}
+        data={deviceLogs}
         columns={columns}
         pageSize={25}
         pageSizeOptions={[25, 50, 100]}

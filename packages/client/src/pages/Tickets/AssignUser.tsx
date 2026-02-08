@@ -1,34 +1,24 @@
 import { Popover, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import classNames from "classnames";
-import React, { Fragment, useEffect, useState } from "react";
-import { EmployeeModel, TicketModel } from "../../types/models";
+import { Fragment, useState } from "react";
+import { EmployeeModel } from "../../types/models";
+import { useUsers } from "../../api";
 import Combobox from "../../components/Combobox";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useToasterContext } from "../../hooks";
-import { APIUsersResponse } from "../../types/apiResponses";
 
 export default function AssignUser(props: AssignUserProps) {
-  const [users, setUsers] = useState<EmployeeModel[]>([]);
+  const { data: users = [] } = useUsers({ active: true });
   const [selectedPerson, setSelectedPerson] = useState<EmployeeModel>();
   const { showError } = useToasterContext();
   const [disableButton, setDisableButton] = useState(false);
-
-  useEffect(() => {
-    const getUsers = async () => {
-      const res = await axios.get<APIUsersResponse>("/api/v2/users?active=true");
-      setUsers(res.data.data.users);
-    };
-    getUsers();
-  }, []);
 
   const handleAddAssignee = async () => {
     if (!selectedPerson) return;
     setDisableButton(true);
     try {
-      const ticket = await props.assignUser(selectedPerson._id, "ADD");
-      props.setTicket(ticket);
+      await props.onAssign(selectedPerson._id, "ADD");
       setSelectedPerson(undefined);
     } catch (err) {
       //@ts-ignore
@@ -116,6 +106,5 @@ export default function AssignUser(props: AssignUserProps) {
 }
 
 interface AssignUserProps {
-  assignUser: (assign: string, op: "ADD" | "REMOVE") => Promise<TicketModel>;
-  setTicket: React.Dispatch<React.SetStateAction<TicketModel | undefined>>;
+  onAssign: (assign: string, op: "ADD" | "REMOVE") => Promise<void>;
 }

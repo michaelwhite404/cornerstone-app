@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useOutletContext, useParams } from "react-router-dom";
 import { StudentModel } from "../../types/models";
+import { useUpdateStudentPasswords } from "../../api";
 import BackButton from "../../components/BackButton";
 import FadeIn from "../../components/FadeIn";
 import LabeledInput2 from "../../components/LabeledInput2";
@@ -25,14 +26,10 @@ export default function StudentDetails() {
   const location = useLocation();
   const { user } = useAuth();
   const [passwordReset, setPasswordReset] = useState("");
-  // const [student, setStudent] = useState<StudentModel | undefined>(() =>
-  //   (location.state as any)?.newStudent
-  //     ? (location.state as { newStudent: true; student: StudentModel }).student
-  //     : undefined
-  // );
   const { slug } = useParams<{ slug: string }>();
   const { showToaster } = useToasterContext();
   const { student, setSelectedStudent, onBack } = useOutletContext<StudentDetailProps>();
+  const updatePasswordMutation = useUpdateStudentPasswords();
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -63,9 +60,9 @@ export default function StudentDetails() {
       user?.homeroomGrade === student?.grade) &&
     student?.status === "Active";
 
-  const resetPassword = () => {
+  const resetPassword = async () => {
     try {
-      axios.patch("/api/v2/students/update-password", {
+      await updatePasswordMutation.mutateAsync({
         students: [
           {
             email: student!.schoolEmail,

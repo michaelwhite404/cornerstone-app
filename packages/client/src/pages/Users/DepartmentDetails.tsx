@@ -1,8 +1,8 @@
-import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 import pluralize from "pluralize";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { DepartmentModel } from "../../types/models";
+import { departmentKeys, useDepartment, useAddDepartmentMembers } from "../../api";
 import BackButton from "../../components/BackButton";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import Tabs2 from "../../components/Tabs2";
@@ -17,41 +17,30 @@ const tabs = [
 ];
 
 export default function DepartmentDetails() {
-  const [department, setDepartment] = useState<DepartmentModel>();
   const [open, setOpen] = useState(false);
   const [pageState, setPageState] = useState("MEMBERS");
   const { id } = useParams<"id">();
   const { showToaster } = useToasterContext();
-  const fetchDepartment = useCallback(async () => {
-    const res = await axios.get(`/api/v2/departments/${id}`);
-    setDepartment(res.data.data.department);
-  }, [id]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchDepartment();
-  }, [fetchDepartment]);
+  const { data: department } = useDepartment(id || "");
+  const addMembersMutation = useAddDepartmentMembers();
+
+  const fetchDepartment = async () => {
+    await queryClient.invalidateQueries({ queryKey: departmentKeys.detail(id || "") });
+  };
 
   const addMembersToGroup = async (users: { id: string; role: string }[]) => {
     if (department) {
-      axios
-        .post(`/api/v2/departments/${department._id}/members`, { users })
-        .then((res) => {
-          const returnedMembers = res.data.data.members as NonNullable<DepartmentModel["members"]>;
-
-          const oldMembers = department.members ? [...department.members] : [];
-          const newMembersList = [...oldMembers, ...returnedMembers].sort((a, b) =>
-            a.fullName!.localeCompare(b.fullName!)
-          );
-          setDepartment({
-            ...department,
-            membersCount: newMembersList.length,
-            members: newMembersList,
-          });
-          showToaster(pluralize("members", returnedMembers.length, true) + " added!", "success");
-        })
-        .catch(() =>
-          showToaster("There was a problem with the request. Please try again", "danger")
-        );
+      try {
+        const returnedMembers = await addMembersMutation.mutateAsync({
+          departmentId: department._id,
+          users,
+        });
+        showToaster(pluralize("members", returnedMembers.length, true) + " added!", "success");
+      } catch {
+        showToaster("There was a problem with the request. Please try again", "danger");
+      }
     }
   };
 

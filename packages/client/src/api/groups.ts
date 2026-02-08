@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { admin_directory_v1 } from "googleapis";
 import { apiClient, extractData } from "./client";
+import { GroupModel } from "../types/models";
 
 type GoogleGroup = admin_directory_v1.Schema$Group;
 
@@ -26,7 +27,7 @@ const fetchGroups = async () => {
 };
 
 const fetchGroup = async (email: string) => {
-  const response = await apiClient.get<{ data: { group: GoogleGroup } }>(`/groups/${email}`);
+  const response = await apiClient.get<{ data: { group: GroupModel } }>(`/groups/${email}`);
   return extractData(response).group;
 };
 

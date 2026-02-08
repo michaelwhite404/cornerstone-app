@@ -32,8 +32,14 @@ const fetchStudents = async (params: FetchStudentsParams = {}) => {
   return extractData(response).students;
 };
 
-const fetchStudent = async (id: string) => {
-  const response = await apiClient.get<{ data: { student: StudentModel } }>(`/students/${id}`);
+interface FetchStudentOptions {
+  projection?: "FULL";
+}
+
+const fetchStudent = async (id: string, options: FetchStudentOptions = {}) => {
+  const response = await apiClient.get<{ data: { student: StudentModel } }>(`/students/${id}`, {
+    params: options.projection ? { projection: options.projection } : undefined,
+  });
   return extractData(response).student;
 };
 
@@ -59,10 +65,10 @@ export const useStudents = (params: FetchStudentsParams = {}) => {
   });
 };
 
-export const useStudent = (id: string) => {
+export const useStudent = (id: string, options: FetchStudentOptions = {}) => {
   return useQuery({
-    queryKey: studentKeys.detail(id),
-    queryFn: () => fetchStudent(id),
+    queryKey: [...studentKeys.detail(id), options],
+    queryFn: () => fetchStudent(id, options),
     enabled: !!id,
   });
 };
@@ -75,5 +81,21 @@ export const useCreateStudent = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentKeys.lists() });
     },
+  });
+};
+
+// Update student passwords
+interface UpdateStudentPasswordData {
+  students: { email: string; password: string }[];
+}
+
+const updateStudentPasswords = async (data: UpdateStudentPasswordData) => {
+  const response = await apiClient.patch("/students/update-password", data);
+  return response.data;
+};
+
+export const useUpdateStudentPasswords = () => {
+  return useMutation({
+    mutationFn: updateStudentPasswords,
   });
 };

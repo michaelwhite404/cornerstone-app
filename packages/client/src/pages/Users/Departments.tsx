@@ -1,27 +1,17 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { DepartmentModel } from "../../types/models";
+import { useState } from "react";
+import { useDepartments, useCreateDepartment } from "../../api";
 import CreateDepartmentModal from "./CreateDepartmentModal";
 import DepartmentDetails from "./DepartmentDetails";
 import DepartmentsTable from "./DepartmentsTable";
 import DirectoryMainButton from "./DirectoryMainButton";
 
 export default function Departments() {
-  const [departments, setDepartments] = useState<DepartmentModel[]>([]);
+  const { data: departments = [] } = useDepartments();
+  const createDepartmentMutation = useCreateDepartment();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const fetchDepartments = async () => {
-    const res = await axios.get("/api/v2/departments");
-    setDepartments(res.data.data.departments);
-  };
-
-  useEffect(() => {
-    fetchDepartments();
-  }, []);
-
   const createDepartment = async (data: { name: string }) => {
-    const res = await axios.post("/api/v2/departments", data);
-    return res.data.data.department as DepartmentModel;
+    return await createDepartmentMutation.mutateAsync(data);
   };
 
   return (

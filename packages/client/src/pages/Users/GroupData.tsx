@@ -1,9 +1,11 @@
 import { MailIcon as MailIconSolid } from "@heroicons/react/solid";
 import { MailIcon as MailIconOutline, PencilIcon } from "@heroicons/react/outline";
 import axios, { AxiosError } from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { GroupMember, GroupModel } from "../../types/models";
+import { groupKeys, useGroup } from "../../api";
 import BackButton from "../../components/BackButton";
 import { Button } from "../../components/ui";
 import { Divider } from "../../components/ui";
@@ -19,10 +21,17 @@ import pluralize from "pluralize";
 import capitalize from "capitalize";
 
 export default function GroupData() {
+  const { slug } = useParams();
+  const queryClient = useQueryClient();
+  const { showToaster } = useToasterContext();
+
+  // Fetch group with TanStack Query
+  const { data: fetchedGroup } = useGroup(slug || "");
+
+  // Local state for the group and members
   const [group, setGroup] = useState<GroupModel>();
   const [m, setM] = useState<GroupMember[]>([]);
-  const { showToaster } = useToasterContext();
-  const { slug } = useParams();
+
   const {
     allSelected,
     checkboxRef,
@@ -34,19 +43,17 @@ export default function GroupData() {
   const [openEdit, setOpenEdit] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
 
-  const fetchGroup = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/v2/groups/${slug}`);
-      setGroup(res.data.data.group);
-      setM(res.data.data.group.members || []);
-    } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
-    }
-  }, [showToaster, slug]);
-
+  // Sync fetched group to local state
   useEffect(() => {
-    fetchGroup();
-  }, [fetchGroup]);
+    if (fetchedGroup) {
+      setGroup(fetchedGroup);
+      setM(fetchedGroup.members || []);
+    }
+  }, [fetchedGroup]);
+
+  const refetchGroup = () => {
+    queryClient.invalidateQueries({ queryKey: groupKeys.detail(slug || "") });
+  };
 
   const groupData = {
     name: group?.name || "",

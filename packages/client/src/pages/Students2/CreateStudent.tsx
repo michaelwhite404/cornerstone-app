@@ -1,8 +1,9 @@
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import { Divider } from "../../components/ui";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCreateStudent } from "../../api";
 import BackButton from "../../components/BackButton";
 import FadeIn from "../../components/FadeIn";
 import { AddOnInput } from "../../components/Inputs";
@@ -10,7 +11,7 @@ import LabeledInput2 from "../../components/LabeledInput2";
 import MainContent from "../../components/MainContent";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useToasterContext, useToggle } from "../../hooks";
-import { APIError, APIStudentResponse } from "../../types/apiResponses";
+import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
 
 export default function CreateStudent() {
@@ -25,6 +26,7 @@ export default function CreateStudent() {
   const [showPassword, toggle] = useToggle(false);
   const { showToaster } = useToasterContext();
   const navigate = useNavigate();
+  const createStudentMutation = useCreateStudent();
   const handleBack = () => navigate("/students");
 
   type InputElement = HTMLInputElement | HTMLSelectElement;
@@ -41,12 +43,9 @@ export default function CreateStudent() {
     (data.status === "Active" ? +data.grade > -1 : true) &&
     data.password.length > 0;
 
-  const createStudent = async () =>
-    (await axios.post<APIStudentResponse>("/api/v2/students", data)).data.data.student;
-
   const handleSubmit = async () => {
     try {
-      const student = await createStudent();
+      const student = await createStudentMutation.mutateAsync(data);
       showToaster("Students Created!", "success");
       navigate(`/students/${student._id}`, {
         state: {

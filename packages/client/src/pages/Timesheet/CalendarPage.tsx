@@ -1,5 +1,6 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useState } from "react";
+import { useCreateTimesheet } from "../../api";
 import Modal from "../../components/Modal";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useAuth, useToasterContext } from "../../hooks";
@@ -12,13 +13,14 @@ export default function CalendarPage(props: Props) {
   const [date, setDate] = useState(new Date());
   const [modalOpen, setModalOpen] = useState(false);
   const { showToaster } = useToasterContext();
+  const createTimesheetMutation = useCreateTimesheet();
 
   const { showTimesheetEntry } = props;
 
   const addTimesheetEntry = async (data: AddTimesheetData) => {
     try {
-      const res = await axios.post("/api/v2/timesheets", data);
-      setDate(new Date(res.data.data.timesheetEntry.timeEnd));
+      const entry = await createTimesheetMutation.mutateAsync(data);
+      setDate(new Date(entry.timeEnd));
       setModalOpen(false);
       showToaster("Entry added successfully", "success");
     } catch (err) {

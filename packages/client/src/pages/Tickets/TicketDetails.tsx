@@ -7,62 +7,54 @@ import {
   LockOpenIcon,
   // PencilIcon,
 } from "@heroicons/react/solid";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { format } from "date-fns";
 import pluralize from "pluralize";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { EmployeeModel, TicketModel } from "../../types/models";
+import { EmployeeModel } from "../../types/models";
+import { useTicket, useUpdateTicket, useCloseTicket } from "../../api";
 import { useAuth, useDocTitle, useToasterContext } from "../../hooks";
-import { APIError, APITicketResponse } from "../../types/apiResponses";
+import { APIError } from "../../types/apiResponses";
 import ActivityFeed from "./ActivityFeed";
 import AssignUser from "./AssignUser";
 import CloseTicketModal from "./CloseTicketModal";
 
 export default function TicketDetails() {
   useDocTitle("Tickets | Cornerstone App");
-  const [ticket, setTicket] = useState<TicketModel>();
   const [comment, setComment] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const { ticketId } = useParams<"ticketId">();
   const { user } = useAuth();
   const { showToaster } = useToasterContext();
-  useEffect(() => {
-    const fetchTicket = async () => {
-      const res = await axios.get<APITicketResponse>(`/api/v2/tickets/${ticketId}`);
-      setTicket(res.data.data.ticket);
-    };
 
-    fetchTicket();
-  }, [ticketId]);
-
-  const updateComment = async () => {
-    const res = await axios.post<APITicketResponse>(`/api/v2/tickets/${ticketId}/update`, {
-      type: "COMMENT",
-      comment,
-    });
-    return res.data.data.ticket;
-  };
-
-  const assignUser = async (assign: string, op: "ADD" | "REMOVE") => {
-    const res = await axios.post<APITicketResponse>(`/api/v2/tickets/${ticketId}/update`, {
-      type: "ASSIGN",
-      assign,
-      op,
-    });
-    return res.data.data.ticket;
-  };
+  const { data: ticket } = useTicket(ticketId || "");
+  const updateTicketMutation = useUpdateTicket();
+  const closeTicketMutation = useCloseTicket();
 
   const handleCommentUpdate = async () => {
-    if (!comment) return;
+    if (!comment || !ticketId) return;
     try {
-      const ticket = await updateComment();
-      setTicket(ticket);
+      await updateTicketMutation.mutateAsync({
+        ticketId,
+        type: "COMMENT",
+        comment,
+      });
       setComment("");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
     }
+  };
+
+  const handleAssignUser = async (assign: string, op: "ADD" | "REMOVE") => {
+    if (!ticketId) return;
+    await updateTicketMutation.mutateAsync({
+      ticketId,
+      type: "ASSIGN",
+      assign,
+      op,
+    });
   };
 
   const canCloseTicket =
@@ -71,10 +63,9 @@ export default function TicketDetails() {
     (ticket.assignedTo as EmployeeModel[]).some((employee) => employee._id === user!._id);
 
   const closeTicket = async () => {
-    if (!canCloseTicket) return;
+    if (!canCloseTicket || !ticket) return;
     try {
-      const res = await axios.post<APITicketResponse>(`/api/v2/tickets/${ticket!.ticketId}/close`);
-      setTicket(res.data.data.ticket);
+      await closeTicketMutation.mutateAsync(ticket.ticketId);
       showToaster("Ticket closed", "success");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
@@ -375,7 +366,7 @@ export default function TicketDetails() {
                     </ul>
                     {/* Add assignees */}
                     {ticket.status === "OPEN" && (
-                      <AssignUser assignUser={assignUser} setTicket={setTicket} />
+                      <AssignUser onAssign={handleAssignUser} />
                     )}
                   </div>
                   {/* <div>
