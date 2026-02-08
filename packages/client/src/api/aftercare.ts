@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, extractData } from "./client";
 import { AftercareAttendanceEntryModel, StudentModel } from "../types/models";
-import { AttendanceEntry } from "../types/aftercareTypes";
+import { AttendanceEntry, CurrentSession } from "../types/aftercareTypes";
 
 // Query Keys
 export const aftercareKeys = {
@@ -54,6 +54,28 @@ const updateStudentAftercare = async (data: UpdateStudentAftercareData) => {
   return response.data;
 };
 
+const fetchAftercareStudents = async () => {
+  const response = await apiClient.get<{ data: { students: StudentModel[] } }>(
+    "/aftercare/students"
+  );
+  return extractData(response).students;
+};
+
+const startSession = async (students: string[]) => {
+  const response = await apiClient.post<{ data: CurrentSession }>(
+    "/aftercare/session",
+    { students }
+  );
+  return extractData(response);
+};
+
+const fetchTodaySession = async () => {
+  const response = await apiClient.get<{ data: CurrentSession }>(
+    "/aftercare/session/today"
+  );
+  return extractData(response);
+};
+
 // Hooks
 export const useAftercareSession = (date: Date) => {
   const year = date.getFullYear();
@@ -90,5 +112,30 @@ export const useUpdateStudentAftercare = () => {
       queryClient.invalidateQueries({ queryKey: aftercareKeys.students() });
       queryClient.invalidateQueries({ queryKey: aftercareKeys.stats() });
     },
+  });
+};
+
+export const useAftercareStudents = () => {
+  return useQuery({
+    queryKey: aftercareKeys.studentList(),
+    queryFn: fetchAftercareStudents,
+  });
+};
+
+export const useStartSession = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: startSession,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: aftercareKeys.sessions() });
+    },
+  });
+};
+
+export const useTodaySession = () => {
+  return useQuery({
+    queryKey: [...aftercareKeys.sessions(), "today"] as const,
+    queryFn: fetchTodaySession,
   });
 };

@@ -83,6 +83,23 @@ const updateUser = async ({ id, data }: { id: string; data: UpdateUserData }) =>
   return extractData(response).user;
 };
 
+interface CreateUserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  title: string;
+  role: string;
+  homeroomGrade?: number | string;
+  timesheetEnabled?: boolean;
+  password: string;
+  changePasswordAtNextLogin?: boolean;
+}
+
+const createUser = async (data: CreateUserData) => {
+  const response = await apiClient.post<{ data: { user: EmployeeModel } }>("/users", data);
+  return extractData(response).user;
+};
+
 // Hooks
 export const useUsers = (params: FetchUsersParams = {}) => {
   return useQuery({
@@ -121,6 +138,17 @@ export const useUpdateUser = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+    },
+  });
+};
+
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
   });

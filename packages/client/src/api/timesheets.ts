@@ -2,16 +2,34 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, extractData } from "./client";
 import { TimesheetModel } from "../types/models";
 
+// Types
+interface FetchTimesheetsParams {
+  status?: string;
+  sort?: string;
+  employee?: string;
+  "timeStart[gte]"?: string | Date;
+  "timeStart[lte]"?: string | Date;
+}
+
 // Query Keys
 export const timesheetKeys = {
   all: ["timesheets"] as const,
   lists: () => [...timesheetKeys.all, "list"] as const,
-  list: (params?: Record<string, unknown>) => [...timesheetKeys.lists(), params] as const,
+  list: (params?: FetchTimesheetsParams) => [...timesheetKeys.lists(), params] as const,
   details: () => [...timesheetKeys.all, "detail"] as const,
   detail: (id: string) => [...timesheetKeys.details(), id] as const,
 };
 
 // API Functions
+
+const fetchTimesheets = async (params: FetchTimesheetsParams = {}) => {
+  const response = await apiClient.get<{ data: { timesheetEntries: TimesheetModel[] } }>(
+    "/timesheets",
+    { params }
+  );
+  return extractData(response).timesheetEntries;
+};
+
 const fetchTimesheet = async (id: string) => {
   const response = await apiClient.get<{ data: { timesheetEntry: TimesheetModel } }>(
     `/timesheets/${id}`
@@ -47,7 +65,27 @@ const updateTimesheet = async ({ id, data }: UpdateTimesheetData) => {
   return extractData(response).timesheetEntry;
 };
 
+interface FinalizeTimesheetsData {
+  approve?: string[];
+  reject?: string[];
+}
+
+const finalizeTimesheets = async (data: FinalizeTimesheetsData) => {
+  const response = await apiClient.patch<{ data: { message: string } }>(
+    "/timesheets/approve",
+    data
+  );
+  return extractData(response).message;
+};
+
 // Hooks
+export const useTimesheets = (params: FetchTimesheetsParams = {}) => {
+  return useQuery({
+    queryKey: timesheetKeys.list(params),
+    queryFn: () => fetchTimesheets(params),
+  });
+};
+
 export const useTimesheet = (id: string) => {
   return useQuery({
     queryKey: timesheetKeys.detail(id),
@@ -74,6 +112,17 @@ export const useUpdateTimesheet = () => {
     mutationFn: updateTimesheet,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: timesheetKeys.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: timesheetKeys.lists() });
+    },
+  });
+};
+
+export const useFinalizeTimesheets = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: finalizeTimesheets,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: timesheetKeys.lists() });
     },
   });

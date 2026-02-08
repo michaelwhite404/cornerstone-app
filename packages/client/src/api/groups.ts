@@ -42,6 +42,19 @@ const createGroup = async (data: CreateGroupData) => {
   return extractData(response).group;
 };
 
+interface AddGroupMembersData {
+  groupEmail: string;
+  users: { email: string; role: string }[];
+}
+
+const addGroupMembers = async ({ groupEmail, users }: AddGroupMembersData) => {
+  const emailStart = groupEmail.replace("@cornerstone-schools.org", "");
+  const response = await apiClient.post<{
+    data: { members: admin_directory_v1.Schema$Member[] };
+  }>(`/groups/${emailStart}/members`, { users });
+  return extractData(response).members;
+};
+
 // Hooks
 export const useGroups = () => {
   return useQuery({
@@ -70,6 +83,19 @@ export const useCreateGroup = () => {
         return [...oldGroups, newGroup].sort((a, b) =>
           (a.name || "").localeCompare(b.name || "")
         );
+      });
+    },
+  });
+};
+
+export const useAddGroupMembers = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addGroupMembers,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: groupKeys.detail(variables.groupEmail.replace("@cornerstone-schools.org", "")),
       });
     },
   });

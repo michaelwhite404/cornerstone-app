@@ -6,7 +6,10 @@ export {
   aftercareKeys,
   useAftercareSession,
   useAftercareStats,
+  useAftercareStudents,
+  useStartSession,
   useStudentAftercareEntries,
+  useTodaySession,
   useUpdateStudentAftercare,
 } from "./aftercare";
 
@@ -18,6 +21,10 @@ export {
   useDepartmentsAllowingTickets,
   useCreateDepartment,
   useAddDepartmentMembers,
+  useDeleteDepartmentMember,
+  useUpdateDepartmentMember,
+  useAvailableSettings,
+  useDepartmentSettings,
 } from "./departments";
 
 // Short URLs
@@ -43,6 +50,7 @@ export {
   useGroups,
   useGroup,
   useCreateGroup,
+  useAddGroupMembers,
 } from "./groups";
 
 // Leaves
@@ -52,6 +60,7 @@ export {
   useLeave,
   useCreateLeave,
   useFinalizeLeave,
+  useGenerateLeaveReport,
 } from "./leaves";
 
 // Students
@@ -84,10 +93,19 @@ export {
 // Timesheets
 export {
   timesheetKeys,
+  useTimesheets,
   useTimesheet,
   useCreateTimesheet,
   useUpdateTimesheet,
+  useFinalizeTimesheets,
 } from "./timesheets";
+
+// Reimbursements
+export {
+  reimbursementKeys,
+  useReimbursements,
+  useFinalizeReimbursement,
+} from "./reimbursements";
 
 // Users
 export {
@@ -96,6 +114,7 @@ export {
   useUser,
   useCurrentUser,
   useCurrentUserWithGroups,
+  useCreateUser,
   useUpdateUser,
   useUpdatePassword,
   useGoogleUsers,

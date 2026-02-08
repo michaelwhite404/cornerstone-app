@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, extractData } from "./client";
-import { DepartmentModel } from "../types/models";
+import {
+  DepartmentModel,
+  DepartmentAvailableSettingModel,
+  DepartmentSetting,
+} from "../types/models";
 
 // Query Keys
 export const departmentKeys = {
@@ -102,5 +106,85 @@ export const useAddDepartmentMembers = () => {
       queryClient.invalidateQueries({ queryKey: departmentKeys.detail(variables.departmentId) });
       queryClient.invalidateQueries({ queryKey: departmentKeys.lists() });
     },
+  });
+};
+
+// Delete department member
+const deleteDepartmentMember = async ({
+  departmentId,
+  memberId,
+}: {
+  departmentId: string;
+  memberId: string;
+}) => {
+  const response = await apiClient.delete(`/departments/${departmentId}/members/${memberId}`);
+  return response.data;
+};
+
+export const useDeleteDepartmentMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteDepartmentMember,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: departmentKeys.detail(variables.departmentId) });
+    },
+  });
+};
+
+// Update department member role
+const updateDepartmentMember = async ({
+  departmentId,
+  memberId,
+  role,
+}: {
+  departmentId: string;
+  memberId: string;
+  role: string;
+}) => {
+  const response = await apiClient.patch(`/departments/${departmentId}/members/${memberId}`, {
+    role,
+  });
+  return response.data;
+};
+
+export const useUpdateDepartmentMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateDepartmentMember,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: departmentKeys.detail(variables.departmentId) });
+    },
+  });
+};
+
+// Department Settings
+const fetchAvailableSettings = async () => {
+  const response = await apiClient.get<{
+    data: { availableSettings: DepartmentAvailableSettingModel[] };
+  }>("/departments/settings");
+  return extractData(response).availableSettings;
+};
+
+const fetchDepartmentSettings = async (departmentId: string) => {
+  const response = await apiClient.get<{ data: { settings: DepartmentSetting[] } }>(
+    `/departments/${departmentId}/settings`
+  );
+  return extractData(response).settings;
+};
+
+export const useAvailableSettings = () => {
+  return useQuery({
+    queryKey: [...departmentKeys.all, "availableSettings"] as const,
+    queryFn: fetchAvailableSettings,
+  });
+};
+
+export const useDepartmentSettings = (departmentId: string) => {
+  return useQuery({
+    queryKey: [...departmentKeys.detail(departmentId), "settings"] as const,
+    queryFn: () => fetchDepartmentSettings(departmentId),
+    enabled: !!departmentId,
   });
 };

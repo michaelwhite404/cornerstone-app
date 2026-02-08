@@ -1,5 +1,4 @@
 import React, { createContext, useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import { useAuth, useDocTitle, useSocket } from "../../../hooks";
 import { LeaveApproval, LeaveModel } from "../../../types/models";
 import Detail from "./Detail";
@@ -7,10 +6,10 @@ import AddLeave from "./AddLeave";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import Tabs2, { TabOption } from "../../../components/Tabs2";
 import MyLeaves from "./MyLeaves";
-import { APILeaveResponse } from "../../../types/apiResponses";
 import { useLocation } from "react-router-dom";
 import { DocumentTextIcon } from "@heroicons/react/solid";
 import ReportModal from "./ReportModal";
+import { useLeaves, useFinalizeLeave } from "../../../api";
 
 type PageState = "MY_LEAVES" | "APPROVALS" | "ALL";
 const getStatus = (approval?: LeaveApproval): Leave["status"] =>
@@ -36,7 +35,6 @@ export const LeavesSortContext = createContext({} as SortContext);
 function Leaves() {
   useDocTitle("Leave Requests | Cornerstone App");
   const [pageState, setPageState] = useState<PageState>("MY_LEAVES");
-  const [loaded, setLoaded] = useState(false);
   const [leaves, setLeaves] = useState<Leave[]>([]);
   const [sort, setSort] = useState<Sort | null>(null);
   const [slideOpen, setSlideOpen] = useState(false);
@@ -46,8 +44,13 @@ function Leaves() {
   const user = useAuth().user!;
   const socket = useSocket();
 
+  const { data: fetchedLeaves = [], isLoading } = useLeaves();
+  const finalizeLeavesMutation = useFinalizeLeave();
+  const loaded = !isLoading;
+
+  // Sync fetched leaves to local state with selection data
   useEffect(() => {
-    const getLeaves = async () => {
+    if (fetchedLeaves.length > 0) {
       const leaveId = location.hash.replace("#", "");
       leaveId &&
         window.history.replaceState(
@@ -56,9 +59,7 @@ function Leaves() {
           window.location.pathname + window.location.search
         );
 
-      setLoaded(false);
-      const leaves = (await axios.get("/api/v2/leaves")).data.data.leaves as LeaveModel[];
-      const l = leaves.map((leave) => ({
+      const l = fetchedLeaves.map((leave) => ({
         ...leave,
         selected: leave._id === leaveId,
         status: getStatus(leave.approval),
@@ -71,12 +72,9 @@ function Leaves() {
           setPageState("APPROVALS");
         setSlideOpen(true);
       }
-      setLoaded(true);
-    };
-
-    getLeaves();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchedLeaves]);
 
   useEffect(() => {
     const handleFinalize = (finalized: LeaveModel) => {
@@ -152,8 +150,7 @@ function Leaves() {
   };
 
   const finalizeLeave = async (id: string, approved: boolean) => {
-    const res = await axios.post<APILeaveResponse>(`/api/v2/leaves/${id}/approve`, { approved });
-    return res.data.data.leave;
+    return finalizeLeavesMutation.mutateAsync({ id, approved });
   };
 
   const tabs = useMemo(() => {

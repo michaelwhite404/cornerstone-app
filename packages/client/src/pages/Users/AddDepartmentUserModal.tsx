@@ -1,13 +1,12 @@
 import { CheckIcon, PlusIcon, XCircleIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import capitalize from "capitalize";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DepartmentModel, EmployeeModel } from "../../types/models";
+import { useUsers } from "../../api";
 import Combobox from "../../components/Combobox";
 import Menu from "../../components/Menu";
 import Modal from "../../components/Modal";
-import { APIUsersResponse } from "../../types/apiResponses";
 
 interface Props {
   open: boolean;
@@ -38,15 +37,19 @@ export default function AddDepartmentUserModal(props: Props) {
     role: Role;
   }>({ role: "MEMBER" });
 
+  const { data: allUsers = [] } = useUsers({ active: true });
+  const currentUsersIds = useMemo(
+    () => props.currentUsers.map((user) => user._id as string),
+    [props.currentUsers]
+  );
+
+  // Initialize users list when allUsers loads, filtering out current members
   useEffect(() => {
-    const fetchUsers = async () => {
-      const { users } = (await axios.get<APIUsersResponse>("/api/v2/users?active=true")).data.data;
-      const potentialMembers: PotentialMember[] = users.map((user) => ({ user }));
-      const currentUsersIds = props.currentUsers.map((user) => user._id as string);
+    if (allUsers.length > 0) {
+      const potentialMembers: PotentialMember[] = allUsers.map((user) => ({ user }));
       setUsers(potentialMembers.filter(({ user }) => !currentUsersIds.includes(user?._id)));
-    };
-    fetchUsers();
-  }, [props.currentUsers]);
+    }
+  }, [allUsers, currentUsersIds]);
 
   const futureMembers = users.filter((u) => u.role) as FutureMember[];
 

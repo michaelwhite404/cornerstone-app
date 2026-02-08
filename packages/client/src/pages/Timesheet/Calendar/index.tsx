@@ -3,47 +3,40 @@ import { CalendarWeek } from "./Week";
 import { CalendarViewDropdown } from "./ViewDropdown";
 import { DatePick } from "./DatePick";
 import { WeekLine } from "./WeekLine";
-import { useCallback, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { CalendarEvent, CalendarView } from "../../../types/calendar";
 import { endOfWeek, format, startOfWeek } from "date-fns";
-import axios from "axios";
-import { TimesheetModel } from "../../../types/models";
 import { useAuth } from "../../../hooks";
 import { start, end } from "../../../utils/startEnd";
 import Month from "../../../types/month";
+import { useTimesheets } from "../../../api";
 
 
 function Calendar(props: CalendarProps) {
   const [view, setView] = useState<CalendarView>("week");
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const { user } = useAuth();
 
   const { date, setDate, showTimesheetEntry } = props;
   const { month, year } = getMDY(date);
 
-  const getTimesheetData = useCallback(async () => {
-    const res = await axios.get("/api/v2/timesheets", {
-      params: {
-        "timeStart[gte]": start(date, view),
-        "timeStart[lte]": end(date, view),
-        employee: user?._id,
-      },
-    });
-    const entries = res.data.data.timesheetEntries as TimesheetModel[];
-    const events: CalendarEvent[] = entries.map((entry) => ({
-      id: entry._id,
-      description: entry.description,
-      date: new Date(entry.timeStart),
-      timeLabel: `${entry.hours} ${entry.hours === 1 ? "Hr" : "Hrs"}`,
-      timeStart: new Date(entry.timeStart).toISOString(),
-      timeEnd: new Date(entry.timeEnd).toISOString(),
-    }));
-    setEvents(events);
-  }, [date, user?._id, view]);
+  const { data: entries = [] } = useTimesheets({
+    "timeStart[gte]": start(date, view),
+    "timeStart[lte]": end(date, view),
+    employee: user?._id,
+  });
 
-  useEffect(() => {
-    getTimesheetData();
-  }, [getTimesheetData]);
+  const events: CalendarEvent[] = useMemo(
+    () =>
+      entries.map((entry) => ({
+        id: entry._id,
+        description: entry.description,
+        date: new Date(entry.timeStart),
+        timeLabel: `${entry.hours} ${entry.hours === 1 ? "Hr" : "Hrs"}`,
+        timeStart: new Date(entry.timeStart).toISOString(),
+        timeEnd: new Date(entry.timeEnd).toISOString(),
+      })),
+    [entries]
+  );
 
   return (
     <div>

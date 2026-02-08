@@ -1,18 +1,24 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { Divider, Switch } from "../../components/ui";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EmployeeModel, UserGroup } from "../../types/models";
-import { useUser, useDepartments, useGroups } from "../../api";
+import {
+  useUser,
+  useDepartments,
+  useGroups,
+  useAddDepartmentMembers,
+  useAddGroupMembers,
+  useUpdateUser,
+} from "../../api";
 import BackButton from "../../components/BackButton";
 import LabeledInput2 from "../../components/LabeledInput2";
 import { AddOnInput } from "../../components/Inputs";
 import DepartmentList from "./UserData/DepartmentList";
 import GroupList from "./UserData/GroupsList";
 import { grades } from "../../utils/grades";
-import { admin_directory_v1 } from "googleapis";
 import MainContent from "../../components/MainContent";
-import { APIError, APIUserResponse } from "../../types/apiResponses";
+import { APIError } from "../../types/apiResponses";
 import { useToasterContext } from "../../hooks";
 
 export default function UserData() {
@@ -25,6 +31,11 @@ export default function UserData() {
   const { data: fetchedUser } = useUser(slug || "", { projection: "FULL" });
   const { data: departments = [] } = useDepartments();
   const { data: groups = [] } = useGroups();
+
+  // Mutations
+  const addDepartmentMembersMutation = useAddDepartmentMembers();
+  const addGroupMembersMutation = useAddGroupMembers();
+  const updateUserMutation = useUpdateUser();
 
   // Local state for editing
   const [user, setUser] = useState<EmployeeModel>();
@@ -63,7 +74,8 @@ export default function UserData() {
     role: "MEMBER" | "LEADER"
   ) => {
     if (!user) return;
-    await axios.post(`/api/v2/departments/${department._id}/members`, {
+    await addDepartmentMembersMutation.mutateAsync({
+      departmentId: department._id,
       users: [{ id: user._id, role }],
     });
     if (!user.departments) return setUser({ ...user, departments: [{ ...department, role }] });
@@ -75,11 +87,11 @@ export default function UserData() {
 
   const addGroupMember = async (email: string, role: string) => {
     if (!user) return;
-    const emailStart = email.replace("@cornerstone-schools.org", "");
-    const res = await axios.post(`/api/v2/groups/${emailStart}/members`, {
+    const members = await addGroupMembersMutation.mutateAsync({
+      groupEmail: email,
       users: [{ email: user.email, role }],
     });
-    const member = res.data.data.members[0] as admin_directory_v1.Schema$Member | undefined;
+    const member = members[0];
     if (!member) return;
     const group = groups.find((g) => g.email === email);
     if (!group) return;
@@ -130,10 +142,16 @@ export default function UserData() {
   };
 
   const handleUserUpdate = async () => {
-    if (!user || !canUpdate()) return;
+    if (!user || !userEdit || !canUpdate()) return;
     try {
-      const res = await axios.patch<APIUserResponse>(`/api/v2/users/${user._id}`, userEdit);
-      const updatedUser = res.data.data.user;
+      const updatedUser = await updateUserMutation.mutateAsync({
+        id: user._id,
+        data: {
+          firstName: userEdit.firstName,
+          lastName: userEdit.lastName,
+          email: userEdit.email,
+        },
+      });
       setUser({ groups: user.groups, ...updatedUser });
       setUserEdit({ groups: user.groups, ...updatedUser });
       showToaster("User Updated", "success");

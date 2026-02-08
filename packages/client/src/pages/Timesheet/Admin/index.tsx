@@ -1,7 +1,6 @@
-import axios from "axios";
 import React, { useMemo, useState } from "react";
 import { EmployeeModel } from "../../../types/models";
-import { useUsers } from "../../../api";
+import { useUsers, useFinalizeTimesheets } from "../../../api";
 import MainContent from "../../../components/MainContent";
 import PageHeader from "../../../components/PageHeader";
 import SideTable from "../../../components/SideTable/SideTable";
@@ -16,6 +15,12 @@ export default function Admin(props: Props) {
   const [selected, setSelected] = useState<EmployeeModel>();
   const width = useWindowSize()[0];
   const [filter, setFilter] = useState("");
+  const finalizeTimesheetsMutation = useFinalizeTimesheets();
+
+  const finalizeTimesheet = async (ids: string[], approve: boolean) => {
+    const data = approve ? { approve: ids } : { reject: ids };
+    return finalizeTimesheetsMutation.mutateAsync(data);
+  };
 
   const data = useMemo(() => users, [users]);
   const columns = useMemo(
@@ -106,10 +111,3 @@ const RowComponent = (user: EmployeeModel) => {
 interface Props {
   showTimesheetEntry: (entryId: string) => Promise<void>;
 }
-
-const finalizeTimesheet = async (ids: string[], approve: boolean) => {
-  const res = await axios.patch("/api/v2/timesheets/approve", {
-    [approve ? "approve" : "reject"]: ids,
-  });
-  return res.data.data.message as string;
-};

@@ -1,10 +1,10 @@
-import axios from "axios";
 import { useContext, useState } from "react";
 import isDeepEqual from "deep-equal";
 import { INotificationCategory } from "../../../utils/notificationSettings";
 import { NotificationContext } from "../Notifications";
 import NotificationSetting from "./NotificationSetting";
 import { useAuth, useToasterContext } from "../../../hooks";
+import { useUpdateUserSetting } from "../../../api";
 
 export default function NotificationCategory({ notificationCategory }: NotificationCategoryProps) {
   const getCategoryState = (data: { [x: string]: any }) =>
@@ -13,11 +13,13 @@ export default function NotificationCategory({ notificationCategory }: Notificat
   const { setSettings } = useAuth();
   const [stateBeforeUpdate, setStateBeforeUpdate] = useState(getCategoryState(data));
   const { showToaster } = useToasterContext();
+  const updateSettingMutation = useUpdateUserSetting();
+
   const handleUpdateSetting = async () => {
     try {
       await Promise.all(
         notificationCategory.settings.map(({ name }) =>
-          axios.patch("/api/v2/users/me/settings", {
+          updateSettingMutation.mutateAsync({
             settingName: `setting.user.notification.${name}`,
             value: data[name],
           })

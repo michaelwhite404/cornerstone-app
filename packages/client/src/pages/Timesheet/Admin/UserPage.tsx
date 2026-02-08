@@ -1,7 +1,6 @@
 import { CheckIcon, XIcon } from "@heroicons/react/outline";
-import axios from "axios";
 import { format, getDaysInMonth } from "date-fns";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { EmployeeModel, TimesheetModel } from "../../../types/models";
 import BackButton from "../../../components/BackButton";
 import FadeIn from "../../../components/FadeIn";
@@ -9,33 +8,25 @@ import MainContent from "../../../components/MainContent";
 import { end, start } from "../../../utils/startEnd";
 import EntriesTable from "./EntriesTable";
 import MonthYearPicker from "./MonthYearPicker";
+import { useTimesheets } from "../../../api";
 
 export default function UserPage(props: UserPageProps) {
-  const [entries, setEntries] = useState<TimesheetModel[]>([]);
   const [date, setDate] = useState(new Date());
   const [selectedData, setSelectedData] = useState<TimesheetModel[]>([]);
   const { selected, onBack, finalizeTimesheet, showTimesheetEntry } = props;
-  const getUserEntries = useCallback(async () => {
-    const res = await axios.get(`/api/v2/timesheets/`, {
-      params: {
-        employee: selected._id,
-        sort: "timeStart",
-        "timeStart[gte]": start(date, "month"),
-        "timeStart[lte]": end(date, "month"),
-      },
-    });
-    setEntries(res.data.data.timesheetEntries);
-  }, [date, selected]);
 
-  useEffect(() => {
-    getUserEntries();
-  }, [getUserEntries]);
+  const { data: entries = [], refetch } = useTimesheets({
+    employee: selected._id,
+    sort: "timeStart",
+    "timeStart[gte]": start(date, "month"),
+    "timeStart[lte]": end(date, "month"),
+  });
 
   const handleTimesheetFinalize = async (approve: boolean) => {
     try {
       const ids = selectedData.filter((e) => e.status === "Pending").map((e) => e._id) as string[];
       await finalizeTimesheet(ids, approve);
-      getUserEntries();
+      refetch();
     } catch (err) {
       console.log(err);
     }

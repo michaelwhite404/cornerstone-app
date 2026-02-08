@@ -1,9 +1,9 @@
-import axios from "axios";
 import classNames from "classnames";
 import pluralize from "pluralize";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { DepartmentMember, DepartmentModel } from "../../types/models";
+import { useDeleteDepartmentMember, useUpdateDepartmentMember } from "../../api";
 import Menuuuu from "../../components/Menu";
 import TableWrapper from "../../components/TableWrapper";
 import { useChecker2, useToasterContext } from "../../hooks";
@@ -31,17 +31,17 @@ export default function DepartmentMembers(props: Props) {
   const { showToaster } = useToasterContext();
   const [dirtyRows, setDirtyRows] = useState<DirtyRow[]>([]);
 
-  const deleteMember = async (departmentId: string, memberId: string) => {
-    return axios.delete(`/api/v2/departments/${departmentId}/members/${memberId}`);
-  };
-
-  const updateMember = async (departmentId: string, memberId: string, role: string) => {
-    return axios.patch(`/api/v2/departments/${departmentId}/members/${memberId}`, { role });
-  };
+  const deleteMemberMutation = useDeleteDepartmentMember();
+  const updateMemberMutation = useUpdateDepartmentMember();
 
   const handleDeleteMembers = async () => {
     const response = await Promise.allSettled(
-      selectedMembers.map((member) => deleteMember(department._id, member._id))
+      selectedMembers.map((member) =>
+        deleteMemberMutation.mutateAsync({
+          departmentId: department._id,
+          memberId: member._id,
+        })
+      )
     );
     fetchDepartment();
     setSelectedMembers([]);
@@ -57,7 +57,13 @@ export default function DepartmentMembers(props: Props) {
 
   const handleUpdateMembers = async () => {
     const response = await Promise.allSettled(
-      dirtyRows.map((row) => updateMember(department._id, row._id, row.role))
+      dirtyRows.map((row) =>
+        updateMemberMutation.mutateAsync({
+          departmentId: department._id,
+          memberId: row._id,
+          role: row.role,
+        })
+      )
     );
     fetchDepartment();
     setSelectedMembers([]);

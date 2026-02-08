@@ -1,5 +1,4 @@
 import { PlusIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import capitalize from "capitalize";
 import pluralize from "pluralize";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -13,9 +12,9 @@ import SideTable from "../../components/SideTable/SideTable";
 import SideTableFilter from "../../components/SideTable/SideTableFilter";
 import { useAuth, useDocTitle, useWindowSize } from "../../hooks";
 import { grades } from "../../utils/grades";
+import { useDevices } from "../../api";
 
 export default function DeviceType2() {
-  const [devices, setDevices] = useState<DeviceModel[]>([]);
   const { deviceType, slug } = useParams<"deviceType" | "slug">();
   const location = useLocation();
   useDocTitle(`${capitalize(deviceType!)} | Devices | Cornerstone App`);
@@ -40,20 +39,7 @@ export default function DeviceType2() {
     Component: <></>,
   });
 
-  const getDevicesByType = useCallback(async () => {
-    const res = await axios.get("/api/v2/devices", {
-      params: {
-        deviceType: pluralize.singular(deviceType!),
-        sort: "name",
-        limit: 2000,
-      },
-    });
-    setDevices(res.data.data.devices);
-  }, [deviceType]);
-
-  useEffect(() => {
-    getDevicesByType();
-  }, [getDevicesByType]);
+  const { data: devices = [], refetch: reFetchDevices } = useDevices(deviceType!);
 
   useEffect(() => setPageState(getPageState), [getPageState]);
 
@@ -131,7 +117,7 @@ export default function DeviceType2() {
           context={{
             device: selected,
             onBack: handleBack,
-            reFetchDevices: getDevicesByType,
+            reFetchDevices,
             dialogControls,
             user,
             deviceType,

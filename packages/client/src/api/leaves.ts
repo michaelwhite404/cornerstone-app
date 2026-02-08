@@ -79,3 +79,35 @@ export const useFinalizeLeave = () => {
     },
   });
 };
+
+// Generate Report
+interface GenerateReportData {
+  type: "sheets" | "csv" | "excel" | "pdf";
+  fields: string[];
+}
+
+interface GenerateReportResponse {
+  spreadsheetUrl?: string;
+  blob?: Blob;
+}
+
+const generateLeaveReport = async (data: GenerateReportData): Promise<GenerateReportResponse> => {
+  if (data.type === "sheets") {
+    const response = await apiClient.post<{ data: { spreadsheetUrl: string } }>(
+      "/leaves/generate-report",
+      data
+    );
+    return { spreadsheetUrl: extractData(response).spreadsheetUrl };
+  }
+  // For blob types (csv, excel, pdf)
+  const response = await apiClient.post("/leaves/generate-report", data, {
+    responseType: "blob",
+  });
+  return { blob: response.data };
+};
+
+export const useGenerateLeaveReport = () => {
+  return useMutation({
+    mutationFn: generateLeaveReport,
+  });
+};

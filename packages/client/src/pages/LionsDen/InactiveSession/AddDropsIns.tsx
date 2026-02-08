@@ -1,15 +1,14 @@
 import { TrashIcon } from "@heroicons/react/solid";
 import { Button } from "../../../components/ui";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActionMeta } from "react-select";
 import Select from "react-select";
 import { StudentModel } from "../../../types/models";
 import FadeIn from "../../../components/FadeIn";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import { InactiveAftercarePagesProps } from "../../../types/aftercareTypes";
-import { APIStudentsResponse } from "../../../types/apiResponses";
 import BackButton from "../../../components/BackButton";
+import { useStudents } from "../../../api";
 
 interface StudentToSelect {
   student: StudentModel;
@@ -26,27 +25,31 @@ interface AddDropInsProps extends InactiveAftercarePagesProps {
 }
 
 export default function AddDropIns({ setPageState, studentsToAdd, startSession }: AddDropInsProps) {
+  const { data: allStudents = [] } = useStudents({
+    status: "Active",
+    sort: "-grade,lastName",
+    limit: 2000,
+  });
+
+  // Initialize students selection state from fetched data
+  const nonAftercareStudents = useMemo(
+    () =>
+      allStudents
+        .filter((s) => !s.aftercare)
+        .map((s) => ({ student: s, selected: false })),
+    [allStudents]
+  );
+
   const [students, setStudents] = useState<StudentToSelect[]>([]);
 
-  const selected = students.filter((s) => s.selected);
-
+  // Sync when data loads
   useEffect(() => {
-    getAftercareStudents();
-  }, []);
+    if (nonAftercareStudents.length > 0 && students.length === 0) {
+      setStudents(nonAftercareStudents);
+    }
+  }, [nonAftercareStudents, students.length]);
 
-  const getAftercareStudents = async () => {
-    const res = await axios.get<APIStudentsResponse>("/api/v2/students", {
-      params: {
-        status: "Active",
-        sort: "-grade,lastName",
-        limit: 2000,
-      },
-    });
-    const stu = res.data.data.students
-      .filter((s) => !s.aftercare)
-      .map((s) => ({ student: s, selected: false }));
-    setStudents(stu);
-  };
+  const selected = students.filter((s) => s.selected);
 
   const options = students
     .filter((s) => !s.selected)
