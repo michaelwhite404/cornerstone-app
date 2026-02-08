@@ -9,6 +9,23 @@ export {
   useCreateDeviceError,
 } from "./devices";
 
+// Groups (Google Directory)
+export {
+  groupKeys,
+  useGroups,
+  useGroup,
+  useCreateGroup,
+} from "./groups";
+
+// Leaves
+export {
+  leaveKeys,
+  useLeaves,
+  useLeave,
+  useCreateLeave,
+  useFinalizeLeave,
+} from "./leaves";
+
 // Students
 export {
   studentKeys,
@@ -17,6 +34,14 @@ export {
   useCreateStudent,
 } from "./students";
 
+// Textbooks
+export {
+  textbookKeys,
+  useTextbooks,
+  useCheckoutTextbooks,
+  useCheckinTextbooks,
+} from "./textbooks";
+
 // Tickets
 export {
   ticketKeys,
@@ -24,3 +49,13 @@ export {
   useTicket,
   useCreateTicket,
 } from "./tickets";
+
+// Users
+export {
+  userKeys,
+  useUsers,
+  useUser,
+  useCurrentUser,
+  useCurrentUserWithGroups,
+  useUpdateUser,
+} from "./users";

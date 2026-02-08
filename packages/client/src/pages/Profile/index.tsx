@@ -1,37 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useCurrentUserWithGroups } from "../../api";
 import { useAuth, useDocTitle } from "../../hooks";
 import Tabs2, { TabOption } from "../../components/Tabs2";
 import General from "./General";
 import Password from "./Password";
 import Teams from "./Teams";
 import Notifications from "./Notifications";
-import axios from "axios";
-import { UserGroup } from "../../types/models";
 
 type PageState = "GENERAL" | "PASSWORD" | "NOTIFICATIONS" | "TEAMS";
 
 export default function Profile() {
   useDocTitle("Profile | Cornerstone App");
   const [pageState, setPageState] = useState<PageState>("GENERAL");
-  const [groups, setGroups] = useState<UserGroup[]>([]);
   const { user } = useAuth();
-
-  useEffect(() => {
-    const getGroups = async () => {
-      const res = await axios.get("/api/v2/users/me", { params: { projection: "FULL" } });
-      setGroups(
-        (res.data.data.user.groups as UserGroup[])?.sort((a, b) => {
-          const nameA = a.name!.toUpperCase();
-          const nameB = b.name!.toUpperCase();
-          if (nameA < nameB) return -1;
-          if (nameA > nameB) return 1;
-          return 0;
-        }) || []
-      );
-    };
-
-    getGroups();
-  }, [user?._id]);
+  const { data: userWithGroups } = useCurrentUserWithGroups();
+  const groups = userWithGroups?.groups || [];
 
   const tabs: TabOption<PageState>[] = [
     { name: "General", value: "GENERAL" },

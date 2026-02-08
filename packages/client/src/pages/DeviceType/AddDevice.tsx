@@ -11,14 +11,14 @@ interface AddDeviceProps {
   deviceType: string;
   setPageStatus: React.Dispatch<React.SetStateAction<"List" | "Single" | "Add">>;
   setSelectedDevice: React.Dispatch<React.SetStateAction<DeviceModel | undefined>>;
-  getDevicesByType: () => Promise<void>;
+  onDeviceAdded: () => void;
 }
 
 export default function AddDevice({
   deviceType,
   setPageStatus,
   setSelectedDevice,
-  getDevicesByType,
+  onDeviceAdded,
 }: AddDeviceProps) {
   const { showToaster } = useToasterContext();
 
@@ -71,7 +71,7 @@ export default function AddDevice({
       setSelectedDevice(device);
       setPageStatus("Single");
       showToaster(`${device.name} successfully created`, "success");
-      getDevicesByType();
+      onDeviceAdded();
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
     }

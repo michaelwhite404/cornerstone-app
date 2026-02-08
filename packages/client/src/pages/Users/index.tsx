@@ -1,7 +1,5 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { EmployeeModel } from "../../types/models";
+import { useUsers } from "../../api";
 import Tabs from "../../components/Tabs";
 import PageUsers from "./Users";
 import Departments from "./Departments";
@@ -16,21 +14,8 @@ const tabs = [
 ];
 
 function Users() {
-  const [users, setUsers] = useState<EmployeeModel[]>([]);
+  const { data: users = [] } = useUsers({ sort: "-active,lastName" });
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const res = await axios.get("/api/v2/users", {
-        params: {
-          sort: "-active,lastName",
-        },
-      });
-      setUsers(res.data.data.users);
-    };
-
-    fetchUsers();
-  }, []);
 
   return (
     <div className="flex flex-col relative" style={{ padding: "10px 25px 25px" }}>
