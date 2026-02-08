@@ -25,9 +25,9 @@ export default function Tickets() {
   }, []);
   return (
     <div className="flex flex-col" style={{ padding: "10px 25px 25px" }}>
-      <div className="sm:flex sm:justify-between align-center">
+      <div className="sm:flex sm:justify-between sm:items-center">
         {/* Header */}
-        <div className="page-header">
+        <div className="flex items-center justify-between">
           <h1 style={{ marginBottom: "10px" }}>Tickets</h1>
           {/* <p>Manage the team and account permissions here</p> */}
         </div>

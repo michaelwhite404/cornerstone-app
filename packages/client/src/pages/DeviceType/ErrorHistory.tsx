@@ -1,6 +1,8 @@
-import { Button, Classes, Icon, TextArea } from "@blueprintjs/core";
 import { AxiosError } from "axios";
 import { useCallback, useMemo, useState } from "react";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/solid";
+import { PlusIcon } from "@heroicons/react/solid";
+import { Button, Input, Textarea } from "../../components/ui";
 import { UseExpandedRowProps } from "react-table";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import { ErrorLogModel } from "../../types/models/errorLogTypes";
@@ -9,7 +11,7 @@ import PaneHeader from "../../components/PaneHeader/PaneHeader";
 import TableExpanded from "../../components/TableExpanded/TableExpanded";
 import { useToasterContext } from "../../hooks";
 import { APIError } from "../../types/apiResponses";
-import "./ErrorHistory.sass";
+
 
 interface ErrorHistoryProps {
   errors: ErrorLogModel[];
@@ -70,7 +72,11 @@ export default function ErrorHistory({
           // to build the expander.
           <div>
             <span {...row.getToggleRowExpandedProps()}>
-              <Icon icon={`chevron-${row.isExpanded ? "down" : "right"}`} size={18} color="black" />
+              {row.isExpanded ? (
+                <ChevronDownIcon className="h-5 w-5 text-black" />
+              ) : (
+                <ChevronRightIcon className="h-5 w-5 text-black" />
+              )}
             </span>
           </div>
         ),
@@ -90,13 +96,13 @@ export default function ErrorHistory({
 
   const renderRowSubComponent = useCallback(
     ({ original }: { original: ErrorLogModel }) => (
-      <div className="error-info">
-        <div className="error-basic-info">
-          <div className="error-left">
+      <div className="p-5">
+        <div className="flex flex-row mb-[15px]">
+          <div className="w-2/3 pr-[5px] break-words whitespace-pre-line">
             <div>Title: {original.title}</div>
             <div>Description: {original.description}</div>
           </div>
-          <div className="error-right">
+          <div className="w-1/3">
             <DeviceErrorStatusBadge status={original.status} />
           </div>
           <br />
@@ -107,12 +113,12 @@ export default function ErrorHistory({
         <br />
         <div className="error-updates">
           {original.updates.map((update, i) => (
-            <div className="error-single-update">
-              <div className="error-left">
+            <div className="flex flex-row mb-[15px]">
+              <div className="w-2/3 pr-[5px] break-words whitespace-pre-line">
                 <div> {`${updateText(original, i)}: ${update.description}`} </div>
                 <div>{new Date(update.createdAt).toLocaleString()}</div>
               </div>
-              <div className="error-right">
+              <div className="w-1/3">
                 <DeviceErrorStatusBadge status={update.status} />
               </div>
             </div>
@@ -127,7 +133,7 @@ export default function ErrorHistory({
   const newErrorSubmittable = Object.values(errorData).every((v) => v.length > 0);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement> & React.ChangeEventHandler<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setErrorData({ ...errorData, [e.target.name]: e.target.value });
   };
@@ -150,7 +156,7 @@ export default function ErrorHistory({
       <PaneHeader>
         Error History
         {!addingError && (
-          <Button icon="plus" intent="primary" onClick={() => setAddingError(true)}>
+          <Button icon={<PlusIcon className="h-5 w-5" />} variant="primary" onClick={() => setAddingError(true)}>
             Add Error
           </Button>
         )}
@@ -160,8 +166,7 @@ export default function ErrorHistory({
           <div style={{ width: "75%" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
               <label htmlFor="error-title">Title of Issue</label>
-              <input
-                className={Classes.INPUT}
+              <Input
                 name="title"
                 type="text"
                 dir="auto"
@@ -172,20 +177,19 @@ export default function ErrorHistory({
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
               <label htmlFor="error-description">Description of Issue</label>
-              <TextArea
+              <Textarea
                 style={{ minWidth: "250px", maxWidth: "250px", minHeight: "175px" }}
                 name="description"
                 value={errorData.description}
-                // @ts-ignore
                 onChange={handleInputChange}
               />
             </div>
             <div style={{ textAlign: "right" }}>
-              <Button intent="danger" onClick={() => setAddingError(false)}>
+              <Button variant="danger" onClick={() => setAddingError(false)}>
                 Cancel
               </Button>
               <Button
-                intent="primary"
+                variant="primary"
                 style={{ marginLeft: 10 }}
                 disabled={!newErrorSubmittable}
                 onClick={handleSubmit}
@@ -202,7 +206,7 @@ export default function ErrorHistory({
             columns={columns}
             data={data}
             renderRowSubComponent={renderRowSubComponent}
-            className="error-history-table"
+            className=""
           />
         </div>
       ) : (

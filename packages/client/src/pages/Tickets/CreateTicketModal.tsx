@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import LabeledInput2 from "../../components/LabeledInput2";
 import capitalize from "capitalize";
-import { Divider } from "@mui/material";
+import { Divider } from "../../components/ui";
 import axios from "axios";
 import { DepartmentModel, TicketModel } from "../../types/models";
 import { useNavigate } from "react-router-dom";

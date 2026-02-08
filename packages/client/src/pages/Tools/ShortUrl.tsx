@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import axios, { AxiosError } from "axios";
-import { Checkbox, Label, Switch } from "@blueprintjs/core";
+import { Checkbox, Label, Switch } from "../../components/ui";
 import { nanoid } from "nanoid";
 import { useAuth, useDocTitle, useToasterContext, useToggle } from "../../hooks";
 import LabeledInput from "../../components/Inputs/LabeledInput";
@@ -70,7 +70,7 @@ export default function ShortUrl() {
 
   return (
     <div style={{ padding: "10px 25px 25px" }}>
-      <div className="page-header">
+      <div className="flex items-center justify-between">
         <h1 style={{ marginBottom: "10px" }}>Short URL</h1>
         <p>Create short links with Cornerstone branding</p>
       </div>
@@ -111,9 +111,8 @@ export default function ShortUrl() {
           style={{ userSelect: "none" }}
           checked={newLink.autogenerate}
           onChange={toggleCheckbox}
-        >
-          Auto-generate short link
-        </Checkbox>
+          label="Auto-generate short link"
+        />
         <PrimaryButton
           className="md:hidden block ml-auto mt-6"
           text="+ Add Short Link"
@@ -124,7 +123,7 @@ export default function ShortUrl() {
       <div className="mt-24">
         <div className="flex flex-col sm:flex-row space-between">
           <h3 className="mb-3 sm:mt-0">Short Link Created by {staff ? "Staff" : "You"}</h3>
-          <Switch large checked={staff} onChange={toggle} label="View All Staff" />
+          <Switch checked={staff} onChange={toggle} label="View All Staff" />
         </div>
         <ShortLinksTable links={staff ? shortLinks : myLinks} />
         <ShortLinksTableMobile links={staff ? shortLinks : myLinks} />

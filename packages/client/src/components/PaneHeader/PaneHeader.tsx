@@ -1,6 +1,9 @@
 import { ReactNode } from "react";
-import "./PaneHeader.sass";
 
 export default function PaneHeader({ children }: { children: ReactNode }) {
-  return <h3 className="pane-header">{children}</h3>;
+  return (
+    <h3 className="text-[rgb(49,113,179)] text-lg font-medium flex items-center justify-between">
+      {children}
+    </h3>
+  );
 }

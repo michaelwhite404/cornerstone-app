@@ -35,7 +35,7 @@ function Users() {
   return (
     <div className="flex flex-col relative" style={{ padding: "10px 25px 25px" }}>
       {/* Header */}
-      <div className="page-header">
+      <div className="flex flex-col items-start justify-between">
         <h1 style={{ marginBottom: "10px" }}>User Management</h1>
         <p>Manage the team and account permissions here</p>
       </div>

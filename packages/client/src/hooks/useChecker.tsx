@@ -1,6 +1,6 @@
-import { Checkbox } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
+import { Checkbox } from "../components/ui";
 
 interface CheckerRow<T> {
   rowId: string;

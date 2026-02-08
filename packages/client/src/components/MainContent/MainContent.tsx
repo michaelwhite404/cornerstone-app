@@ -1,11 +1,10 @@
 import { ReactNode } from "react";
-import "./MainContent.sass";
 import MainContentFooter from "./MainContentFooter";
 import MainContentHeader from "./MainContentHeader";
 import MainContentInnerWrapper from "./MainContentInnerWrapper";
 
 function MainContent({ children }: { children?: ReactNode }) {
-  return <main className="main-content">{children}</main>;
+  return <main className="flex-grow overflow-auto bg-white">{children}</main>;
 }
 
 MainContent.InnerWrapper = MainContentInnerWrapper;

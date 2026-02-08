@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import SessionsTable from "./SessionsTable";
-import "./Sessions.sass";
+
 import DateSelector from "../../components/DateSelector";
 import SessionStat from "./SessionStat";
 import { format } from "date-fns";
@@ -28,8 +28,8 @@ export default function Sessions() {
 
   return (
     <div>
-      <div className="session-header">Session on {format(date, "LLLL d, yyyy")}</div>
-      <div className="session-stats-container">
+      <div className="text-lg font-medium mb-3">Session on {format(date, "LLLL d, yyyy")}</div>
+      <div className="grid gap-[35px] grid-cols-[2fr_2fr_auto] mb-[25px] max-[640px]:grid-cols-1 max-[640px]:grid-rows-[repeat(3,1fr)] max-[640px]:gap-[15px]">
         <SessionStat label="Total Students" value={entries.length} disable={!entries.length} />
         <SessionStat
           label="Drop Ins"

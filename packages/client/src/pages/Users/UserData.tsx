@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { Divider, Switch } from "@mui/material";
+import { Divider, Switch } from "../../components/ui";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { DepartmentModel, EmployeeModel, UserGroup } from "../../types/models";
@@ -276,12 +276,11 @@ export default function UserData() {
                     Timesheet Enabled
                   </label>
                   <Switch
-                    name="timesheetEnabled"
                     checked={userEdit?.timesheetEnabled || false}
-                    onChange={() =>
+                    onChange={(checked) =>
                       handleChange({
                         //@ts-ignore
-                        target: { name: "timesheetEnabled", value: !userEdit?.timesheetEnabled },
+                        target: { name: "timesheetEnabled", value: checked },
                       })
                     }
                   />
@@ -302,7 +301,7 @@ export default function UserData() {
                 </div>
                 <div className="px-5 py-5 md:py-0">
                   <Divider className="hidden md:block" orientation="vertical" />
-                  <Divider className="md:hidden" orientation="horizontal" />
+                  <Divider className="md:hidden" />
                 </div>
                 <div className="flex-1">
                   <GroupList

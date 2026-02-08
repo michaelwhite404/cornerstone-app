@@ -106,7 +106,7 @@ export default function LionsDenStudents() {
 
   return (
     <div>
-      <div className="session-header">Students ({data.length})</div>
+      <div className="text-lg font-medium mb-3">Students ({data.length})</div>
       <div>
         <StudentSearch students={notInA} onSubmit={addStudents} />
         <StudentsTable students={data} removeStudents={removeStudents} openModal={openModal} />

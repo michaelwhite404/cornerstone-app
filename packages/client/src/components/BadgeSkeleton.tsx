@@ -1,4 +1,4 @@
-import { Skeleton } from "@mui/material";
+import { Skeleton } from "./ui";
 
 export default function BadgeSkeleton({ width = 90 }: { width?: number }) {
   return (
@@ -7,18 +7,13 @@ export default function BadgeSkeleton({ width = 90 }: { width?: number }) {
         variant="circular"
         width={6}
         height={6}
-        sx={{ bgcolor: "grey.400", position: "absolute", left: 10, top: 7, zIndex: 10 }}
-        animation={false}
+        className="absolute left-2.5 top-[7px] z-10"
       />
       <Skeleton
         variant="rectangular"
         width={width}
         height={20}
-        sx={{
-          borderRadius: 9999,
-          marginRight: 0,
-          bgcolor: "grey.100",
-        }}
+        className="rounded-full"
       />
     </div>
   );

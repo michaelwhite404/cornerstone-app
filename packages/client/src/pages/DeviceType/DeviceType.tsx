@@ -1,10 +1,12 @@
-import { Button, Drawer, Menu, MenuItem } from "@blueprintjs/core";
-import { Popover2 } from "@blueprintjs/popover2";
 import axios from "axios";
 import capitalize from "capitalize";
 import pluralize from "pluralize";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Menu, Transition } from "@headlessui/react";
+import { CogIcon, PlusIcon, ViewListIcon, ChartBarIcon } from "@heroicons/react/solid";
+import { Button } from "../../components/ui";
+import Slideover from "../../components/Slideover";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import DeviceStatusBadge from "../../components/Badges/DeviceStatusBagde";
 import PageHeader from "../../components/PageHeader";
@@ -61,7 +63,10 @@ export default function DeviceType() {
                 alt={`${original.brand} Logo`}
                 style={{ width: 30, marginRight: 10 }}
               />
-              <span className="device-name" onClick={() => handleDeviceNameClick(original)}>
+              <span
+                className="text-black cursor-pointer hover:text-blue-400"
+                onClick={() => handleDeviceNameClick(original)}
+              >
                 {original.name}
               </span>
             </span>
@@ -148,44 +153,79 @@ export default function DeviceType() {
       />
     ),
   };
-  const drawerSize = {
-    List: "0%",
-    Single: "70%",
-    Add: "40%",
-  };
-
-  const ActionsMenu = (
-    <Menu className="custom-pop">
-      <MenuItem
-        icon="add"
-        text={`Add ${capitalize(pluralize.singular(deviceType!))}`}
-        onClick={() => setPageStatus("Add")}
-      />
-      <MenuItem icon="th-list" text="Checkout Logs" onClick={() => goTo("logs")} />
-      <MenuItem icon="stacked-chart" text="Stats" onClick={() => goTo("stats")} />
-    </Menu>
-  );
-
   return (
     <div>
       <PageHeader text={deviceType!}>
-        <Popover2 content={ActionsMenu} placement="bottom-end" className="menu-popover">
-          <Button icon="settings" text="Actions" large />
-        </Popover2>
+        <Menu as="div" className="relative">
+          <Menu.Button as={Fragment}>
+            <Button icon={<CogIcon className="h-5 w-5" />} text="Actions" size="lg" />
+          </Menu.Button>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div className="py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      className={`${
+                        active ? "bg-gray-100" : ""
+                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                      onClick={() => setPageStatus("Add")}
+                    >
+                      <PlusIcon className="h-5 w-5 mr-2" />
+                      Add {capitalize(pluralize.singular(deviceType!))}
+                    </button>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      className={`${
+                        active ? "bg-gray-100" : ""
+                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                      onClick={() => goTo("logs")}
+                    >
+                      <ViewListIcon className="h-5 w-5 mr-2" />
+                      Checkout Logs
+                    </button>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      className={`${
+                        active ? "bg-gray-100" : ""
+                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                      onClick={() => goTo("stats")}
+                    >
+                      <ChartBarIcon className="h-5 w-5 mr-2" />
+                      Stats
+                    </button>
+                  )}
+                </Menu.Item>
+              </div>
+            </Menu.Items>
+          </Transition>
+        </Menu>
       </PageHeader>
       <Table columns={columns} data={data} sortBy="name" />
-      <Drawer
-        isOpen={pageStatus !== "List"}
-        onClose={handleDrawerClose}
-        usePortal
-        size={drawerSize[pageStatus]}
-        hasBackdrop
-        canEscapeKeyClose={false}
-        canOutsideClickClose={pageStatus === "Single"}
-        title={drawerTitle[pageStatus]}
-      >
-        {drawerContent[pageStatus]}
-      </Drawer>
+      <Slideover open={pageStatus !== "List"} onOverlayClick={handleDrawerClose}>
+        <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+          <div className="px-4 py-4 sm:px-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="text-lg font-medium text-gray-900">{drawerTitle[pageStatus]}</div>
+            </div>
+          </div>
+          <div className="relative flex-1 overflow-y-auto">{drawerContent[pageStatus]}</div>
+        </div>
+      </Slideover>
     </div>
   );
 }

@@ -8,5 +8,5 @@ export default function CheckoutBox({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={classNames("device-checkout-box", className?.split(" "))}>{children}</div>;
+  return <div className={classNames("w-1/3 p-[15px] flex flex-col items-start", className?.split(" "))}>{children}</div>;
 }

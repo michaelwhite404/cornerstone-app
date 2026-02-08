@@ -1,7 +1,7 @@
-import { Button, Classes, Radio, TextArea } from "@blueprintjs/core";
 import React, { useState } from "react";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import PaneHeader from "../../components/PaneHeader/PaneHeader";
+import { Button, Input, RadioGroup, Textarea } from "../../components/ui";
 
 interface DeviceCheckinProps {
   device: DeviceModel;
@@ -15,12 +15,11 @@ export default function Checkin({ device, checkinDevice, onCheckinSuccess }: Dev
     title: "",
     description: "",
   });
-  const handleRadioChange = (e: React.FormEvent<HTMLDivElement>) => {
-    // @ts-ignore
-    setRadio(e.target.value as string);
+  const handleRadioChange = (value: string) => {
+    setRadio(value);
   };
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement> & React.ChangeEventHandler<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setError({ ...error, [e.target.name]: e.target.value });
   };
@@ -49,13 +48,22 @@ export default function Checkin({ device, checkinDevice, onCheckinSuccess }: Dev
       <PaneHeader>Check In</PaneHeader>
       <div className="flex">
         <div style={{ width: "65%" }}>
-          <div style={{ marginBottom: "25px" }} onChange={handleRadioChange}>
-            <Radio className="radio" name="checkin-device" value="passed">
-              {device.lastUser!.fullName} has returned the {device.deviceType} in working condition
-            </Radio>
-            <Radio className="radio" name="checkin-device" value="error">
-              There is an issue with the {device.deviceType}
-            </Radio>
+          <div style={{ marginBottom: "25px" }}>
+            <RadioGroup
+              name="checkin-device"
+              options={[
+                {
+                  label: `${device.lastUser!.fullName} has returned the ${device.deviceType} in working condition`,
+                  value: "passed",
+                },
+                {
+                  label: `There is an issue with the ${device.deviceType}`,
+                  value: "error",
+                },
+              ]}
+              value={radio}
+              onChange={handleRadioChange}
+            />
           </div>
           {radio === "error" && (
             <div style={{ width: "75%" }}>
@@ -63,8 +71,7 @@ export default function Checkin({ device, checkinDevice, onCheckinSuccess }: Dev
                 style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}
               >
                 <label htmlFor="error-title">Title of Issue</label>
-                <input
-                  className={Classes.INPUT}
+                <Input
                   name="title"
                   type="text"
                   dir="auto"
@@ -74,10 +81,9 @@ export default function Checkin({ device, checkinDevice, onCheckinSuccess }: Dev
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <label htmlFor="error-description">Description of Issue</label>
-                <TextArea
+                <Textarea
                   style={{ minWidth: "250px", maxWidth: "250px", minHeight: "175px" }}
                   name="description"
-                  // @ts-ignore
                   onChange={handleInputChange}
                 />
               </div>
@@ -85,7 +91,7 @@ export default function Checkin({ device, checkinDevice, onCheckinSuccess }: Dev
           )}
         </div>
         <div className="device-checkin-box button" style={{ justifyContent: "flex-start" }}>
-          <Button intent="primary" disabled={!submittable()} onClick={handleCheckin}>
+          <Button variant="primary" disabled={!submittable()} onClick={handleCheckin}>
             Check In {device.deviceType}
           </Button>
         </div>

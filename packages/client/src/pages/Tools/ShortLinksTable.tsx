@@ -1,7 +1,7 @@
 import { ShortUrlModel } from "../../types/models";
 import QRCode from "../../components/QRCode";
 import TableWrapper from "../../components/TableWrapper";
-import "./ShortLinksTable.sass";
+
 
 const headers = ["Full URL", "Short Link", "Clicks", "QR Clicks", "QR Code"];
 
@@ -12,7 +12,7 @@ export default function ShortLinksTable({ links }: { links: ShortUrlModel[] }) {
   return (
     <div className="hidden md:block">
       <TableWrapper>
-        <table className="short-link-table">
+        <table className="[&_tr_td]:max-w-[250px] [&_tr_td]:overflow-hidden [&_tr_td]:text-ellipsis [&_tr_td]:whitespace-nowrap [&_tr_th]:max-w-[250px] [&_tr_th]:overflow-hidden [&_tr_th]:text-ellipsis [&_tr_th]:whitespace-nowrap [&_tr_:first-child]:pl-[15px] [&_tr_:first-child]:pr-[15px] [&_tr_td]:py-1.5 [&_tr_td]:pr-[15px]">
           <thead>
             <tr>
               {headers.map((h) => (

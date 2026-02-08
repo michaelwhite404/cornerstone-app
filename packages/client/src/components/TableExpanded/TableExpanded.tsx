@@ -1,6 +1,5 @@
 import { Fragment } from "react";
 import { Column, useExpanded, useTable, UseTableRowProps } from "react-table";
-import "./TableExpanded.sass";
 
 interface TableExpandedProps<T> extends Pick<React.HTMLAttributes<HTMLTableElement>, "className"> {
   columns: Column[];
@@ -39,7 +38,13 @@ export default function TableExpanded<T extends object = {}>({
 
   return (
     <>
-      <table className={"table-wrapper table-expanded " + className} {...getTableProps()}>
+      <table
+        className={
+          "table-wrapper [&_thead_th:first-child]:pl-5 [&_td]:py-1.5 [&_td]:px-0 [&_td]:max-w-0 [&_td]:overflow-hidden [&_td]:text-ellipsis [&_td]:whitespace-nowrap [&_td:first-child]:pl-5 [&_tbody[role='rowgroup']_tr:last-child]:border-b-0 [&_tbody[role='rowgroup']_tr.expanded-row:hover]:bg-transparent " +
+          className
+        }
+        {...getTableProps()}
+      >
         <thead>
           {headerGroups.map((headerGroup, i) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={`header-row-${i}`}>

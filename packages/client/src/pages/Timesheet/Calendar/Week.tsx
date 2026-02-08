@@ -65,7 +65,7 @@ export function CalendarWeek(props: CalendarWeekProps) {
   const showLine = width >= 640 ? days.some((d) => d.isToday) : isToday(props.date);
 
   return (
-    <div className="flex flex-col week-view-wrapper">
+    <div className="flex flex-col h-[calc(100vh-50px)]">
       <div
         ref={container}
         className="flex flex-auto flex-col overflow-auto bg-white rounded shadow ring-1 ring-black ring-opacity-5"

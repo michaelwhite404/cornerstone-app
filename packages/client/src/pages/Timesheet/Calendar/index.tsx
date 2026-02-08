@@ -11,7 +11,7 @@ import { TimesheetModel } from "../../../types/models";
 import { useAuth } from "../../../hooks";
 import { start, end } from "../../../utils/startEnd";
 import Month from "../../../types/month";
-import "./Calendar.sass";
+
 
 function Calendar(props: CalendarProps) {
   const [view, setView] = useState<CalendarView>("week");

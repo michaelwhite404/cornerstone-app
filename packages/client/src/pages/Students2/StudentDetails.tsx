@@ -1,4 +1,4 @@
-import { Divider } from "@mui/material";
+import { Divider } from "../../components/ui";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useOutletContext, useParams } from "react-router-dom";
@@ -11,7 +11,7 @@ import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useAuth, useToasterContext } from "../../hooks";
 import { APIError, APIStudentResponse } from "../../types/apiResponses";
 import { numberToGrade } from "../../utils/grades";
-import "./StudentDetails.scss";
+
 import StudentDevicesTable from "./StudentDevicesTable";
 import StudentTextbooksTable from "./StudentTextbooksTable";
 
@@ -96,7 +96,14 @@ export default function StudentDetails() {
                 className="z-10"
                 style={{ filter: "drop-shadow(-1px 6px 3px rgba(50, 50, 0, 0.5))" }}
               >
-                <div className="student-cover-image"></div>
+                <div className="h-[250px] -ml-10" style={{
+                  backgroundImage: "linear-gradient(180deg, rgba(39, 39, 39, 0.7), rgba(39, 39, 39, 0.7)), url(https://uploads-ssl.webflow.com/5f11b0f9a179803d92d0d70e/5f4949b94ed6d65fbe4b23d1_perry-grone-lbLgFFlADrY-unsplash.jpg)",
+                  backgroundPosition: "0px 0px, 50% 57%",
+                  backgroundSize: "auto, cover",
+                  backgroundRepeat: "repeat, no-repeat",
+                  clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 110px))",
+                  WebkitClipPath: "polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 110px))",
+                }}></div>
               </div>
               <div className="md:mx-12 mx-6 -mt-28 z-20 relative">
                 <div className="flex items-end">

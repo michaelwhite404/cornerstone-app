@@ -2,7 +2,6 @@ import { useState } from "react";
 import Select from "react-select";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import { StudentModel } from "../../../types/models";
-import "./StudentSearch.sass";
 import pluralize from "pluralize";
 
 interface StudentSearchProps {
@@ -36,7 +35,7 @@ export default function StudentSearch(props: StudentSearchProps) {
 
   const btnTxt = `+ Add ${pluralize("Students", selected.length, selected.length > 1)}`;
   return (
-    <div className="add-student-container">
+    <div className="grid grid-cols-[1fr_auto] gap-[15px] max-[480px]:grid-cols-1 max-[480px]:gap-2.5">
       <Select
         isMulti
         placeholder="Students to Add"

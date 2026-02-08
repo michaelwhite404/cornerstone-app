@@ -9,7 +9,17 @@ export default function MainContentFooter({
   children?: ReactNode;
   align?: "left" | "center" | "right";
 }) {
-  const className = classNames("main-content-footer", { [`mcf-${align}`]: align });
+  const alignClass =
+    align === "left"
+      ? "justify-start"
+      : align === "center"
+      ? "justify-center"
+      : "justify-end";
+
+  const className = classNames(
+    "mt-auto py-3 px-6 items-center flex bg-white border-t border-[#e5e7eb]",
+    alignClass
+  );
 
   return (
     <div className={className} {...props}>

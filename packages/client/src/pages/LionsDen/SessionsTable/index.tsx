@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import Badge from "../../../components/Badge/Badge";
 import TableWrapper from "../../../components/TableWrapper";
 import { SignedOutEntry } from "../../../types/aftercareTypes";
-import "./SessionsTable.sass";
+
 
 export default function SessionsTable({ entries }: { entries: SignedOutEntry[] }) {
   const regular: SignedOutEntry[] = [];
@@ -15,13 +15,13 @@ export default function SessionsTable({ entries }: { entries: SignedOutEntry[] }
 
   return (
     <TableWrapper>
-      <table className="aftercare-session-table">
+      <table className="relative">
         <thead>
           <tr>
-            <th>Student</th>
-            <th className="hide-at-640">Time</th>
+            <th className="pl-[15px]">Student</th>
+            <th className="max-[640px]:hidden">Time</th>
             <th style={{ width: 150 }}>Signature</th>
-            <th className="hide-at-640" style={{ width: 150 }}></th>
+            <th className="max-[640px]:hidden" style={{ width: 150 }}></th>
           </tr>
         </thead>
         <tbody>
@@ -31,7 +31,7 @@ export default function SessionsTable({ entries }: { entries: SignedOutEntry[] }
           {dropIns.length > 0 && (
             <tr>
               <td
-                className="table-header"
+                className="border-b border-gray-300 bg-[#f9f9fb] uppercase text-xs text-gray-400 font-medium tracking-wider text-left"
                 style={{ height: "auto", padding: "10px 15px" }}
                 colSpan={4}
               >
@@ -51,9 +51,9 @@ export default function SessionsTable({ entries }: { entries: SignedOutEntry[] }
 function EntryRow({ entry }: { entry: SignedOutEntry }) {
   return (
     <tr style={{ borderBottom: "1px #e5e7eb solid" }} key={entry._id}>
-      <td>
+      <td className="py-[7px] h-14 pl-[15px]">
         <div>{entry.student.fullName}</div>
-        <div className="show-at-640">
+        <div className="hidden max-[640px]:block">
           <div
             style={{
               color: "gray",
@@ -66,11 +66,11 @@ function EntryRow({ entry }: { entry: SignedOutEntry }) {
           {entry.lateSignOut && <Badge text="Late" color="red" />}
         </div>
       </td>
-      <td className="hide-at-640">{format(new Date(entry.signOutDate), "h:mm aa")}</td>
-      <td>
-        <img className="sign-out-signature" src={`/images/${entry.signature}`} alt="signature" />
+      <td className="max-[640px]:hidden py-[7px] h-14">{format(new Date(entry.signOutDate), "h:mm aa")}</td>
+      <td className="py-[7px] h-14">
+        <img className="h-10 max-[640px]:w-[100px]" src={`/images/${entry.signature}`} alt="signature" />
       </td>
-      <td className="hide-at-640 late-td">
+      <td className="max-[640px]:hidden text-center py-[7px] h-14">
         {entry.lateSignOut && <Badge text="Late" color="red" />}
       </td>
     </tr>

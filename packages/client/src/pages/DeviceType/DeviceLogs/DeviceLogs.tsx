@@ -10,7 +10,7 @@ import PageHeader from "../../../components/PageHeader";
 import TablePaginate from "../../../components/TablePaginate/TablePaginate";
 import { useDocTitle, useWindowSize } from "../../../hooks";
 import { APICheckoutLogResponse, APIError } from "../../../types/apiResponses";
-import "./DeviceLogs.sass";
+
 
 export default function DeviceLogs() {
   const { deviceType } = useParams<{ deviceType: string }>();

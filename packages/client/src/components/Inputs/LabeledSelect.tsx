@@ -1,7 +1,8 @@
-import { HTMLSelect, HTMLSelectProps, Label } from "@blueprintjs/core";
 import React from "react";
+import { Label, Select } from "../ui";
+import type { SelectProps } from "../ui";
 
-interface LabeledSelectProps extends HTMLSelectProps {
+interface LabeledSelectProps extends SelectProps {
   label: string;
   required?: boolean;
 }
@@ -13,7 +14,7 @@ export default function LabeledSelect({ label, required, ...props }: LabeledSele
         {label}
         {required && <span style={{ marginLeft: 5, color: "red" }}>*</span>}
       </span>
-      <HTMLSelect {...props} />
+      <Select fill {...props} />
     </Label>
   );
 }

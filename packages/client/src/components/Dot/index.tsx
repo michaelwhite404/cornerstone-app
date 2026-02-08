@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { StandardLonghandProperties } from "csstype";
-import "./Dot.sass";
 
 interface DotProps {
   blinking?: boolean;
@@ -8,6 +7,6 @@ interface DotProps {
 }
 
 export default function Dot(props: DotProps) {
-  const c = classNames("dot", { blinking: props.blinking });
+  const c = classNames("w-2 h-2 rounded-full", { "animate-blinking": props.blinking });
   return <div className={c} style={{ backgroundColor: props.color || "black" }} />;
 }

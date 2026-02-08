@@ -8,7 +8,7 @@ import { Leave } from ".";
 import DateSelector from "../../../components/DateSelector";
 import { useToasterContext } from "../../../hooks";
 import { APIError, APIResponse } from "../../../types/apiResponses";
-import "./AddLeave.sass";
+
 
 interface AddLeaveProps {
   open: boolean;
@@ -168,7 +168,7 @@ export default function AddLeave(props: AddLeaveProps) {
                   <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     {/* <TextInput label="" /> */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="flex add-leave-date-selector col-span-2 xs:col-span-1">
+                      <div className="flex items-end col-span-2 xs:col-span-1 [&_.date-selector]:w-full [&_.date-selector]:mr-1 [&_label]:mb-0">
                         <DateSelector
                           label="Date Start"
                           maxDate={new Date("Dec 31, 9999")}
@@ -184,7 +184,7 @@ export default function AddLeave(props: AddLeaveProps) {
                           />
                         )}
                       </div>
-                      <div className="flex add-leave-date-selector col-span-2 xs:col-span-1">
+                      <div className="flex items-end col-span-2 xs:col-span-1 [&_.date-selector]:w-full [&_.date-selector]:mr-1 [&_label]:mb-0">
                         <DateSelector
                           label="Date End"
                           maxDate={new Date("Dec 31, 9999")}

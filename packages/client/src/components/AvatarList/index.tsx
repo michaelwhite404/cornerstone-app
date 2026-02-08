@@ -1,5 +1,3 @@
-import "./index.sass";
-
 interface AvatarListProps {
   max?: number;
   tooltip?: boolean;
@@ -11,7 +9,6 @@ interface AvatarListProps {
 
 export default function AvatarList(props: AvatarListProps) {
   const { users, max, tooltip = false } = props;
-  // const { length } = users;
 
   const renderedUsers = max ? users.slice(0, max) : users;
 
@@ -19,7 +16,7 @@ export default function AvatarList(props: AvatarListProps) {
     <div className="flex -space-x-1 relative z-0">
       {renderedUsers.map((user, i) => {
         return (
-          <div className="avatar relative group" key={i}>
+          <div className="relative group" key={i}>
             <img
               key={i}
               className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white"
@@ -29,7 +26,7 @@ export default function AvatarList(props: AvatarListProps) {
             />
             {tooltip && (
               <div
-                className="avatar-tooltip absolute z-30 -top-7 bg-gray-400 text-white rounded px-3 min-w-max left-1/2"
+                className="opacity-0 invisible group-hover:opacity-100 group-hover:visible absolute z-30 -top-7 bg-gray-400 text-white rounded px-3 min-w-max left-1/2 transition-[opacity,visibility] duration-[250ms] ease-in-out"
                 style={{ transform: "translate(-50%, 0)" }}
               >
                 <div

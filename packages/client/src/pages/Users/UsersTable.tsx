@@ -10,10 +10,10 @@ export default function UsersTable(props: UsersTableProps) {
       <table>
         <thead>
           <tr>
-            <th className="pl-4 sticky-header">Name</th>
-            <th className="xl:table-cell sticky-header hidden">Email</th>
-            <th className="md:table-cell hidden sticky-header">Title</th>
-            <th className="sticky-header">Role</th>
+            <th className="pl-4 sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Name</th>
+            <th className="xl:table-cell sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0 hidden">Email</th>
+            <th className="md:table-cell hidden sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Title</th>
+            <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Role</th>
           </tr>
         </thead>
         <tbody>

@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 import { APIError } from "../types/apiResponses";
 import Class from "../types/class";
 import { grades } from "../utils/grades";
-import { HTMLSelect } from "@blueprintjs/core";
+import { Select } from "../components/ui";
 
 interface IUseClasses {
   classes: Class[];
@@ -99,7 +99,7 @@ export default function useClasses(fetchedClasses?: Class[]): IUseClasses {
       value && setGradePicked(value);
     }, [value]);
     return (
-      <HTMLSelect
+      <Select
         value={value ?? gradePicked}
         options={gradeValues}
         onChange={(e) => changeGrade(e, onChange)}
@@ -122,7 +122,7 @@ export default function useClasses(fetchedClasses?: Class[]): IUseClasses {
     value?: string;
     onChange?: (value: string) => any;
   }) => (
-    <HTMLSelect
+    <Select
       disabled={gradePicked < 0}
       value={value ?? studentPicked}
       options={studentOptions || [selectAStudent]}

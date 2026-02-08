@@ -70,7 +70,7 @@ export default function Admin(props: Props) {
           selected={selected?._id || ""}
           filterValue={filter}
         >
-          <div className="side-table-top">
+          <div className="pt-6 px-6 pb-4 border-b border-gray-200">
             <PageHeader text="Timesheets" />
             <SideTableFilter value={filter} onChange={(value) => setFilter(value)} />
           </div>

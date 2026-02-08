@@ -1,6 +1,5 @@
 import React, { Fragment, ReactNode } from "react";
 import FadeIn from "../FadeIn";
-import "./EmptyState.sass";
 
 export default function EmptyState({
   children,
@@ -12,9 +11,9 @@ export default function EmptyState({
   const El = fadeIn ? FadeIn : Fragment;
 
   return (
-    <div className="empty-state-container">
+    <div className="w-full h-full flex flex-col items-center justify-center">
       <El>
-        <div className="empty-state-border">{children}</div>
+        <div className="py-16 px-24 border-2 border-gray-200 border-dashed rounded-2xl">{children}</div>
       </El>
     </div>
   );

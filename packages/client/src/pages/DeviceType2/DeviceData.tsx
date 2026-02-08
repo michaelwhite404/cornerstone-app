@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
+import { ExclamationIcon, RefreshIcon } from "@heroicons/react/solid";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import BackButton from "../../components/BackButton";
 import DeviceStatusBadge from "../../components/Badges/DeviceStatusBagde";
@@ -14,7 +15,7 @@ import {
 import MainContent from "../../components/MainContent";
 import { useDevice, useToasterContext } from "../../hooks";
 import BadgeSkeleton from "../../components/BadgeSkeleton";
-import { Button, ButtonGroup, IconName } from "@blueprintjs/core";
+import { Button } from "../../components/ui";
 import ResetBody from "../DeviceType/SingleDevice/ResetBody";
 import CreateError from "./Modals/CreateError";
 import { EmployeeModel } from "../../types/models/employeeTypes";
@@ -34,7 +35,7 @@ interface DeviceDataProps {
 }
 interface SubHeadingButton {
   text: string;
-  icon: IconName;
+  icon: ReactNode;
   onClick: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   show?: boolean;
 }
@@ -79,7 +80,7 @@ export default function DeviceData() {
   const subHeadingButtons: SubHeadingButton[] = [
     {
       text: "Reset",
-      icon: "reset",
+      icon: <RefreshIcon className="h-5 w-5" />,
       onClick: () =>
         dialogControls.open(
           `Reset ${device?.name || ""}`,
@@ -90,7 +91,7 @@ export default function DeviceData() {
     },
     {
       text: "Create Error",
-      icon: "warning-sign",
+      icon: <ExclamationIcon className="h-5 w-5" />,
       onClick: () =>
         dialogControls.open(
           `Create Error`,
@@ -127,11 +128,11 @@ export default function DeviceData() {
         </MainContent.Header>
         {showableButtons.length > 0 && (
           <MainContent.Header>
-            <ButtonGroup style={{ marginLeft: "auto" }}>
+            <div className="flex" style={{ marginLeft: "auto" }}>
               {showableButtons.map(({ text, icon, onClick }) => (
                 <Button key={text} text={text} icon={icon} onClick={onClick} />
               ))}
-            </ButtonGroup>
+            </div>
           </MainContent.Header>
         )}
         <div style={{ overflowY: "scroll" }}>
@@ -177,7 +178,7 @@ export default function DeviceData() {
         </div>
         {device?.status === "Assigned" && (
           <MainContent.Footer>
-            <Button text="Unassign" onClick={handleUnassign} intent="primary" />
+            <Button text="Unassign" onClick={handleUnassign} variant="primary" />
           </MainContent.Footer>
         )}
       </FadeIn>

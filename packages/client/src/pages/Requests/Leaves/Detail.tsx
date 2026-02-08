@@ -100,26 +100,26 @@ export default function Detail(props: OutletContext) {
                           <div className="mt-10 grid gap-8 grid-cols-2">
                             <div className="col-span-2">
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">From</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">From</div>
                                 <div>{selected.user.fullName}</div>
                               </FadeIn>
                             </div>
                             <div>
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">Date Start</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Date Start</div>
                                 <div>{format(new Date(selected.dateStart), "P")}</div>
                               </FadeIn>
                             </div>
                             <div>
                               <FadeIn delay={125}>
-                                <div className="show-entry-label">Date End</div>
+                                <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Date End</div>
                                 <div>{format(new Date(selected.dateEnd), "P")}</div>
                               </FadeIn>
                             </div>
                             {selected.comments && (
                               <div className="col-span-2">
                                 <FadeIn delay={125}>
-                                  <div className="show-entry-label">Comments</div>
+                                  <div className="mb-1 text-[#b6b4b4] font-medium tracking-wide text-xs uppercase">Comments</div>
                                   <div>{selected.comments}</div>
                                 </FadeIn>
                               </div>

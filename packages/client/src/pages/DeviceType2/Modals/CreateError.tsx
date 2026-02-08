@@ -1,4 +1,4 @@
-import { Button, Classes } from "@blueprintjs/core";
+import { Button } from "../../../components/ui";
 import React, { useState } from "react";
 import { DeviceModel } from "../../../types/models/deviceTypes";
 import { ErrorLogModel } from "../../../types/models/errorLogTypes";
@@ -36,7 +36,7 @@ export default function CreateError({ close, createError, reFetchDevices }: Crea
 
   return (
     <>
-      <div className={Classes.DIALOG_BODY}>
+      <div>
         <LabeledInput name="title" label="Title" required onChange={handleChange} />
         <LabeledTextArea
           name="description"
@@ -46,16 +46,14 @@ export default function CreateError({ close, createError, reFetchDevices }: Crea
           onChange={handleChange}
         />
       </div>
-      <div className={Classes.DIALOG_FOOTER}>
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          <Button text="Cancel" onClick={close} />
-          <Button
-            text="Create Error"
-            intent="primary"
-            onClick={handleSubmit}
-            disabled={!submittable}
-          />
-        </div>
+      <div className="mt-4 flex justify-end gap-2">
+        <Button text="Cancel" onClick={close} />
+        <Button
+          text="Create Error"
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={!submittable}
+        />
       </div>
     </>
   );

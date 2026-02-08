@@ -1,5 +1,5 @@
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
-import { Divider } from "@mui/material";
+import { Divider } from "../../components/ui";
 import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";

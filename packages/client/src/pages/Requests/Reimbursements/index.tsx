@@ -124,7 +124,7 @@ export default function Reimbursements() {
   return (
     <div style={{ padding: "10px 25px 25px" }}>
       <div className="sm:flex sm:justify-between  sm:align-center">
-        <div className="page-header">
+        <div className="flex flex-col items-start justify-between">
           <h1 style={{ textTransform: "capitalize", marginBottom: "10px" }}>
             Reimbursement Requests
           </h1>

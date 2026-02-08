@@ -8,7 +8,7 @@ export default function LabeledInput2(props: LabeledInput2Props) {
       <label htmlFor={name} className="block text-sm font-medium text-gray-700">
         {props.label}
       </label>
-      <div className="mt-1">
+      <div className="mt-1 w-full">
         <input
           type={type || "text"}
           name={name}

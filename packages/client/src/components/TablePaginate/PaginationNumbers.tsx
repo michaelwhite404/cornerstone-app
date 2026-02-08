@@ -1,4 +1,4 @@
-import { Icon } from "@blueprintjs/core";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
 
 interface PaginationNumbersProps {
   currentPage: number;
@@ -51,37 +51,41 @@ export default function PaginationNumbers({
   const array = getPaginationArray(currentPage, pageCount);
 
   return (
-    <div className="pagination-navigator pagination-toolbar-item">
+    <div className="flex flex-row justify-end w-1/3">
       {pageCount > 1 && (
         <>
-          <div className="pagination-arrow-holder">
+          <div className="flex items-center justify-center h-[22px] w-[22px]">
             {canPreviousPage && (
               <button
-                className="pagination-arrow"
+                className="bg-transparent border-none text-[#999999] p-0.5 rounded-md cursor-pointer hover:bg-[#eeeeee] disabled:text-[#d6d5d5]"
                 onClick={previousPage}
                 disabled={!canPreviousPage}
               >
-                <Icon icon="chevron-left" />
+                <ChevronLeftIcon className="h-5 w-5" />
               </button>
             )}
           </div>
-          <ul className="pagination-page-container">
+          <ul className="list-none m-0 ps-0 flex flex-row items-center">
             {array.map((value: string | number, i) => (
               <li
                 key={`page-${i}`}
-                className={`pagination-page-number ${currentPage === value ? "current-page" : ""} ${
-                  typeof value === "number" ? "" : "dots"
-                }`}
+                className={`flex items-center justify-center bg-transparent border-none text-[#999999] rounded-md cursor-pointer h-[22px] w-[22px] mx-0.5 hover:bg-[#eeeeee] ${
+                  currentPage === value ? "!bg-[#c7c7c7]" : ""
+                } ${typeof value === "number" ? "" : "hover:!bg-transparent !cursor-default"}`}
                 onClick={() => typeof value === "number" && goToPage(value)}
               >
                 {value}
               </li>
             ))}
           </ul>
-          <div className="pagination-arrow-holder">
+          <div className="flex items-center justify-center h-[22px] w-[22px]">
             {canNextPage && (
-              <button className="pagination-arrow" onClick={nextPage} disabled={!canNextPage}>
-                <Icon icon="chevron-right" />
+              <button
+                className="bg-transparent border-none text-[#999999] p-0.5 rounded-md cursor-pointer hover:bg-[#eeeeee] disabled:text-[#d6d5d5]"
+                onClick={nextPage}
+                disabled={!canNextPage}
+              >
+                <ChevronRightIcon className="h-5 w-5" />
               </button>
             )}
           </div>

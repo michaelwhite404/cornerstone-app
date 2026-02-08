@@ -1,5 +1,5 @@
-import { Button, HTMLSelect, InputGroup } from "@blueprintjs/core";
-import { XCircleIcon } from "@heroicons/react/solid";
+import { XCircleIcon, TrashIcon } from "@heroicons/react/solid";
+import { Button, Input, Select } from "../../components/ui";
 
 interface PreBook {
   passed: boolean;
@@ -26,7 +26,7 @@ export default function AddBooksTable({ booksToAdd, changeBook, deleteBook, data
       <thead>
         <tr>
           {["", "#", "Quality", "Status", ""].map((h, i) => (
-            <th className="sticky-header" key={"header" + i}>
+            <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0" key={"header" + i}>
               {h}
             </th>
           ))}
@@ -66,44 +66,50 @@ function TableRow({
 
   return (
     <tr key={`book-index-${index}`}>
-      <td style={{ textAlign: "center" }} className="add-input">
+      <td style={{ textAlign: "center" }} className="py-2">
         {!book.passed && <XCircleIcon color="#c50f0f" width={25} />}
       </td>
-      <td className="add-input">
-        <InputGroup
+      <td className="py-2">
+        <Input
           value={`${book.bookNumber}`}
           style={{ width: 50 }}
           onChange={(e) => changeBook(index, "bookNumber", e.target.value)}
-          className="add-input"
+          className="py-2"
           disabled={!dataLocked}
         />
       </td>
-      <td className="add-input">
-        <HTMLSelect
-          options={["Excellent", "Good", "Acceptable", "Poor", "Lost"]}
+      <td className="py-2">
+        <Select
+          options={["Excellent", "Good", "Acceptable", "Poor", "Lost"].map((q) => ({
+            label: q,
+            value: q,
+          }))}
           value={book.quality}
           onChange={(e) => changeBook(index, "quality", e.target.value)}
-          className="add-input"
+          className="py-2"
           disabled={!dataLocked}
         />
       </td>
-      <td className="add-input">
-        <HTMLSelect
-          options={["Available", "Replaced", "Not Available"]}
+      <td className="py-2">
+        <Select
+          options={["Available", "Replaced", "Not Available"].map((s) => ({
+            label: s,
+            value: s,
+          }))}
           value={book.status}
           onChange={(e) => changeBook(index, "status", e.target.value)}
-          className="add-input"
+          className="py-2"
           disabled={!dataLocked}
         />
       </td>
-      <td className="add-input">
+      <td className="py-2">
         {index > 0 && (
           <Button
-            icon="trash"
-            minimal
-            intent="danger"
+            icon={<TrashIcon className="h-5 w-5" />}
+            variant="minimal"
             onClick={handleDelete}
             disabled={!dataLocked}
+            className="text-red-500 hover:text-red-700"
           />
         )}
       </td>

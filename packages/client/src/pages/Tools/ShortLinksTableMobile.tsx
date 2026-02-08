@@ -4,7 +4,7 @@ import TableWrapper from "../../components/TableWrapper";
 
 export default function ShortLinksTableMobile({ links }: { links: ShortUrlModel[] }) {
   return (
-    <div className="short-link-table-mobile md:hidden">
+    <div className="bg-white md:hidden [&_.header]:uppercase [&_.header]:text-xs [&_.header]:text-[#9ca3af] [&_.header]:font-medium [&_.header]:tracking-wide [&_.header]:text-left">
       <TableWrapper>
         {links.map((link) => (
           <div key={link._id} className="flex space-between align-center px-4 py-3 border-b">

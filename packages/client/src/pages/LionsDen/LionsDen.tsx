@@ -64,7 +64,7 @@ export default function LionsDen() {
   return (
     <div style={{ padding: "10px 25px 25px" }}>
       {/* Header */}
-      <div className="page-header">
+      <div className="flex items-center justify-between">
         <h1 style={{ marginBottom: "10px" }}>Lions Den</h1>
       </div>
       {/* Tabs */}

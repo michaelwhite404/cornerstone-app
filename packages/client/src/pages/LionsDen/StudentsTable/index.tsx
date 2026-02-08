@@ -1,11 +1,11 @@
-import { Checkbox } from "@mui/material";
+import { Checkbox } from "../../../components/ui";
 import classNames from "classnames";
 import pluralize from "pluralize";
 import { useEffect, useState } from "react";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import TableWrapper from "../../../components/TableWrapper";
 import { numberToGrade } from "../../../utils/grades";
-import "./StudentsTable.sass";
+
 
 type RemoveArray<T> = T extends any[] ? T[number] : never;
 type CheckboxStates = "unchecked" | "checked" | "indeterminate";
@@ -96,7 +96,7 @@ export default function StudentTable({ students, removeStudents, openModal }: St
 
   return (
     <TableWrapper>
-      <table className="aftercare-student-table">
+      <table className="[&_th]:p-0 [&_tr>:first-child]:pl-2.5">
         <thead>
           <tr>
             {headings.map((h) => (
@@ -109,7 +109,7 @@ export default function StudentTable({ students, removeStudents, openModal }: St
         <tbody>
           {rows.map((student) => (
             <tr
-              className={classNames({ checked: student.checked })}
+              className={classNames({ "[&_td]:bg-[#fafafa]": student.checked })}
               style={{ borderBottom: "1px #e5e7eb solid" }}
               key={student._id}
             >
@@ -142,7 +142,7 @@ export default function StudentTable({ students, removeStudents, openModal }: St
                     </>
                   )}
                 </span>
-                <div className="block sm:hidden sub-td">
+                <div className="block sm:hidden text-gray-500 text-xs">
                   {student.grade !== undefined && <div>Grade: {numberToGrade(student.grade)}</div>}
                   {/* <div>Days Present: {student.entriesCount}</div>
                   <div>Days Late: {student.lateCount}</div> */}

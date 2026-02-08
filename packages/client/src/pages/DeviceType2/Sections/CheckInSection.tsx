@@ -56,13 +56,13 @@ export default function CheckInSection({
       <Checkin>
         {showData ? (
           <>
-            <div className="device-checkin-left">
+            <div className="w-[70%] pr-2 max-[650px]:w-full">
               <Checkin.Form device={device} radioValue={radio} onRadioChange={handleRadioChange} />
               {radio === "error" && (
                 <Checkin.ErrorForm value={error} onInputChange={handleInputChange} />
               )}
             </div>
-            <div className="device-checkin-right">
+            <div className="w-[30%] max-[650px]:w-full">
               <Checkin.Button
                 deviceType={device?.deviceType}
                 disabled={!submittable}

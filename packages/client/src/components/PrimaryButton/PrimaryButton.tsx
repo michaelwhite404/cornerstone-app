@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { ReactNode } from "react";
-import "./PrimaryButton.sass";
 
 interface PrimaryButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
@@ -12,7 +11,11 @@ export default function PrimaryButton({ children, text, fill, ...props }: Primar
   const { className, ...rest } = props;
   return (
     <button
-      className={classNames("primary-button", { "primary-button-fill": fill }, className)}
+      className={classNames(
+        "bg-[#2972e7] text-white text-sm font-medium border-none py-2.5 px-4 cursor-pointer rounded hover:bg-[#1a64db] focus:outline-none focus:ring-2 focus:ring-[#1a64db] focus:ring-offset-2 active:bg-[#1253bb] disabled:bg-[#c4c4c4]",
+        { "w-full": fill },
+        className
+      )}
       {...rest}
     >
       {children || text}

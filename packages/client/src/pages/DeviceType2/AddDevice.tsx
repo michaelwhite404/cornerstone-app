@@ -1,4 +1,4 @@
-import { Button, InputGroup, Label } from "@blueprintjs/core";
+import { Button, Input, Label } from "../../components/ui";
 import axios, { AxiosError } from "axios";
 import capitalize from "capitalize";
 import pluralize, { singular } from "pluralize";
@@ -155,7 +155,7 @@ export default function AddDevice() {
         </div>
         <MainContent.Footer>
           <Button text="Cancel" onClick={onBack} style={{ marginRight: 10 }} />
-          <Button intent="primary" onClick={handleClick} disabled={!submittable}>
+          <Button variant="primary" onClick={handleClick} disabled={!submittable}>
             Create {capitalize(singular(deviceType))}
           </Button>
         </MainContent.Footer>
@@ -188,13 +188,14 @@ const InputRow = ({
           {label}
           {required && <span style={{ marginLeft: 5, color: "red" }}>*</span>}
         </span>
-        <InputGroup
+        <Input
           className="add-device-input"
           value={value}
           name={name}
           onChange={onChange}
           disabled={disabled}
           placeholder={placeholder}
+          fill
         />
       </Label>
     </div>
