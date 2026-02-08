@@ -179,7 +179,10 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
           </div>
         </div>
       </TableToolbox>
-      <div className="w-full flex items-center flex-col h-[calc(100%-145px)]" id="add-table-container">
+      <div
+        className="w-full flex items-center flex-col h-[calc(100%-145px)]"
+        id="add-table-container"
+      >
         <div
           style={{
             width: "100%",

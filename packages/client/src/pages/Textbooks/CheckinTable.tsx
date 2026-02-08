@@ -57,7 +57,10 @@ export default function CheckinTable({
 
   return (
     <>
-      <div className="w-full flex items-center flex-col h-[calc(100%-90px)]" id="checkin-table-container">
+      <div
+        className="w-full flex items-center flex-col h-[calc(100%-90px)]"
+        id="checkin-table-container"
+      >
         <div
           style={{
             width: "100%",
@@ -75,10 +78,18 @@ export default function CheckinTable({
             <thead>
               <tr>
                 <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"></th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Book Name</th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Number</th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Student</th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Quality</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Book Name
+                </th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Number
+                </th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Student
+                </th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Quality
+                </th>
               </tr>
             </thead>
             <tbody>

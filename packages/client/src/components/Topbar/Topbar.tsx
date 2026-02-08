@@ -24,7 +24,11 @@ export default function Topbar() {
       <div className="mr-4 flex items-center justify-center">
         <HMenu as="div" className="relative menu-popover">
           <HMenu.Button className="block border-none cursor-pointer w-[35px] h-[35px] p-0">
-            <img src={user?.image} alt="Profile" className="rounded-full flex-shrink-0 max-w-full" />
+            <img
+              src={user?.image}
+              alt="Profile"
+              className="rounded-full flex-shrink-0 max-w-full"
+            />
           </HMenu.Button>
           <Transition
             as={Fragment}

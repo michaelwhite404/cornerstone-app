@@ -13,7 +13,9 @@ export default function CheckinForm({
 }) {
   const options = [
     {
-      label: `${device?.lastUser!.fullName} has returned the ${device?.deviceType} in working condition`,
+      label: `${device?.lastUser!.fullName} has returned the ${
+        device?.deviceType
+      } in working condition`,
       value: "passed",
     },
     {

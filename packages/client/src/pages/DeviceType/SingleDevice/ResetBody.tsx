@@ -12,8 +12,7 @@ export default function ResetBody({ close, resetDevice }: ResetBodyProps) {
   const [radio, setRadio] = useState<"wipe" | "powerwash">();
   const [checked, setChecked] = useState(false);
 
-  const handleRadioChange = (value: string) =>
-    setRadio(value as "wipe" | "powerwash");
+  const handleRadioChange = (value: string) => setRadio(value as "wipe" | "powerwash");
 
   const handleCheckboxChange = () => setChecked(!checked);
   const submittable = Boolean(radio) && checked;
@@ -40,11 +39,13 @@ export default function ResetBody({ close, resetDevice }: ResetBodyProps) {
             name="reset-type"
             options={[
               {
-                label: "Clear User Profiles - remove all user profile data, but keep device policy and enrollment (RECOMMENDED)",
+                label:
+                  "Clear User Profiles - remove all user profile data, but keep device policy and enrollment (RECOMMENDED)",
                 value: "wipe",
               },
               {
-                label: "Factory Reset - remove all data including user profiles, device policies, and enrollment data. Warning: This will revert the device back to factory state with no enrollment, unless the device is subject to forced or auto re-enrollment.",
+                label:
+                  "Factory Reset - remove all data including user profiles, device policies, and enrollment data. Warning: This will revert the device back to factory state with no enrollment, unless the device is subject to forced or auto re-enrollment.",
                 value: "powerwash",
               },
             ]}

@@ -98,7 +98,10 @@ export default function TextbooksTable({
                     // Loop over the headers in each row
                     headerGroup.headers.map((column) => (
                       // Apply the header cell props
-                      <th {...column.getHeaderProps()} className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                      <th
+                        {...column.getHeaderProps()}
+                        className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"
+                      >
                         {
                           // Render the header
                           column.render("Header")

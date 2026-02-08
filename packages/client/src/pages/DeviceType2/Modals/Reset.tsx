@@ -27,11 +27,13 @@ export default function Reset({ close, resetDevice }: ResetBodyProps) {
 
   const radioOptions = [
     {
-      label: "Clear User Profiles — to remove all user profile data, but keep device policy and enrollment (RECOMMENDED)",
+      label:
+        "Clear User Profiles — to remove all user profile data, but keep device policy and enrollment (RECOMMENDED)",
       value: "wipe",
     },
     {
-      label: "Factory Reset — to remove all data including user profiles, device policies, and enrollment data. Warning: This will revert the device back to factory state with no enrollment, unless the device is subject to forced or auto re-enrollment.",
+      label:
+        "Factory Reset — to remove all data including user profiles, device policies, and enrollment data. Warning: This will revert the device back to factory state with no enrollment, unless the device is subject to forced or auto re-enrollment.",
       value: "powerwash",
     },
   ];

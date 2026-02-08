@@ -63,7 +63,10 @@ export default function DeviceType() {
                 alt={`${original.brand} Logo`}
                 style={{ width: 30, marginRight: 10 }}
               />
-              <span className="text-black cursor-pointer hover:text-blue-400" onClick={() => handleDeviceNameClick(original)}>
+              <span
+                className="text-black cursor-pointer hover:text-blue-400"
+                onClick={() => handleDeviceNameClick(original)}
+              >
                 {original.name}
               </span>
             </span>
@@ -171,7 +174,9 @@ export default function DeviceType() {
                 <Menu.Item>
                   {({ active }) => (
                     <button
-                      className={`${active ? "bg-gray-100" : ""} flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                      className={`${
+                        active ? "bg-gray-100" : ""
+                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
                       onClick={() => setPageStatus("Add")}
                     >
                       <PlusIcon className="h-5 w-5 mr-2" />
@@ -182,7 +187,9 @@ export default function DeviceType() {
                 <Menu.Item>
                   {({ active }) => (
                     <button
-                      className={`${active ? "bg-gray-100" : ""} flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                      className={`${
+                        active ? "bg-gray-100" : ""
+                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
                       onClick={() => goTo("logs")}
                     >
                       <ViewListIcon className="h-5 w-5 mr-2" />
@@ -193,7 +200,9 @@ export default function DeviceType() {
                 <Menu.Item>
                   {({ active }) => (
                     <button
-                      className={`${active ? "bg-gray-100" : ""} flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                      className={`${
+                        active ? "bg-gray-100" : ""
+                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
                       onClick={() => goTo("stats")}
                     >
                       <ChartBarIcon className="h-5 w-5 mr-2" />
@@ -214,9 +223,7 @@ export default function DeviceType() {
               <div className="text-lg font-medium text-gray-900">{drawerTitle[pageStatus]}</div>
             </div>
           </div>
-          <div className="relative flex-1 overflow-y-auto">
-            {drawerContent[pageStatus]}
-          </div>
+          <div className="relative flex-1 overflow-y-auto">{drawerContent[pageStatus]}</div>
         </div>
       </Slideover>
     </div>

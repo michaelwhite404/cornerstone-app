@@ -10,7 +10,6 @@ import { useDocTitle } from "../../hooks";
 import { APIError } from "../../types/apiResponses";
 import CheckoutTable from "./CheckoutTable";
 import TextbooksTable from "./TextbooksTable";
-
 import BadgeColor from "../../components/Badge/BadgeColor";
 import Badge from "../../components/Badge/Badge";
 import { numberToGrade } from "../../utils/grades";

@@ -6,7 +6,11 @@ interface LabeledNumbericInputProps extends InputProps {
   label: string;
   required?: boolean;
   /** BlueprintJS compat: called with (valueAsNumber, valueAsString, inputElement) */
-  onValueChange?: (valueAsNumber: number, valueAsString: string, inputElement: HTMLInputElement | null) => void;
+  onValueChange?: (
+    valueAsNumber: number,
+    valueAsString: string,
+    inputElement: HTMLInputElement | null
+  ) => void;
   /** BlueprintJS compat: ignored, type="number" already restricts input */
   allowNumericCharactersOnly?: boolean;
 }

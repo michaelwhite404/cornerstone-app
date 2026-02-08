@@ -8,7 +8,6 @@ import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
 import Class from "../../types/class";
 
-
 const gradeValues = grades.map((value, i) => ({
   value: `${i}`,
   label: i === 0 ? "Kindergarten" : value,
@@ -98,14 +97,14 @@ export default function CheckoutTable({
             <Select options={gradeValues} onChange={changeAllGrades} />
           </span>
           <span className="flex" style={{ width: "25%", marginRight: "25px" }}>
-            <ProgressBar
-              value={checkoutsFinished / checkoutData.length}
-              intent="success"
-            />
+            <ProgressBar value={checkoutsFinished / checkoutData.length} intent="success" />
           </span>
         </div>
       </TableToolbox>
-      <div className="w-full flex items-center flex-col h-[calc(100%-145px)]" id="checkout-table-container">
+      <div
+        className="w-full flex items-center flex-col h-[calc(100%-145px)]"
+        id="checkout-table-container"
+      >
         <div
           style={{
             width: "100%",
@@ -123,10 +122,18 @@ export default function CheckoutTable({
             <thead>
               <tr>
                 <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0"></th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Book Name</th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Number</th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Grade</th>
-                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">Student</th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Book Name
+                </th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Number
+                </th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Grade
+                </th>
+                <th className="sticky top-0 z-[2] shadow-[0_-1px_#d1d5db_inset] border-b-0">
+                  Student
+                </th>
               </tr>
             </thead>
             <tbody>
