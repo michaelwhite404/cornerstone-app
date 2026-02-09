@@ -9,7 +9,7 @@ Cornerstone App is a full-stack school management platform for Cornerstone Schoo
 ## Tech Stack
 
 - **Backend:** Node.js (v14), TypeScript, Express, MongoDB/Mongoose, Socket.IO
-- **Frontend:** React 17 (CRA), TypeScript, Tailwind CSS, SCSS, BlueprintJS, Material-UI
+- **Frontend:** React 17 (CRA with craco), TypeScript, Tailwind CSS, TanStack Query v4, Headless UI
 - **Auth:** Passport.js with Google OAuth 2.0 + JWT
 - **Deployment:** Heroku, AWS S3 for file storage
 - **Package Manager:** pnpm workspaces
@@ -87,9 +87,29 @@ Layered MVC architecture with versioned APIs:
 
 ### Frontend (packages/client/)
 
-React SPA built with Create React App. Proxies API requests to `localhost:8080` in development.
+React SPA built with Create React App (using craco for webpack overrides). Proxies API requests to `localhost:8080` in development.
 
 Shared types from the server are duplicated at `packages/client/src/types/models/` with mongoose-specific code stripped out.
+
+#### Data Fetching (TanStack Query)
+
+API hooks live in `src/api/` with a consistent pattern:
+- **Query keys** for cache management (e.g., `studentKeys.all`, `deviceKeys.list(type)`)
+- **`useQuery`** for data fetching with automatic caching/refetching
+- **`useMutation`** for create/update/delete operations with cache invalidation
+- **`apiClient`** in `src/api/client.ts` is the axios instance for v2 API calls
+
+Example usage:
+```typescript
+import { useStudents, useCreateStudent } from "../api";
+
+const { data: students, isLoading } = useStudents();
+const createMutation = useCreateStudent();
+```
+
+#### UI Components
+
+Custom Tailwind-based components in `src/components/ui/` (Button, Input, Select, etc.). Uses Headless UI for accessible primitives (Dialog, Menu, Combobox) and Heroicons v1 for icons.
 
 ### API Structure
 
