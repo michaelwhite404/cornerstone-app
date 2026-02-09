@@ -39,11 +39,18 @@ export {
   deviceKeys,
   useDevices,
   useDevice,
+  useDeviceWithActions,
   useCreateDeviceError,
   useDeviceLogs,
   useDeviceStats,
   useGoogleDevice,
   useChromeOsVersion,
+  useCheckoutDevice,
+  useCheckinDevice,
+  useAssignDevice,
+  useUnassignDevice,
+  useUpdateDeviceError,
+  useResetDevice,
 } from "./devices";
 
 // Groups (Google Directory)
@@ -72,6 +79,8 @@ export {
   useStudent,
   useCreateStudent,
   useUpdateStudentPasswords,
+  useStudentsByGrade,
+  useClassSelection,
 } from "./students";
 
 // Textbooks
@@ -82,6 +91,10 @@ export {
   useTextbooks,
   useCheckoutTextbooks,
   useCheckinTextbooks,
+  useLegacyCheckoutTextbook,
+  useLegacyCheckinTextbook,
+  useCreateSetAndBooks,
+  useTextbookActions,
 } from "./textbooks";
 
 // Tickets

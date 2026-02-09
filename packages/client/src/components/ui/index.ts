@@ -33,3 +33,6 @@ export type { ChipProps } from "./Chip";
 
 export { Divider } from "./Divider";
 export type { DividerProps } from "./Divider";
+
+export { GradeSelect } from "./GradeSelect";
+export { StudentSelect } from "./StudentSelect";

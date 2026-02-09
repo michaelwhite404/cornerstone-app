@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Button, Select, Skeleton } from "../../../components/ui";
-import { useClasses, useToasterContext } from "../../../hooks";
+import { useEffect, useState } from "react";
+import { Button, Select, Skeleton, GradeSelect, StudentSelect } from "../../../components/ui";
+import { useToasterContext } from "../../../hooks";
+import { useClassSelection } from "../../../api";
 import DevicePane from "../DevicePane";
 import capitalize from "capitalize";
 import { DeviceModel } from "../../../types/models/deviceTypes";
@@ -26,8 +27,17 @@ export default function CheckOutSection({
   onAssignSuccess,
   assignDevice,
 }: CheckOutSectionProps) {
-  const { GradeSelect, StudentSelect, studentPicked, reset, setGradePicked, setStudentPicked } =
-    useClasses();
+  const {
+    gradePicked,
+    studentPicked,
+    gradeOptions,
+    studentOptions,
+    changeGrade,
+    changeStudent,
+    setGradePicked,
+    setStudentPicked,
+    reset,
+  } = useClassSelection();
   const { showToaster } = useToasterContext();
   const [action, setAction] = useState("Check Out");
 
@@ -70,7 +80,11 @@ export default function CheckOutSection({
         {showData ? (
           <Checkout.Box>
             <span style={{ fontWeight: 500, marginBottom: "6px" }}>Grade</span>
-            <GradeSelect />
+            <GradeSelect
+              value={gradePicked}
+              options={gradeOptions}
+              onChange={changeGrade}
+            />
           </Checkout.Box>
         ) : (
           <Checkout.Skeleton />
@@ -78,7 +92,12 @@ export default function CheckOutSection({
         {showData ? (
           <Checkout.Box>
             <span style={{ fontWeight: 500, marginBottom: "6px" }}>Student</span>
-            <StudentSelect />
+            <StudentSelect
+              value={studentPicked}
+              options={studentOptions}
+              onChange={changeStudent}
+              disabled={gradePicked < 0}
+            />
           </Checkout.Box>
         ) : (
           <Checkout.Skeleton />

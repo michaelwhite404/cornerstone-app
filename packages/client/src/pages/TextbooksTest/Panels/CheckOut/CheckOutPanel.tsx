@@ -2,13 +2,17 @@ import { CheckCircleIcon } from "@heroicons/react/solid";
 import { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { TextbookModel } from "../../../../types/models/textbookTypes";
-import { Button, ProgressBar } from "../../../../components/ui";
+import { Button, ProgressBar, GradeSelect, StudentSelect } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import TableToolbox from "../../../../components/Table/TableToolbox";
-import { useClasses, useToasterContext } from "../../../../hooks";
-import useTextbook from "../../../../hooks/useTextbook";
+import { useToasterContext } from "../../../../hooks";
+import { useTextbookActions, useClassSelection } from "../../../../api";
 import { APIError } from "../../../../types/apiResponses";
-import Class from "../../../../types/class";
+
+interface ClassGroup {
+  grade: number;
+  students: { id: string; fullName: string }[];
+}
 
 interface CheckOutProps {
   data: TextbookModel[];
@@ -16,14 +20,14 @@ interface CheckOutProps {
 }
 
 export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
-  const { checkoutTextbook } = useTextbook();
+  const { checkoutTextbook } = useTextbookActions();
   const { showToaster } = useToasterContext();
   const [checkoutData, setCheckoutData] = useState<{ book: string; student: string }[]>(
     data.map((t) => ({ book: t._id, student: "-1" }))
   );
   const [gradeSelect, setGradeSelect] = useState(checkoutData.map(() => -1));
   const checkoutsFinished = checkoutData.filter((row) => row.student !== "-1").length;
-  const { classes, gradePicked, GradeSelect } = useClasses();
+  const { classes, gradePicked, gradeOptions, changeGrade } = useClassSelection();
 
   useEffect(() => {
     const arr = Array(checkoutData.length).fill(gradePicked);
@@ -71,7 +75,7 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
           <div className="w-full h-full flex items-center justify-between">
             <span style={{ marginLeft: "25px" }}>
               Change All Grades: {"  "}
-              <GradeSelect />
+              <GradeSelect value={gradePicked} options={gradeOptions} onChange={changeGrade} />
             </span>
             <span className="flex" style={{ width: "25%", marginRight: "25px" }}>
               <ProgressBar value={checkoutsFinished / checkoutData.length} intent="success" />
@@ -113,7 +117,7 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
                   <TableRow
                     textbook={t}
                     value={checkoutData[i]}
-                    classes={classes}
+                    classes={classes as ClassGroup[]}
                     grade={gradeSelect[i]}
                     updateBook={updateBook}
                     updateGrade={updateGrade}
@@ -140,6 +144,22 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
   );
 }
 
+const GRADES = [
+  "Kindergarten",
+  "1st Grade",
+  "2nd Grade",
+  "3rd Grade",
+  "4th Grade",
+  "5th Grade",
+  "6th Grade",
+  "7th Grade",
+  "8th Grade",
+  "9th Grade",
+  "10th Grade",
+  "11th Grade",
+  "12th Grade",
+];
+
 const TableRow = ({
   textbook,
   value,
@@ -154,21 +174,36 @@ const TableRow = ({
     book: string;
     student: string;
   };
-  classes: Class[];
+  classes: ClassGroup[];
   grade: number;
   updateBook: (bookId: string, student: string) => void;
   updateGrade: (index: number, grade: number) => void;
   index: number;
 }) => {
-  const { GradeSelect, StudentSelect } = useClasses(classes);
+  // Build options directly - don't use useClassSelection to avoid state conflicts
+  const gradeOptions = [
+    { value: "-1", label: "Select a grade" },
+    ...GRADES.map((label, i) => ({ value: String(i), label })),
+  ];
 
-  const handleGradeChange = (value: number) => {
-    updateGrade(value, index);
+  const studentOptions =
+    grade < 0 || classes.length === 0
+      ? [{ value: "-1", label: "Select A Student" }]
+      : [
+          { value: "-1", label: "Select A Student" },
+          ...classes[grade].students.map((s) => ({
+            value: s.id,
+            label: s.fullName,
+          })),
+        ];
+
+  const handleGradeChange = (newGrade: number) => {
+    updateGrade(newGrade, index);
     updateBook(textbook._id, "-1");
   };
 
-  const handleStudentChange = (value: string) => {
-    updateBook(textbook._id, value);
+  const handleStudentChange = (studentId: string) => {
+    updateBook(textbook._id, studentId);
   };
 
   return (
@@ -183,10 +218,15 @@ const TableRow = ({
       <td>{textbook.textbookSet.title}</td>
       <td>{textbook.bookNumber}</td>
       <td>
-        <GradeSelect value={grade} onChange={handleGradeChange} />
+        <GradeSelect value={grade} options={gradeOptions} onChange={handleGradeChange} />
       </td>
       <td>
-        <StudentSelect value={value.student} onChange={handleStudentChange} />
+        <StudentSelect
+          value={value.student}
+          options={studentOptions}
+          onChange={handleStudentChange}
+          disabled={grade < 0}
+        />
       </td>
     </tr>
   );

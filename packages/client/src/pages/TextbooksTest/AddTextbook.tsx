@@ -11,7 +11,7 @@ import LabeledInput from "../../components/Inputs/LabeledInput";
 import LabeledNumbericInput from "../../components/Inputs/LabeledNumbericInput";
 import LabeledSelect from "../../components/Inputs/LabeledSelect";
 import { useToasterContext } from "../../hooks";
-import useTextbook from "../../hooks/useTextbook";
+import { useTextbookActions } from "../../api";
 import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
 import AddBooksTable from "./AddBooksTable";
@@ -37,7 +37,7 @@ const defaultPreBook = (bookNumber: number, passed = true): PreBook => ({
 });
 
 export default function AddTextbook(props: AddTextbookProps) {
-  const { createSetAndBooks } = useTextbook();
+  const { createSetAndBooks } = useTextbookActions();
   const { showToaster } = useToasterContext();
   const { getTextbookSets } = useContext(TextbookContext);
   const [data, setData] = useState({ title: "", class: "", grade: 0, num: 1 });

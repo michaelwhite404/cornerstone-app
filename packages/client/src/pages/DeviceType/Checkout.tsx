@@ -1,8 +1,8 @@
 import capitalize from "capitalize";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import PaneHeader from "../../components/PaneHeader/PaneHeader";
-import { useClasses } from "../../hooks";
-import { Button } from "../../components/ui";
+import { useClassSelection } from "../../api";
+import { Button, GradeSelect, StudentSelect } from "../../components/ui";
 
 interface DeviceCheckoutProps {
   /** The device to checkout */
@@ -19,7 +19,14 @@ export default function Checkout({
   onCheckoutSuccess,
   checkoutDevice,
 }: DeviceCheckoutProps) {
-  const { GradeSelect, StudentSelect, studentPicked } = useClasses();
+  const {
+    gradePicked,
+    studentPicked,
+    gradeOptions,
+    studentOptions,
+    changeGrade,
+    changeStudent,
+  } = useClassSelection();
 
   const handleCheckout = async () => {
     const updatedDevice = await checkoutDevice(studentPicked);
@@ -31,11 +38,20 @@ export default function Checkout({
       <div className="flex space-between">
         <div className="w-1/3 p-[15px] flex flex-col items-start">
           <span style={{ fontWeight: 500, marginBottom: "6px" }}>Grade</span>
-          <GradeSelect />
+          <GradeSelect
+            value={gradePicked}
+            options={gradeOptions}
+            onChange={changeGrade}
+          />
         </div>
         <div className="w-1/3 p-[15px] flex flex-col items-start">
           <span style={{ fontWeight: 500, marginBottom: "6px" }}>Student</span>
-          <StudentSelect />
+          <StudentSelect
+            value={studentPicked}
+            options={studentOptions}
+            onChange={changeStudent}
+            disabled={gradePicked < 0}
+          />
         </div>
         <div className="w-1/3 p-[15px] flex flex-col items-start button">
           <Button variant="primary" disabled={studentPicked === "-1"} onClick={handleCheckout}>

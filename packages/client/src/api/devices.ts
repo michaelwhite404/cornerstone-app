@@ -1,8 +1,10 @@
+import { useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { apiClient, extractData } from "./client";
 import { DeviceModel } from "../types/models/deviceTypes";
 import { ErrorLogModel } from "../types/models/errorLogTypes";
+import { CheckoutLogModel } from "../types/models/checkoutLogTypes";
 import { Brand, Totals } from "../types/brand";
 import pluralize from "pluralize";
 
@@ -82,18 +84,6 @@ export const useCreateDeviceError = (deviceType: string) => {
 };
 
 // Device Logs
-interface CheckoutLogModel {
-  _id: string;
-  device: DeviceModel;
-  deviceUser: { fullName: string };
-  checkOutDate: string;
-  checkInDate?: string;
-  teacherCheckOut?: { fullName: string };
-  teacherCheckIn?: { fullName: string };
-  checkedIn: boolean;
-  error?: boolean;
-}
-
 const fetchDeviceLogs = async () => {
   const response = await apiClient.get<{ data: { deviceLogs: CheckoutLogModel[] } }>("/devices/logs", {
     params: {
@@ -157,3 +147,233 @@ export const useChromeOsVersion = () => {
     staleTime: 1000 * 60 * 60, // Cache for 1 hour since this rarely changes
   });
 };
+
+// Device Mutations
+
+const checkoutDevice = async (deviceId: string, studentId: string) => {
+  const response = await apiClient.post<{ data: { device: DeviceModel } }>(
+    `/devices/${deviceId}/check-out/student/${studentId}`
+  );
+  return extractData(response).device;
+};
+
+export const useCheckoutDevice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ deviceId, studentId }: { deviceId: string; studentId: string }) =>
+      checkoutDevice(deviceId, studentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: deviceKeys.all });
+    },
+  });
+};
+
+const checkinDevice = async (deviceId: string, data?: { error?: boolean; description?: string }) => {
+  const response = await apiClient.post<{ data: { device: DeviceModel } }>(
+    `/devices/${deviceId}/check-in`,
+    data
+  );
+  return extractData(response).device;
+};
+
+export const useCheckinDevice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ deviceId, data }: { deviceId: string; data?: { error?: boolean; description?: string } }) =>
+      checkinDevice(deviceId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: deviceKeys.all });
+    },
+  });
+};
+
+const assignDevice = async (deviceId: string, studentId: string) => {
+  const response = await apiClient.post<{ data: { device: DeviceModel } }>(
+    `/devices/${deviceId}/assign`,
+    { student: studentId }
+  );
+  return extractData(response).device;
+};
+
+export const useAssignDevice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ deviceId, studentId }: { deviceId: string; studentId: string }) =>
+      assignDevice(deviceId, studentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: deviceKeys.all });
+    },
+  });
+};
+
+const unassignDevice = async (deviceId: string) => {
+  const response = await apiClient.post<{ data: { device: DeviceModel } }>(
+    `/devices/${deviceId}/unassign`
+  );
+  return extractData(response).device;
+};
+
+export const useUnassignDevice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (deviceId: string) => unassignDevice(deviceId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: deviceKeys.all });
+    },
+  });
+};
+
+interface UpdateErrorData {
+  status: string;
+  description: string;
+}
+
+const updateDeviceError = async (deviceId: string, errorId: string, data: UpdateErrorData) => {
+  const response = await apiClient.patch<{ data: { errorLog: ErrorLogModel } }>(
+    `/devices/${deviceId}/errors/${errorId}`,
+    data
+  );
+  return extractData(response).errorLog;
+};
+
+export const useUpdateDeviceError = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ deviceId, errorId, data }: { deviceId: string; errorId: string; data: UpdateErrorData }) =>
+      updateDeviceError(deviceId, errorId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: deviceKeys.all });
+    },
+  });
+};
+
+const resetDevice = async (directoryId: string, action: "wipe" | "powerwash") => {
+  const response = await apiClient.post<{ data: { message: string } }>(
+    `/devices/from-google/${directoryId}/${action}`
+  );
+  return extractData(response).message;
+};
+
+export const useResetDevice = () => {
+  return useMutation({
+    mutationFn: ({ directoryId, action }: { directoryId: string; action: "wipe" | "powerwash" }) =>
+      resetDevice(directoryId, action),
+  });
+};
+
+// Composite hook for device page (combines query + all mutations)
+interface DeviceWithRelations extends DeviceModel {
+  checkouts?: CheckoutLogModel[];
+  errorLogs?: ErrorLogModel[];
+}
+
+export function useDeviceWithActions(deviceType: string, slug: string) {
+  const { data: deviceData, isLoading, refetch } = useDevice(deviceType, slug);
+
+  const checkoutMutation = useCheckoutDevice();
+  const checkinMutation = useCheckinDevice();
+  const assignMutation = useAssignDevice();
+  const unassignMutation = useUnassignDevice();
+  const updateErrorMutation = useUpdateDeviceError();
+  const createErrorMutation = useCreateDeviceError(deviceType);
+  const resetMutation = useResetDevice();
+
+  // Extract device, checkouts, and errors from the response
+  const { device, checkouts, errors } = useMemo(() => {
+    if (!deviceData) {
+      return { device: undefined, checkouts: [] as CheckoutLogModel[], errors: [] as ErrorLogModel[] };
+    }
+    const { checkouts, errorLogs, ...device } = deviceData as DeviceWithRelations;
+    return {
+      device: device as DeviceModel,
+      checkouts: checkouts || [],
+      errors: errorLogs || [],
+    };
+  }, [deviceData]);
+
+  const checkoutDevice = async (studentId: string) => {
+    if (!device) throw new Error("No device loaded");
+    const result = await checkoutMutation.mutateAsync({
+      deviceId: device._id,
+      studentId,
+    });
+    await refetch();
+    return result;
+  };
+
+  const assignDevice = async (studentId: string) => {
+    if (!device) throw new Error("No device loaded");
+    const result = await assignMutation.mutateAsync({
+      deviceId: device._id,
+      studentId,
+    });
+    await refetch();
+    return result;
+  };
+
+  const unassignDevice = async () => {
+    if (!device) throw new Error("No device loaded");
+    const result = await unassignMutation.mutateAsync(device._id);
+    await refetch();
+    return result;
+  };
+
+  const checkinDevice = async (data?: { error?: boolean; description?: string }) => {
+    if (!device) throw new Error("No device loaded");
+    const result = await checkinMutation.mutateAsync({
+      deviceId: device._id,
+      data,
+    });
+    await refetch();
+    return result;
+  };
+
+  const updateDeviceError = async (
+    errorId: string,
+    data: { status: string; description: string }
+  ) => {
+    if (!device) throw new Error("No device loaded");
+    const errorLog = await updateErrorMutation.mutateAsync({
+      deviceId: device._id,
+      errorId,
+      data,
+    });
+    const { data: fetchedDevice } = await refetch();
+    return { errorLog, device: fetchedDevice! };
+  };
+
+  const createDeviceError = async (data: { title: string; description: string }) => {
+    if (!device) throw new Error("No device loaded");
+    const result = await createErrorMutation.mutateAsync({
+      deviceId: device._id,
+      data,
+    });
+    const { data: fetchedDevice } = await refetch();
+    return { errorLog: result.errorLog, device: fetchedDevice! };
+  };
+
+  const resetDeviceFn = async (action: "wipe" | "powerwash") => {
+    if (!device?.directoryId) throw new Error("No device or directoryId");
+    return resetMutation.mutateAsync({
+      directoryId: device.directoryId,
+      action,
+    });
+  };
+
+  const updateableErrors = errors.filter((e) => !e.final);
+
+  return {
+    device,
+    checkoutDevice,
+    assignDevice,
+    checkouts,
+    errors,
+    checkinDevice,
+    deviceLoaded: !isLoading && !!device,
+    updateableErrors,
+    updateDeviceError,
+    createDeviceError,
+    resetDevice: resetDeviceFn,
+    unassignDevice,
+  };
+}

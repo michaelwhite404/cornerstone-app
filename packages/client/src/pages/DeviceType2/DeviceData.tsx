@@ -124,7 +124,7 @@ export default function DeviceData() {
             <BackButton onClick={onBack} />
             <span style={{ fontWeight: 500, fontSize: 16 }}>{d?.name || ""}</span>
           </div>
-          {showData ? <DeviceStatusBadge status={device!.status} /> : <BadgeSkeleton />}
+          {showData && device ? <DeviceStatusBadge status={device.status} /> : <BadgeSkeleton />}
         </MainContent.Header>
         {showableButtons.length > 0 && (
           <MainContent.Header>

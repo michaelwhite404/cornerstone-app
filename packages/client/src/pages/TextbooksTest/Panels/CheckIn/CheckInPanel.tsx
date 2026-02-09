@@ -4,7 +4,7 @@ import { TextbookModel } from "../../../../types/models/textbookTypes";
 import { Button, Select } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import { useToasterContext } from "../../../../hooks";
-import useTextbook from "../../../../hooks/useTextbook";
+import { useTextbookActions } from "../../../../api";
 import { APIError } from "../../../../types/apiResponses";
 
 interface CheckInProps {
@@ -13,7 +13,7 @@ interface CheckInProps {
 }
 
 export default function CheckInPanel({ data, closePanel }: CheckInProps) {
-  const { checkinTextbook } = useTextbook();
+  const { checkinTextbook } = useTextbookActions();
   const { showToaster } = useToasterContext();
   const [checkinData, setCheckinData] = useState<{ id: string; quality: string }[]>(
     data.map((t) => ({ id: t._id, quality: t.quality }))

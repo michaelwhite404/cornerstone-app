@@ -84,7 +84,7 @@ export default function AddBookPanel({ textbook, books, closePanel }: AddBookPro
           books: booksToAdd,
         }
       );
-      showToaster(pluralize("book", res.data.data.books.length, true) + " added", "success");
+      showToaster(pluralize("book", res.data.data.books.length, true) + " added!", "success");
       closePanel();
       getTextbookSets();
     } catch (err) {

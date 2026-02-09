@@ -82,12 +82,15 @@ export default function BooksTable({
     const getSelected = (): TextbookModel[] => {
       const arr = [];
       for (const id in selectedRowIds) {
-        arr.push(flatRows[id].original);
+        if (flatRows[id]) {
+          arr.push(flatRows[id].original);
+        }
       }
       return arr;
     };
     setSelectedBooks(getSelected());
-  }, [flatRows, selectedRowIds, setSelectedBooks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRowIds]);
 
   const table = (
     <div className="textbooks-table-container">

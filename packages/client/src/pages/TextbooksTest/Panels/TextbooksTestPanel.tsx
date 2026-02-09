@@ -105,7 +105,7 @@ export default function TextbooksTestContent({
       </div>
       <div style={{ overflowY: "scroll" }}>
         <FadeIn>
-          <BooksTable columns={columns} data={data} setSelectedBooks={setSelectedBooks} />
+          <BooksTable key={textbook._id} columns={columns} data={data} setSelectedBooks={setSelectedBooks} />
         </FadeIn>
       </div>
       {showFooter && (

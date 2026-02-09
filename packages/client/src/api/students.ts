@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, extractData } from "./client";
 import { StudentModel } from "../types/models/studentTypes";
@@ -97,5 +98,114 @@ const updateStudentPasswords = async (data: UpdateStudentPasswordData) => {
 export const useUpdateStudentPasswords = () => {
   return useMutation({
     mutationFn: updateStudentPasswords,
+  });
+};
+
+// Class/Grade selection hook (pure data + state, no UI components)
+interface StudentInClass {
+  id: string;
+  fullName: string;
+}
+
+interface ClassGroup {
+  grade: number;
+  students: StudentInClass[];
+}
+
+const GRADES = [
+  "Kindergarten",
+  "1st Grade",
+  "2nd Grade",
+  "3rd Grade",
+  "4th Grade",
+  "5th Grade",
+  "6th Grade",
+  "7th Grade",
+  "8th Grade",
+  "9th Grade",
+  "10th Grade",
+  "11th Grade",
+  "12th Grade",
+];
+
+export function useClassSelection(initialClasses?: ClassGroup[]) {
+  const [gradePicked, setGradePicked] = useState(-1);
+  const [studentPicked, setStudentPicked] = useState("-1");
+
+  const { data: fetchedClasses, isSuccess } = useStudentsByGrade();
+
+  const classes = initialClasses || (fetchedClasses as ClassGroup[]) || [];
+  const loaded = Boolean(initialClasses) || isSuccess;
+
+  // Grade options for select
+  const gradeOptions = [
+    { value: "-1", label: "Select a grade" },
+    ...GRADES.map((label, i) => ({
+      value: String(i),
+      label: i === 0 ? "Kindergarten" : label,
+    })),
+  ];
+
+  // Student options based on selected grade
+  const studentOptions =
+    gradePicked === -1 || classes.length === 0
+      ? [{ value: "-1", label: "Select A Student" }]
+      : [
+          { value: "-1", label: "Select A Student" },
+          ...classes[gradePicked].students.map((s) => ({
+            value: s.id,
+            label: s.fullName,
+          })),
+        ];
+
+  const changeGrade = (grade: number) => {
+    setGradePicked(grade);
+    setStudentPicked("-1");
+  };
+
+  const changeStudent = (studentId: string) => {
+    setStudentPicked(studentId);
+  };
+
+  const reset = useCallback(() => {
+    setGradePicked(-1);
+    setStudentPicked("-1");
+  }, []);
+
+  return {
+    classes,
+    loaded,
+    gradePicked,
+    studentPicked,
+    gradeOptions,
+    studentOptions,
+    setGradePicked,
+    setStudentPicked,
+    changeGrade,
+    changeStudent,
+    reset,
+  };
+}
+
+// Students grouped by grade (for class selection)
+interface StudentInClass {
+  id: string;
+  fullName: string;
+}
+
+interface ClassGroup {
+  grade: number;
+  students: StudentInClass[];
+}
+
+const fetchStudentsByGrade = async () => {
+  const response = await apiClient.get<{ data: { grades: ClassGroup[] } }>("/students/group");
+  return extractData(response).grades;
+};
+
+export const useStudentsByGrade = () => {
+  return useQuery({
+    queryKey: [...studentKeys.all, "byGrade"] as const,
+    queryFn: fetchStudentsByGrade,
   });
 };

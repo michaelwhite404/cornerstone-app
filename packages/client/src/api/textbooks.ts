@@ -108,3 +108,107 @@ export const useCheckinTextbooks = () => {
     },
   });
 };
+
+// Legacy textbook mutations (used by TextbooksTest pages)
+interface LegacyCheckoutData {
+  book: string;
+  student: string;
+}
+
+const legacyCheckoutTextbook = async (data: LegacyCheckoutData[]) => {
+  const response = await apiClient.post<{ message: string }>("/textbooks/books/check-out", {
+    data,
+  });
+  return response.data.message;
+};
+
+export const useLegacyCheckoutTextbook = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: legacyCheckoutTextbook,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: textbookKeys.all });
+    },
+  });
+};
+
+interface LegacyCheckinData {
+  id: string;
+  quality: string;
+}
+
+const legacyCheckinTextbook = async (data: LegacyCheckinData[]) => {
+  const response = await apiClient.patch<{ message: string }>("/textbooks/books/check-in", {
+    books: data,
+  });
+  return response.data.message;
+};
+
+export const useLegacyCheckinTextbook = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: legacyCheckinTextbook,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: textbookKeys.all });
+    },
+  });
+};
+
+interface Prebook {
+  bookNumber: number;
+  quality: string;
+}
+
+interface CreateSetAndBooksData {
+  title: string;
+  class: string;
+  grade: number | string;
+  books: Prebook[];
+}
+
+const createSetAndBooks = async (data: CreateSetAndBooksData) => {
+  const response = await apiClient.post<{ data: { textbook: TextbookSetModel; books: TextbookModel[] } }>(
+    "/textbooks/books/both",
+    data
+  );
+  return extractData(response);
+};
+
+export const useCreateSetAndBooks = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createSetAndBooks,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: textbookKeys.all });
+    },
+  });
+};
+
+// Composite hook for legacy textbook operations
+export function useTextbookActions() {
+  const checkoutMutation = useLegacyCheckoutTextbook();
+  const checkinMutation = useLegacyCheckinTextbook();
+  const createMutation = useCreateSetAndBooks();
+
+  const checkoutTextbook = (data: LegacyCheckoutData[]) => {
+    return checkoutMutation.mutateAsync(data);
+  };
+
+  const checkinTextbook = (data: LegacyCheckinData[]) => {
+    return checkinMutation.mutateAsync(data);
+  };
+
+  const createSetAndBooksFn = (data: CreateSetAndBooksData) => {
+    return createMutation.mutateAsync(data);
+  };
+
+  return {
+    checkoutTextbook,
+    checkinTextbook,
+    createSetAndBooks: createSetAndBooksFn,
+    // Also expose mutation states if needed
+    isCheckingOut: checkoutMutation.isPending,
+    isCheckingIn: checkinMutation.isPending,
+    isCreating: createMutation.isPending,
+  };
+}
