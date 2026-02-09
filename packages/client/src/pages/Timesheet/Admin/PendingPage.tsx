@@ -5,14 +5,14 @@ import { format } from "date-fns";
 // import BackButton from "../../../components/BackButton";
 import FadeIn from "../../../components/FadeIn";
 import MainContent from "../../../components/MainContent";
-import { useChecker2 } from "../../../hooks";
+import { useChecker } from "../../../hooks";
 import { useTimesheets } from "../../../api";
 
 export default function PendingPage(props: Props) {
   const { showTimesheetEntry, finalizeTimesheet } = props;
   const { data: pending = [], refetch } = useTimesheets({ status: "Pending", sort: "-timeStart" });
   const { data, checkboxRef, allSelected, toggleAll, setSelectedData, selectedData } =
-    useChecker2(pending);
+    useChecker(pending);
 
   // const onBack = () => {};
 

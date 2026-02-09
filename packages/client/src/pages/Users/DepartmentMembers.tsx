@@ -6,7 +6,7 @@ import { DepartmentMember, DepartmentModel } from "../../types/models";
 import { useDeleteDepartmentMember, useUpdateDepartmentMember } from "../../api";
 import Menuuuu from "../../components/Menu";
 import TableWrapper from "../../components/TableWrapper";
-import { useChecker2, useToasterContext } from "../../hooks";
+import { useChecker, useToasterContext } from "../../hooks";
 
 interface Props {
   department: DepartmentModel;
@@ -27,7 +27,7 @@ export default function DepartmentMembers(props: Props) {
     selectedData: selectedMembers,
     data: members,
     setSelectedData: setSelectedMembers,
-  } = useChecker2(department.members || []);
+  } = useChecker(department.members || []);
   const { showToaster } = useToasterContext();
   const [dirtyRows, setDirtyRows] = useState<DirtyRow[]>([]);
 

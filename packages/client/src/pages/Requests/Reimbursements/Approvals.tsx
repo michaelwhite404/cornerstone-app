@@ -7,7 +7,7 @@ import { ReimbursementModel } from "../../../types/models";
 import ApprovalBadge from "../../../components/Badges/ApprovalBadge";
 import EmptyStateIllustration from "../../../components/EmptyStateIllustration";
 import TableWrapper from "../../../components/TableWrapper";
-import { useChecker2, useToasterContext } from "../../../hooks";
+import { useChecker, useToasterContext } from "../../../hooks";
 import ApprovalsList from "./ApprovalsList";
 import ApprovalsTable from "./ApprovalsTable";
 
@@ -33,7 +33,7 @@ export default function Approvals(props: Props) {
     { pending: [] as RM[], finalized: [] as RM[] }
   );
   const { allSelected, checkboxRef, data, toggleAll, selectedData, setSelectedData } =
-    useChecker2(pending);
+    useChecker(pending);
 
   const handleMultiFinalize = async (approved: boolean) => {
     if (!selectedData.length) return;

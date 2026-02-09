@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import React, { Fragment, useEffect } from "react";
 import { TimesheetModel } from "../../../types/models";
 import TableWrapper from "../../../components/TableWrapper";
-import { useChecker2 } from "../../../hooks";
+import { useChecker } from "../../../hooks";
 
 const headers = ["Day", "Description", "Times", ""];
 
@@ -25,7 +25,7 @@ const status = {
 
 export default function EntriesTable(props: Props) {
   const { setSelected, showTimesheetEntry } = props;
-  const { allSelected, checkboxRef, toggleAll, selectedData, data, setSelectedData } = useChecker2(
+  const { allSelected, checkboxRef, toggleAll, selectedData, data, setSelectedData } = useChecker(
     props.entries
   );
 

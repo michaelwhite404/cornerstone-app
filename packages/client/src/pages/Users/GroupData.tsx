@@ -9,7 +9,7 @@ import { groupKeys, useGroup } from "../../api";
 import BackButton from "../../components/BackButton";
 import { Button } from "../../components/ui";
 import { Divider } from "../../components/ui";
-import { useChecker2, useToasterContext } from "../../hooks";
+import { useChecker, useToasterContext } from "../../hooks";
 import classNames from "classnames";
 import TableWrapper from "../../components/TableWrapper";
 import GroupDataSlider from "./GroupDataSlider";
@@ -39,7 +39,7 @@ export default function GroupData() {
     selectedData: selectedMembers,
     data: members,
     setSelectedData: setSelectedMembers,
-  } = useChecker2(m);
+  } = useChecker(m);
   const [openEdit, setOpenEdit] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
 
