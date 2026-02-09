@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StudentModel } from "../../types/models/studentTypes";
 import { useDocTitle, useWindowSize } from "../../hooks";
-import cstone from "../../cstone";
+import { useStudents } from "../../api";
 import SideTable from "../../components/SideTable/SideTable";
 import { Row } from "react-table";
 import PageHeader from "../../components/PageHeader";
@@ -13,7 +13,7 @@ import StudentDetails from "./StudentDetails";
 
 function Students2() {
   useDocTitle("Students | Cornerstone App");
-  const [students, setStudents] = useState<StudentModel[]>([]);
+  const { data: students = [] } = useStudents({ limit: 500 });
   const location = useLocation();
   const navigate = useNavigate();
   const { slug } = useParams<"slug">();
@@ -29,15 +29,6 @@ function Students2() {
 
   const [pageState, setPageState] = useState<"blank" | "student" | "add">(getPageState);
   const [filter, setFilter] = useState("");
-  useEffect(() => {
-    const getStudents = async () => {
-      const students = await cstone.students.list({
-        limit: 500,
-      });
-      setStudents(students);
-    };
-    getStudents();
-  }, []);
 
   useEffect(() => {
     location.pathname === "/students" && setSelected(undefined);
