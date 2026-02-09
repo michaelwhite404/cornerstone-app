@@ -1,10 +1,8 @@
-import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { TextbookSetModel } from "../../../types/models/textbookSetTypes";
 import { TextbookModel } from "../../../types/models/textbookTypes";
 import TextbookStatusBadge from "../../../components/Badges/TextbookStatusBadge";
 import TextbookQualityBadge from "../../../components/Badges/TextbookQualityBadge";
-import { APITextbooksResponse } from "../../../types/apiResponses";
 import { numberToGrade } from "../../../utils/grades";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import { Button } from "../../../components/ui";
@@ -12,6 +10,7 @@ import BooksTable from "../BooksTable/BooksTable";
 import pluralize from "pluralize";
 import BackButton from "../../../components/BackButton";
 import FadeIn from "../../../components/FadeIn";
+import { useTextbookSetBooks } from "../../../api";
 
 type PanelView =
   | { type: "main" }
@@ -32,20 +31,11 @@ export default function TextbooksTestContent({
   openPanel: (panel: PanelView) => void;
   closePanel: () => void;
 }) {
-  const [books, setBooks] = useState<TextbookModel[]>([]);
+  const { data: books = [] } = useTextbookSetBooks(textbook._id);
   const [selectedBooks, setSelectedBooks] = useState<TextbookModel[]>([]);
 
   const canCheckOut = selectedBooks.filter((t) => t.status === "Available");
   const canCheckIn = selectedBooks.filter((t) => t.status === "Checked Out");
-
-  useEffect(() => {
-    getBooks();
-
-    async function getBooks() {
-      const res = await axios.get<APITextbooksResponse>(`/api/v2/textbooks/${textbook._id}/books`);
-      setBooks(res.data.data.books);
-    }
-  }, [textbook._id]);
 
   const columns = useMemo(
     () => [

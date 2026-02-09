@@ -1,5 +1,4 @@
-import axios from "axios";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { admin_directory_v1 } from "googleapis";
 import DeviceStatusBadge from "../../../components/Badges/DeviceStatusBagde";
@@ -8,7 +7,6 @@ import PaneHeader from "../../../components/PaneHeader/PaneHeader";
 import { useAuth, useDevice, useDocTitle } from "../../../hooks";
 import { grades } from "../../../utils/grades";
 import Checkin from "../Checkin";
-// import useToasterContext from "../../../hooks/useToasterContext";
 import Checkout from "../Checkout";
 import CheckoutHistory from "../CheckoutHistory";
 import ErrorHistory from "../ErrorHistory";
@@ -20,6 +18,7 @@ import { CogIcon, RefreshIcon } from "@heroicons/react/solid";
 import { Button } from "../../../components/ui";
 import Modal from "../../../components/Modal";
 import ResetBody from "./ResetBody";
+import { useGoogleDevice, useChromeOsVersion } from "../../../api";
 
 type ChromeOsDevice = admin_directory_v1.Schema$ChromeOsDevice;
 
@@ -39,27 +38,14 @@ export default function SingleDevice() {
     resetDevice,
   } = useDevice(deviceType!, slug!);
   const [, setDocTitle] = useDocTitle(`${device?.name || ""} | Cornerstone App`);
-  const [googleDevice, setGoogleDevice] = useState<ChromeOsDevice>();
-  const [currentOsVersion, setCurrentOsVersion] = useState<string>();
+  const { data: googleDevice } = useGoogleDevice(device?.directoryId) as {
+    data: ChromeOsDevice | undefined;
+  };
+  const { data: currentOsVersion } = useChromeOsVersion();
   useEffect(() => {
     setDocTitle(`${device?.name || ""} | Cornerstone App`);
   }, [device?.name, setDocTitle]);
   const [open, setOpen] = useState(false);
-
-  const getGoogleDevice = useCallback(async () => {
-    if (device?.directoryId) {
-      const [deviceRes, versionRes] = await Promise.all([
-        axios.get(`/api/v2/devices/from-google/${device.directoryId}`),
-        axios.get("https://omahaproxy.appspot.com/win"),
-      ]);
-      setGoogleDevice(deviceRes.data.data.device);
-      setCurrentOsVersion(versionRes.data);
-    }
-  }, [device?.directoryId]);
-
-  useEffect(() => {
-    getGoogleDevice();
-  }, [getGoogleDevice]);
 
   const values = [
     { heading: "Model", value: device?.model },
@@ -137,7 +123,9 @@ export default function SingleDevice() {
                       <Menu.Item>
                         {({ active }) => (
                           <button
-                            className={`${active ? "bg-gray-100" : ""} flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                            className={`${
+                              active ? "bg-gray-100" : ""
+                            } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
                             onClick={() => setOpen(true)}
                           >
                             <RefreshIcon className="h-5 w-5 mr-2" />
@@ -191,7 +179,13 @@ export default function SingleDevice() {
   );
 }
 
-const DeviceBasicInfo = ({ heading, value }: { heading: string; value?: string | JSX.Element | null }) => {
+const DeviceBasicInfo = ({
+  heading,
+  value,
+}: {
+  heading: string;
+  value?: string | JSX.Element | null;
+}) => {
   return value ? (
     <div style={{ width: "33.33%", padding: "15px 0" }}>
       <h4>{heading}</h4>

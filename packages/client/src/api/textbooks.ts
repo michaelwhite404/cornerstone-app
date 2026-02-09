@@ -1,15 +1,33 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, extractData } from "./client";
 import { TextbookModel } from "../types/models/textbookTypes";
+import { TextbookSetModel } from "../types/models/textbookSetTypes";
 
 // Query Keys
 export const textbookKeys = {
   all: ["textbooks"] as const,
+  sets: () => [...textbookKeys.all, "sets"] as const,
+  setList: () => [...textbookKeys.sets(), "list"] as const,
+  setBooks: (setId: string) => [...textbookKeys.sets(), setId, "books"] as const,
   books: () => [...textbookKeys.all, "books"] as const,
   bookList: () => [...textbookKeys.books(), "list"] as const,
 };
 
 // API Functions
+const fetchTextbookSets = async () => {
+  const response = await apiClient.get<{ data: { textbooks: TextbookSetModel[] } }>("/textbooks", {
+    params: { sort: "title" },
+  });
+  return extractData(response).textbooks;
+};
+
+const fetchTextbookSetBooks = async (setId: string) => {
+  const response = await apiClient.get<{ data: { books: TextbookModel[] } }>(
+    `/textbooks/${setId}/books`
+  );
+  return extractData(response).books;
+};
+
 const fetchTextbooks = async () => {
   const response = await apiClient.get<{ data: { books: TextbookModel[] } }>("/textbooks/books", {
     params: {
@@ -47,6 +65,21 @@ const checkinTextbooks = async (data: CheckinData) => {
 };
 
 // Hooks
+export const useTextbookSets = () => {
+  return useQuery({
+    queryKey: textbookKeys.setList(),
+    queryFn: fetchTextbookSets,
+  });
+};
+
+export const useTextbookSetBooks = (setId: string) => {
+  return useQuery({
+    queryKey: textbookKeys.setBooks(setId),
+    queryFn: () => fetchTextbookSetBooks(setId),
+    enabled: !!setId,
+  });
+};
+
 export const useTextbooks = () => {
   return useQuery({
     queryKey: textbookKeys.bookList(),

@@ -127,3 +127,33 @@ export const useDeviceStats = (deviceType: string) => {
     enabled: !!deviceType,
   });
 };
+
+// Google Device Info
+const fetchGoogleDevice = async (directoryId: string) => {
+  const response = await apiClient.get<{ data: { device: unknown } }>(
+    `/devices/from-google/${directoryId}`
+  );
+  return extractData(response).device;
+};
+
+export const useGoogleDevice = (directoryId: string | undefined) => {
+  return useQuery({
+    queryKey: [...deviceKeys.all, "google", directoryId] as const,
+    queryFn: () => fetchGoogleDevice(directoryId!),
+    enabled: !!directoryId,
+  });
+};
+
+// Chrome OS Version (external API)
+const fetchChromeOsVersion = async () => {
+  const response = await axios.get<string>("https://omahaproxy.appspot.com/win");
+  return response.data;
+};
+
+export const useChromeOsVersion = () => {
+  return useQuery({
+    queryKey: ["chromeOsVersion"] as const,
+    queryFn: fetchChromeOsVersion,
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour since this rarely changes
+  });
+};

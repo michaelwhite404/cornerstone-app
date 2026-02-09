@@ -42,6 +42,8 @@ export {
   useCreateDeviceError,
   useDeviceLogs,
   useDeviceStats,
+  useGoogleDevice,
+  useChromeOsVersion,
 } from "./devices";
 
 // Groups (Google Directory)
@@ -75,6 +77,8 @@ export {
 // Textbooks
 export {
   textbookKeys,
+  useTextbookSets,
+  useTextbookSetBooks,
   useTextbooks,
   useCheckoutTextbooks,
   useCheckinTextbooks,
