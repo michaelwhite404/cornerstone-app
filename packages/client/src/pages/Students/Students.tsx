@@ -1,16 +1,13 @@
-import axios, { AxiosError } from "axios";
-import { useState } from "react";
 import { useMemo } from "react";
-import { useEffect } from "react";
-import { StudentModel } from "../../types/models/studentTypes";
+import { useStudents } from "../../api";
 import Table from "../../components/Table/Table";
 import { useDocTitle, useWindowSize } from "../../hooks";
-import { APIError, APIStudentsResponse } from "../../types/apiResponses";
 
 export default function Students() {
-  const [students, setStudents] = useState<StudentModel[]>([]);
+  const { data: students = [] } = useStudents();
   const [width] = useWindowSize();
   useDocTitle("Students | Cornerstone App");
+
   const columns = useMemo(
     () => [
       { Header: "Name", accessor: "fullName", width: (width - 344) / 4 },
@@ -25,32 +22,13 @@ export default function Students() {
     ],
     [width]
   );
-  const data = useMemo(() => students, [students]);
-  useEffect(() => {
-    getStudents();
-
-    async function getStudents() {
-      try {
-        const res = await axios.get<APIStudentsResponse>("/api/v2/students", {
-          params: {
-            sort: "grade,lastName",
-            limit: 1000,
-            status: "Active",
-          },
-        });
-        setStudents(res.data.data.students);
-      } catch (err) {
-        console.log((err as AxiosError<APIError>).response!.data);
-      }
-    }
-  }, []);
 
   return (
     <div>
       <div className="flex items-center justify-between">
         <h1 style={{ marginBottom: "10px" }}>Students</h1>
       </div>
-      <Table columns={columns} data={data} sortBy="grade" />
+      <Table columns={columns} data={students} sortBy="grade" />
     </div>
   );
 }

@@ -1,13 +1,12 @@
 import { Menu as HMenu, Transition } from "@headlessui/react";
 import { CogIcon, PlusIcon, LoginIcon, LogoutIcon } from "@heroicons/react/solid";
-import axios, { AxiosError } from "axios";
-import { Fragment, useContext, useEffect, useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { textbookKeys, useTextbooks } from "../../api";
 import { Button } from "../../components/ui";
 import Slideover from "../../components/Slideover";
-import { ToasterContext } from "../../context/ToasterContext";
 import { TextbookModel } from "../../types/models/textbookTypes";
-import { useDocTitle } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
+import { useDocTitle, useToasterContext } from "../../hooks";
 import CheckoutTable from "./CheckoutTable";
 import TextbooksTable from "./TextbooksTable";
 import BadgeColor from "../../components/Badge/BadgeColor";
@@ -19,13 +18,18 @@ import AddTable from "./AddTable";
 
 export default function Textbooks() {
   useDocTitle("Textbooks | Cornerstone App");
-  const [textbooks, setTextbooks] = useState<TextbookModel[]>([]);
+  const queryClient = useQueryClient();
+  const { data: textbooks = [] } = useTextbooks();
   const [selected, setSelected] = useState<TextbookModel[]>([]);
   const [open, setOpen] = useState(false);
   const [pageStatus, setPageStatus] = useState<"Viewing" | "Check In" | "Check Out" | "Add">(
     "Viewing"
   );
-  const { showToaster } = useContext(ToasterContext);
+  const { showToaster } = useToasterContext();
+
+  const refetchTextbooks = () => {
+    queryClient.invalidateQueries({ queryKey: textbookKeys.bookList() });
+  };
 
   const canCheckOut = selected.filter((t) => t.status === "Available");
   const canCheckIn = selected.filter((t) => t.status === "Checked Out");
@@ -87,29 +91,6 @@ export default function Textbooks() {
     []
   );
   const data = useMemo(() => textbooks, [textbooks]);
-
-  useEffect(() => {
-    getTextbooks();
-
-    async function getTextbooks() {
-      try {
-        const res = await axios.get("/api/v2/textbooks/books", {
-          params: {
-            sort: "textbookSet,bookNumber",
-            active: true,
-            limit: 100000,
-          },
-        });
-        setTextbooks(res.data.data.books);
-      } catch (err) {
-        showToaster(
-          `${(err as AxiosError<APIError>).response!.data.message}`,
-          "danger"
-        );
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const showAddTextbook = () => {
     setPageStatus("Add");
@@ -211,7 +192,7 @@ export default function Textbooks() {
               <CheckoutTable
                 data={canCheckOut}
                 setOpen={setOpen}
-                setTextbooks={setTextbooks}
+                onSuccess={refetchTextbooks}
                 showToaster={showToaster}
               />
             )}
@@ -219,12 +200,12 @@ export default function Textbooks() {
               <CheckinTable
                 data={canCheckIn}
                 setOpen={setOpen}
-                setTextbooks={setTextbooks}
+                onSuccess={refetchTextbooks}
                 showToaster={showToaster}
               />
             )}
             {pageStatus === "Add" && (
-              <AddTable setOpen={setOpen} setTextbooks={setTextbooks} showToaster={showToaster} />
+              <AddTable setOpen={setOpen} onSuccess={refetchTextbooks} showToaster={showToaster} />
             )}
           </div>
         </div>

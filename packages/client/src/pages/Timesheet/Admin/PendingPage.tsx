@@ -1,30 +1,18 @@
 import { ArrowNarrowRightIcon, CheckIcon, XIcon } from "@heroicons/react/outline";
 import { CalendarIcon, ClockIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import classNames from "classnames";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
-import { TimesheetModel } from "../../../types/models";
 // import BackButton from "../../../components/BackButton";
 import FadeIn from "../../../components/FadeIn";
 import MainContent from "../../../components/MainContent";
 import { useChecker2 } from "../../../hooks";
+import { useTimesheets } from "../../../api";
 
 export default function PendingPage(props: Props) {
   const { showTimesheetEntry, finalizeTimesheet } = props;
-  const [pending, setPending] = useState<TimesheetModel[]>([]);
+  const { data: pending = [], refetch } = useTimesheets({ status: "Pending", sort: "-timeStart" });
   const { data, checkboxRef, allSelected, toggleAll, setSelectedData, selectedData } =
     useChecker2(pending);
-  const getPendingEntries = async () => {
-    const res = await axios.get("/api/v2/timesheets", {
-      params: { status: "Pending", sort: "-timeStart" },
-    });
-    setPending(res.data.data.timesheetEntries);
-  };
-
-  useEffect(() => {
-    getPendingEntries();
-  }, []);
 
   // const onBack = () => {};
 
@@ -33,7 +21,7 @@ export default function PendingPage(props: Props) {
       const ids = selectedData.map((entry) => entry._id) as string[];
       await finalizeTimesheet(ids, approve);
       setSelectedData([]);
-      getPendingEntries();
+      refetch();
     } catch (err) {
       console.log(err);
     }

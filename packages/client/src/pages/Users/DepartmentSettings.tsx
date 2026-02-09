@@ -1,10 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import {
-  DepartmentAvailableSettingModel as AvailableSetting,
-  DepartmentModel,
-  DepartmentSetting,
-} from "../../types/models";
+import { DepartmentModel, DepartmentSetting } from "../../types/models";
+import { useAvailableSettings, useDepartmentSettings } from "../../api";
 import BooleanSetting from "./SettingsComponents/BooleanSetting";
 import ConstrainedColorSetting from "./SettingsComponents/ConstrainedColorSetting";
 
@@ -14,9 +10,16 @@ interface Props {
 
 export default function DepartmentSettings(props: Props) {
   const { department } = props;
-  const [availableSettings, setAvailableSettings] = useState<AvailableSetting[]>([]);
+  const { data: availableSettings = [] } = useAvailableSettings();
+  const { data: fetchedSettings = [] } = useDepartmentSettings(department._id);
   const [departmentSettings, setDepartmentSettings] = useState<DepartmentSetting[]>([]);
-  const [editted, setEditted] = useState(false);
+
+  // Sync fetched settings to local state for editing
+  useEffect(() => {
+    if (fetchedSettings.length > 0) {
+      setDepartmentSettings(fetchedSettings);
+    }
+  }, [fetchedSettings]);
 
   const handleChange = (key: string, value: any, caption?: string) => {
     const copy = [...departmentSettings];
@@ -25,21 +28,7 @@ export default function DepartmentSettings(props: Props) {
     copy[index].value = value;
     if (caption) copy[index].caption = caption;
     setDepartmentSettings(copy);
-    setEditted(true);
   };
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      const [res1, res2] = await axios.all([
-        axios.get(`/api/v2/departments/settings`),
-        axios.get(`/api/v2/departments/${department._id}/settings`),
-      ]);
-      setAvailableSettings(res1.data.data.availableSettings);
-      setDepartmentSettings(res2.data.data.settings);
-    };
-
-    fetchSettings();
-  }, [department._id]);
 
   const elements = departmentSettings.map((setting) => {
     const availableSetting = availableSettings.find((aS) => aS.key === setting.key);

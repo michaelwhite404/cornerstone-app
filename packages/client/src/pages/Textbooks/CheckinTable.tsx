@@ -4,19 +4,19 @@ import { TextbookModel } from "../../types/models/textbookTypes";
 import axios, { AxiosError } from "axios";
 import { APIError } from "../../types/apiResponses";
 
-interface CheckoutTableProps {
+interface CheckinTableProps {
   data: TextbookModel[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setTextbooks: React.Dispatch<React.SetStateAction<TextbookModel[]>>;
+  onSuccess: () => void;
   showToaster: (message: string, intent: "success" | "danger") => void;
 }
 
 export default function CheckinTable({
   data,
   setOpen,
-  setTextbooks,
+  onSuccess,
   showToaster,
-}: CheckoutTableProps) {
+}: CheckinTableProps) {
   const [checkinData, setCheckinData] = useState<{ id: string; quality: string }[]>(
     data.map((t) => ({ id: t._id, quality: t.quality }))
   );
@@ -37,19 +37,9 @@ export default function CheckinTable({
       const result = await axios.patch("/api/v2/textbooks/books/check-in", {
         books: checkinData,
       });
-      try {
-        const res = await axios.get("/api/v2/textbooks/books", {
-          params: {
-            sort: "textbookSet,bookNumber",
-            active: true,
-          },
-        });
-        setTextbooks(res.data.data.books);
-        setOpen(false);
-        showToaster(result.data.message, "success");
-      } catch (err) {
-        showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
-      }
+      onSuccess();
+      setOpen(false);
+      showToaster(result.data.message, "success");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
     }

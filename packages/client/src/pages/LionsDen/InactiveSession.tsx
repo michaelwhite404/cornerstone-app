@@ -1,12 +1,13 @@
 import { useState } from "react";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { StudentModel } from "../../types/models";
 import EmptyPage from "./InactiveSession/EmptyPage";
 import AddStudents from "./InactiveSession/AddStudents";
 import AddDropIns from "./InactiveSession/AddDropsIns";
 import { CurrentSession, InactivePageState } from "../../types/aftercareTypes";
 import { useToasterContext } from "../../hooks";
-import { APICurrentSessionResponse, APIError } from "../../types/apiResponses";
+import { APIError } from "../../types/apiResponses";
+import { useStartSession } from "../../api";
 
 interface InactiveSessionProps {
   setCurrentSession: React.Dispatch<React.SetStateAction<CurrentSession>>;
@@ -16,14 +17,13 @@ export default function InactiveSession({ setCurrentSession }: InactiveSessionPr
   const [pageState, setPageState] = useState<InactivePageState>("empty");
   const [studentsToAdd, setStudentsToAdd] = useState<StudentModel[]>([]);
   const { showToaster } = useToasterContext();
+  const startSessionMutation = useStartSession();
 
   const startSession = async (students: string[]) => {
     try {
-      const res = await axios.post<APICurrentSessionResponse>("/api/v2/aftercare/session", {
-        students,
-      });
+      const session = await startSessionMutation.mutateAsync(students);
       showToaster("Session Started", "success");
-      setCurrentSession(res.data.data);
+      setCurrentSession(session);
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
     }

@@ -1,11 +1,10 @@
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Dot from "../../components/Dot";
 import Tabs from "../../components/Tabs";
 import { useDocTitle, useSocket } from "../../hooks";
 import { CurrentSession } from "../../types/aftercareTypes";
-import { APICurrentSessionResponse } from "../../types/apiResponses";
+import { useTodaySession } from "../../api";
 
 const tabs = [
   { title: "Current Session", name: "current-session", href: "" },
@@ -20,6 +19,7 @@ export default function LionsDen() {
   useDocTitle("Lions Den | Cornerstone App");
   const socket = useSocket();
   const [pageState, setPageState] = useState<LionsDenPageState>();
+  const { data: fetchedSession, refetch } = useTodaySession();
   const [currentSession, setCurrentSession] = useState<CurrentSession>({
     session: null,
     attendance: [],
@@ -28,10 +28,12 @@ export default function LionsDen() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const getCurrentSession = useCallback(async () => {
-    const res = await axios.get<APICurrentSessionResponse>("/api/v2/aftercare/session/today");
-    setCurrentSession(res.data.data);
-  }, []);
+  // Sync fetched session to local state
+  useEffect(() => {
+    if (fetchedSession) {
+      setCurrentSession(fetchedSession);
+    }
+  }, [fetchedSession]);
 
   useEffect(() => {
     const getPageState = () => {
@@ -43,12 +45,9 @@ export default function LionsDen() {
   }, [location.pathname]);
 
   useEffect(() => {
-    getCurrentSession();
-  }, [getCurrentSession]);
-
-  useEffect(() => {
-    socket?.on("aftercareSignOutSuccess", getCurrentSession);
-    socket?.on("aftercareAddEntries", getCurrentSession);
+    const handleRefetch = () => { refetch(); };
+    socket?.on("aftercareSignOutSuccess", handleRefetch);
+    socket?.on("aftercareAddEntries", handleRefetch);
     socket?.on("newDay", () =>
       setCurrentSession({
         session: null,
@@ -56,7 +55,12 @@ export default function LionsDen() {
       })
     );
     socket?.on("aftercareSessionStart", setCurrentSession);
-  }, [getCurrentSession, socket]);
+
+    return () => {
+      socket?.off("aftercareSignOutSuccess", handleRefetch);
+      socket?.off("aftercareAddEntries", handleRefetch);
+    };
+  }, [refetch, socket]);
 
   const finished =
     currentSession.session && currentSession.attendance.every((entry) => entry.signOutDate);
@@ -92,7 +96,7 @@ export default function LionsDen() {
       </div>
       <Outlet
         context={{
-          getCurrentSession,
+          getCurrentSession: refetch,
           currentSession,
           setCurrentSession,
         }}

@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import axios, { AxiosError } from "axios";
+import { useMemo, useState } from "react";
+import { AxiosError } from "axios";
 import { Checkbox, Label, Switch } from "../../components/ui";
 import { nanoid } from "nanoid";
+import { useShortUrls, useCreateShortUrl } from "../../api";
 import { useAuth, useDocTitle, useToasterContext, useToggle } from "../../hooks";
 import LabeledInput from "../../components/Inputs/LabeledInput";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
-import { APIError, APIShortUrlResponse } from "../../types/apiResponses";
-import { ShortUrlModel } from "../../types/models";
+import { APIError } from "../../types/apiResponses";
 import ShortLinksTable from "./ShortLinksTable";
 import ShortLinksTableMobile from "./ShortLinksTableMobile";
 
@@ -18,23 +18,16 @@ export default function ShortUrl() {
     short: "",
     autogenerate: false,
   });
-  const [shortLinks, setShortLinks] = useState<ShortUrlModel[]>([]);
   const [staff, toggle] = useToggle();
   const { user } = useAuth();
+
+  const { data: shortLinks = [] } = useShortUrls();
+  const createShortUrlMutation = useCreateShortUrl();
 
   const myLinks = useMemo(
     () => shortLinks.filter((link) => link.createdBy === user?._id),
     [shortLinks, user?._id]
   );
-
-  useEffect(() => {
-    const getLinks = async () => {
-      const res = await axios.get("/api/v2/short");
-      setShortLinks(res.data.data.shortUrls);
-    };
-
-    getLinks();
-  }, []);
 
   const clear = () =>
     setNewLink({
@@ -46,7 +39,7 @@ export default function ShortUrl() {
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setNewLink({ ...newLink, [e.target.name]: e.target.value });
 
-  const toggleCheckbox: React.FormEventHandler<HTMLInputElement> = (e) => {
+  const toggleCheckbox: React.FormEventHandler<HTMLInputElement> = () => {
     newLink.autogenerate
       ? setNewLink({ full: newLink.full, short: "", autogenerate: false })
       : setNewLink({ full: newLink.full, short: nanoid(8), autogenerate: true });
@@ -54,12 +47,11 @@ export default function ShortUrl() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post<APIShortUrlResponse>("/api/v2/short", {
+      await createShortUrlMutation.mutateAsync({
         full: newLink.full,
         short: newLink.short,
       });
       showToaster("Short link created", "success");
-      setShortLinks([res.data.data.shortUrl, ...shortLinks]);
       clear();
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");

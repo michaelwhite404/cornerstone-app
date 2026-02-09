@@ -1,36 +1,20 @@
-import axios, { AxiosError } from "axios";
 import classNames from "classnames";
 import { admin_directory_v1 } from "googleapis";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useGroups, useCreateGroup } from "../../api";
 import TableWrapper from "../../components/TableWrapper";
-import { APIError, APIResponse } from "../../types/apiResponses";
 import CreateGroup from "./CreateGroup";
 import DirectoryMainButton from "./DirectoryMainButton";
 
 export default function Groups() {
-  const [groups, setGroups] = useState<admin_directory_v1.Schema$Group[]>([]);
+  const { data: groups = [] } = useGroups();
+  const createGroupMutation = useCreateGroup();
   const [selectedGroups, setSelectedGroups] = useState<admin_directory_v1.Schema$Group[]>([]);
   const checkbox = useRef<HTMLInputElement | null>(null);
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    axios
-      .get<APIResponse<{ groups: admin_directory_v1.Schema$Group[] }>>("/api/v2/groups")
-      .then((res) =>
-        setGroups(
-          res.data.data.groups.sort((a, b) => {
-            const nameA = a.name!.toUpperCase();
-            const nameB = b.name!.toUpperCase();
-            if (nameA < nameB) return -1;
-            if (nameA > nameB) return 1;
-            return 0;
-          })
-        )
-      );
-  }, []);
 
   useLayoutEffect(() => {
     const isIndeterminate = selectedGroups.length > 0 && selectedGroups.length < groups.length;
@@ -46,16 +30,7 @@ export default function Groups() {
   }
 
   const createGroup = async (data: { name: string; email: string; description: string }) => {
-    try {
-      const res = await axios.post<APIResponse<{ group: admin_directory_v1.Schema$Group }>>(
-        "/api/v2/groups",
-        data
-      );
-      const { group } = res.data.data;
-      setGroups([...groups, group].sort((a, b) => a.name!.localeCompare(b.name!)));
-    } catch (err) {
-      throw new Error((err as AxiosError<APIError>).response!.data.message);
-    }
+    await createGroupMutation.mutateAsync(data);
   };
 
   return (

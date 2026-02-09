@@ -10,7 +10,7 @@ import { grades } from "../../utils/grades";
 
 interface AddTableProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setTextbooks: React.Dispatch<React.SetStateAction<TextbookModel[]>>;
+  onSuccess: () => void;
   showToaster: (message: string, intent: "success" | "danger") => void;
 }
 
@@ -21,7 +21,7 @@ interface PreBook {
   status: "Available" | "Checked Out" | "Replaced" | "Not Available";
 }
 
-export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTableProps) {
+export default function AddTable({ setOpen, onSuccess, showToaster }: AddTableProps) {
   const [data, setData] = useState({ title: "", class: "", grade: 0, num: 1 });
   const [dataLocked, setDataLocked] = useState(false);
   const [books, setBooks] = useState<PreBook[]>([
@@ -94,19 +94,9 @@ export default function AddTable({ setOpen, setTextbooks, showToaster }: AddTabl
     if (submittable) {
       try {
         const result = await axios.post("/api/v2/textbooks/books/both", { ...data, books });
-        try {
-          const res = await axios.get("/api/v2/textbooks/books", {
-            params: {
-              sort: "textbookSet,bookNumber",
-              active: true,
-            },
-          });
-          setTextbooks(res.data.data.books);
-          setOpen(false);
-          showToaster(result.data.message, "success");
-        } catch (err) {
-          showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
-        }
+        onSuccess();
+        setOpen(false);
+        showToaster(result.data.message, "success");
       } catch (err) {
         showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
       }

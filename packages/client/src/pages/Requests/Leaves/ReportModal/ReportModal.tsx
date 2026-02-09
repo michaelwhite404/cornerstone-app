@@ -1,12 +1,11 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import { Fragment, useState } from "react";
 import LoadingOverlay from "react-loading-overlay";
-import downloadAxiosData from "../../../../utils/downloadAxiosData";
 import wait from "../../../../utils/wait";
 import FileTypeCards from "./FileTypeCards";
 import LeaveFields from "./LeaveFields";
+import { useGenerateLeaveReport } from "../../../../api";
 
 const initialFields = [
   { text: "Reason for Leave", value: "reason", checked: true },
@@ -24,7 +23,8 @@ export function ReportModal(props: Props) {
   const { closeModal, isOpen } = props;
   const [type, setType] = useState<ExportType>("sheets");
   const [fields, setFields] = useState(initialFields);
-  const [submitting, setSubmitting] = useState(false);
+  const generateReportMutation = useGenerateLeaveReport();
+  const submitting = generateReportMutation.isPending;
 
   const resetData = () => {
     setType("sheets");
@@ -38,7 +38,6 @@ export function ReportModal(props: Props) {
   };
 
   const submit = async () => {
-    setSubmitting(true);
     const data = {
       type,
       fields: fields.reduce((arr, field) => {
@@ -46,19 +45,27 @@ export function ReportModal(props: Props) {
         return arr;
       }, [] as string[]),
     };
-    const res = await axios.post("/api/v2/leaves/generate-report", data, {
-      responseType: type !== "sheets" ? "blob" : undefined,
-    });
+    const result = await generateReportMutation.mutateAsync(data);
     switch (type) {
       case "sheets":
-        window.open(res.data.data.spreadsheetUrl, "_blank");
+        if (result.spreadsheetUrl) {
+          window.open(result.spreadsheetUrl, "_blank");
+        }
         break;
       case "csv":
-        downloadAxiosData(res, `leave-report_${new Date().toISOString()}.csv`);
+        if (result.blob) {
+          const url = window.URL.createObjectURL(result.blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `leave-report_${new Date().toISOString()}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        }
         break;
     }
     handleClose();
-    setSubmitting(false);
   };
 
   return (

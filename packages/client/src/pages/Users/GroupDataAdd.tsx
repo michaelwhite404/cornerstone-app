@@ -1,9 +1,9 @@
 import { CheckIcon, PlusIcon, XCircleIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import capitalize from "capitalize";
 import classNames from "classnames";
 import { admin_directory_v1 } from "googleapis";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import { useGoogleUsers } from "../../api";
 import Combobox from "../../components/Combobox";
 import Menu from "../../components/Menu";
 import Modal from "../../components/Modal";
@@ -23,20 +23,18 @@ interface GroupDataAddProps {
 
 export default function GroupDataAdd(props: GroupDataAddProps) {
   const { addMembersToGroup, groupName, open, setOpen } = props;
-  const [googleUsers, setGoogleUsers] = useState<admin_directory_v1.Schema$User[]>([]);
+  const { data: allGoogleUsers = [] } = useGoogleUsers(true);
   const [memberToAdd, setMemberToAdd] = useState<{
     user?: admin_directory_v1.Schema$User;
     role: string;
   }>({ role: "MEMBER" });
   const [futureMembers, setFutureMembers] = useState<Required<typeof memberToAdd>[]>([]);
 
-  useEffect(() => {
-    const fetchGoogleUsers = async () => {
-      const res = await axios.get("/api/v2/users/from-google?active=true");
-      setGoogleUsers(res.data.data.users);
-    };
-    fetchGoogleUsers();
-  }, []);
+  // Filter out users that are already in futureMembers
+  const googleUsers = useMemo(
+    () => allGoogleUsers.filter((u) => !futureMembers.some((m) => m.user.primaryEmail === u.primaryEmail)),
+    [allGoogleUsers, futureMembers]
+  );
 
   const displayValue = (option?: admin_directory_v1.Schema$User) => option?.name?.fullName || "";
 
@@ -60,9 +58,6 @@ export default function GroupDataAdd(props: GroupDataAddProps) {
 
   const addMember = () => {
     if (memberToAdd.user && memberToAdd.role) {
-      setGoogleUsers(
-        [...googleUsers].filter((user) => user.primaryEmail !== memberToAdd.user?.primaryEmail)
-      );
       setFutureMembers([{ user: memberToAdd.user, role: memberToAdd.role }, ...futureMembers]);
       setMemberToAdd({ role: "MEMBER" });
     }

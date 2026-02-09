@@ -1,49 +1,39 @@
-import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { useMemo, useState } from "react";
 import { AftercareAttendanceEntryModel, StudentModel } from "../../types/models";
 import { useToasterContext } from "../../hooks";
-import {
-  APIAttendanceStatsResponse,
-  APIError,
-  APIStudentsResponse,
-} from "../../types/apiResponses";
+import { useStudents } from "../../api";
+import { useAftercareStats, useUpdateStudentAftercare, useStudentAftercareEntries } from "../../api";
+import { APIError } from "../../types/apiResponses";
 import StudentDataModal from "./StudentDataModal";
 import StudentSearch from "./StudentSearch";
 import StudentsTable from "./StudentsTable";
 
 export default function LionsDenStudents() {
-  const [data, setData] = useState<StudentAftercareStat[]>([]);
-  const [notInA, setNotInA] = useState<StudentModel[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [selectedStat, setSelectedStat] = useState<StudentAftercareStat | null>(null);
   const { showToaster } = useToasterContext();
 
-  const [studentData, setStudentData] = useState<StudentData>();
+  // Fetch students and aftercare stats
+  const { data: allStudents = [] } = useStudents({ sort: "-grade", limit: 2000, status: "Active" });
+  const { data: stats = [] } = useAftercareStats("2024-08-01");
+  const updateStudentAftercareMutation = useUpdateStudentAftercare();
 
-  useEffect(() => {
-    getStudentsData();
-  }, []);
+  // Fetch selected student's entries when modal opens
+  const { data: studentEntries = [] } = useStudentAftercareEntries(selectedStudentId || "");
 
-  const getStudentsData = async () => {
-    const getAftercareStudents = axios.get<APIStudentsResponse>("/api/v2/students", {
-      params: { sort: "-grade", limit: 2000, status: "Active" },
-    });
-    const getAftercareData = axios.get<APIAttendanceStatsResponse>(
-      "/api/v2/aftercare/attendance/stats",
-      { params: { since: "2024-08-01" } }
-    );
-
-    const res = await Promise.all([getAftercareStudents, getAftercareData]);
-
+  // Process data to create the student list and non-aftercare students
+  const { data, notInA } = useMemo(() => {
     const students: StudentModel[] = [];
     const nonAftercareStudents: StudentModel[] = [];
 
-    res[0].data.data.students.forEach((student) => {
+    allStudents.forEach((student) => {
       const array = student.aftercare ? students : nonAftercareStudents;
       array.push(student);
     });
-    const { stats } = res[1].data.data;
 
-    const studentList = stats.map((stat) => ({
+    const studentList: StudentAftercareStat[] = stats.map((stat) => ({
       ...stat.student,
       entriesCount: stat.entriesCount,
       lateCount: stat.lateCount,
@@ -53,18 +43,26 @@ export default function LionsDenStudents() {
     students.forEach((student) => {
       if (!student.aftercare) return;
       if (studentList.find((s) => s._id === student._id)) return;
-      studentList.push({ ...student, entriesCount: 0, lateCount: 0 });
+      studentList.push({ ...student, entriesCount: 0, lateCount: 0, aftercare: true });
     });
     studentList.sort((a, b) => b.entriesCount - a.entriesCount);
-    setData(studentList);
-    setNotInA(nonAftercareStudents);
-  };
+
+    return { data: studentList, notInA: nonAftercareStudents };
+  }, [allStudents, stats]);
+
+  // Prepare student data for modal
+  const studentData = useMemo(() => {
+    if (!selectedStat || !studentEntries.length) return undefined;
+    const entries = studentEntries
+      .filter((entry) => entry.signOutDate)
+      .sort((a, b) => new Date(b.signOutDate!).getTime() - new Date(a.signOutDate!).getTime());
+    return { studentStat: selectedStat, entries };
+  }, [selectedStat, studentEntries]);
 
   const addStudents = async (students: { label: string; value: string }[]) => {
-    const data = students.map((s) => ({ id: s.value, op: "add" }));
+    const data = students.map((s) => ({ id: s.value, op: "add" as const }));
     try {
-      await axios.patch("/api/v2/aftercare/students", { data });
-      getStudentsData();
+      await updateStudentAftercareMutation.mutateAsync({ data });
       showToaster("Students Added!", "success");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
@@ -73,10 +71,9 @@ export default function LionsDenStudents() {
   };
 
   const removeStudents = async (students: { _id: string }[]) => {
-    const data = students.map((s) => ({ id: s._id, op: "remove" }));
+    const data = students.map((s) => ({ id: s._id, op: "remove" as const }));
     try {
-      await axios.patch("/api/v2/aftercare/students", { data });
-      getStudentsData();
+      await updateStudentAftercareMutation.mutateAsync({ data });
       showToaster("Students Removed!", "success");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
@@ -84,23 +81,9 @@ export default function LionsDenStudents() {
     }
   };
 
-  const getStudentData = async (stat: StudentAftercareStat) => {
-    try {
-      const res = await axios.get(`/api/v2/aftercare/students/${stat._id}`);
-      const entries = (res.data.data.entries as AftercareAttendanceEntryModel[])
-        .filter((entry) => entry.signOutDate)
-        .sort((a, b) => new Date(b.signOutDate!).getTime() - new Date(a.signOutDate!).getTime());
-      setStudentData({
-        studentStat: stat,
-        entries,
-      });
-    } catch (err) {
-      showToaster("Could not fetch student data", "danger");
-    }
-  };
-
   const openModal = async (stat: StudentAftercareStat) => {
-    await getStudentData(stat);
+    setSelectedStudentId(stat._id);
+    setSelectedStat(stat);
     setModalOpen(true);
   };
 

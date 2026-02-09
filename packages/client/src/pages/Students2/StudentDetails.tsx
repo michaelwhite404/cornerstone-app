@@ -1,15 +1,16 @@
 import { Divider } from "../../components/ui";
-import axios, { AxiosError } from "axios";
-import React, { useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 import { useLocation, useOutletContext, useParams } from "react-router-dom";
 import { StudentModel } from "../../types/models";
+import { useStudent, useUpdateStudentPasswords } from "../../api";
 import BackButton from "../../components/BackButton";
 import FadeIn from "../../components/FadeIn";
 import LabeledInput2 from "../../components/LabeledInput2";
 import MainContent from "../../components/MainContent";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useAuth, useToasterContext } from "../../hooks";
-import { APIError, APIStudentResponse } from "../../types/apiResponses";
+import { APIError } from "../../types/apiResponses";
 import { numberToGrade } from "../../utils/grades";
 
 import StudentDevicesTable from "./StudentDevicesTable";
@@ -25,37 +26,27 @@ export default function StudentDetails() {
   const location = useLocation();
   const { user } = useAuth();
   const [passwordReset, setPasswordReset] = useState("");
-  // const [student, setStudent] = useState<StudentModel | undefined>(() =>
-  //   (location.state as any)?.newStudent
-  //     ? (location.state as { newStudent: true; student: StudentModel }).student
-  //     : undefined
-  // );
   const { slug } = useParams<{ slug: string }>();
   const { showToaster } = useToasterContext();
   const { student, setSelectedStudent, onBack } = useOutletContext<StudentDetailProps>();
+  const updatePasswordMutation = useUpdateStudentPasswords();
 
+  // Check if this is a new student from navigation state
+  const isNewStudent = (location.state as any)?.newStudent;
+
+  // Fetch student with full projection (skip if new student from create flow)
+  const { data: fetchedStudent, error } = useStudent(isNewStudent ? "" : (slug || ""), { projection: "FULL" });
+
+  // Sync fetched student to parent state
   useEffect(() => {
-    const fetchStudent = async () => {
-      //Chnage with skeleton implement
-      setSelectedStudent(undefined);
-      try {
-        const res = await axios.get<APIStudentResponse>(`/api/v2/students/${slug}`, {
-          params: {
-            projection: "FULL",
-          },
-        });
-        setSelectedStudent(res.data.data.student);
-      } catch (err) {
-        showToaster("Could not fetch student. Plese try again", "danger");
-      }
-    };
-
-    (location.state as any)?.newStudent
-      ? window.history.replaceState({}, document.title)
-      : fetchStudent();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+    if (isNewStudent) {
+      window.history.replaceState({}, document.title);
+    } else if (fetchedStudent) {
+      setSelectedStudent(fetchedStudent);
+    } else if (error) {
+      showToaster("Could not fetch student. Please try again", "danger");
+    }
+  }, [fetchedStudent, error, isNewStudent, setSelectedStudent, showToaster]);
 
   const canUpdatePassword =
     (user?.role === "Admin" ||
@@ -63,9 +54,9 @@ export default function StudentDetails() {
       user?.homeroomGrade === student?.grade) &&
     student?.status === "Active";
 
-  const resetPassword = () => {
+  const resetPassword = async () => {
     try {
-      axios.patch("/api/v2/students/update-password", {
+      await updatePasswordMutation.mutateAsync({
         students: [
           {
             email: student!.schoolEmail,

@@ -1,10 +1,11 @@
-import axios from "axios";
 import capitalize from "capitalize";
 import pluralize from "pluralize";
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { CogIcon, PlusIcon, ViewListIcon, ChartBarIcon } from "@heroicons/react/solid";
+import { useQueryClient } from "@tanstack/react-query";
+import { deviceKeys, useDevices } from "../../api";
 import { Button } from "../../components/ui";
 import Slideover from "../../components/Slideover";
 import { DeviceModel } from "../../types/models/deviceTypes";
@@ -21,16 +22,22 @@ export default function DeviceType() {
   const { deviceType } = useParams<{ deviceType: string }>();
   useDocTitle(`${capitalize(deviceType!)} | Cornerstone App`);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [width] = useWindowSize();
-  const [devices, setDevices] = useState<DeviceModel[]>([]);
+  const { data: devices = [] } = useDevices(deviceType!);
   const [selectedDevice, setSelectedDevice] = useState<DeviceModel | undefined>(undefined);
   const [pageStatus, setPageStatus] = useState<"List" | "Single" | "Add">("List");
 
   const updateDevice = (id: string, newDevice: DeviceModel) => {
-    const copiedDevices = [...devices];
-    const index = copiedDevices.findIndex((device) => device._id === id);
-    copiedDevices[index] = newDevice;
-    setDevices(copiedDevices);
+    // Update the cache with the new device data
+    queryClient.setQueryData<DeviceModel[]>(deviceKeys.list(deviceType!), (oldDevices) => {
+      if (!oldDevices) return [newDevice];
+      return oldDevices.map((device) => (device._id === id ? newDevice : device));
+    });
+  };
+
+  const refetchDevices = () => {
+    queryClient.invalidateQueries({ queryKey: deviceKeys.list(deviceType!) });
   };
 
   const getLastUser = (device: DeviceModel) => {
@@ -100,21 +107,6 @@ export default function DeviceType() {
   );
   const data = useMemo(() => devices, [devices]);
 
-  const getDevicesByType = useCallback(async () => {
-    const res = await axios.get("/api/v2/devices", {
-      params: {
-        deviceType: pluralize.singular(deviceType!),
-        sort: "name",
-        limit: 2000,
-      },
-    });
-    setDevices(res.data.data.devices);
-  }, [deviceType]);
-
-  useEffect(() => {
-    getDevicesByType();
-  }, [getDevicesByType]);
-
   const goTo = (value: string) => navigate(`${pathname}/${value}`);
 
   const drawerTitle = {
@@ -149,7 +141,7 @@ export default function DeviceType() {
         deviceType={deviceType!}
         setPageStatus={setPageStatus}
         setSelectedDevice={setSelectedDevice}
-        getDevicesByType={getDevicesByType}
+        onDeviceAdded={refetchDevices}
       />
     ),
   };

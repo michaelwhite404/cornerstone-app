@@ -1,22 +1,19 @@
 import { Label } from "../../../components/ui";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { StudentModel } from "../../../types/models";
 import BackButton from "../../../components/BackButton";
 import FadeIn from "../../../components/FadeIn";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import { useWindowSize } from "../../../hooks";
 import useChecker from "../../../hooks/useChecker";
 import { InactiveAftercarePagesProps } from "../../../types/aftercareTypes";
-import { APIStudentsResponse } from "../../../types/apiResponses";
+import { useAftercareStudents } from "../../../api";
 
 export default function AddStudents({
   setPageState,
   setStudentsToAdd,
   studentsToAdd,
 }: InactiveAftercarePagesProps) {
-  const [students, setStudents] = useState<StudentModel[]>([]);
+  const { data: students = [] } = useAftercareStudents();
   const { rows, checked } = useChecker(students, {
     onChange: setStudentsToAdd,
     key: "_id",
@@ -24,15 +21,6 @@ export default function AddStudents({
   });
   const { ref, inView } = useInView({ threshold: 0 });
   const [width] = useWindowSize();
-
-  useEffect(() => {
-    getAftercareStudents();
-  }, []);
-
-  const getAftercareStudents = async () => {
-    const res = await axios.get<APIStudentsResponse>("/api/v2/aftercare/students");
-    setStudents(res.data.data.students);
-  };
 
   const onButtonClick = () => {
     setStudentsToAdd(checked);

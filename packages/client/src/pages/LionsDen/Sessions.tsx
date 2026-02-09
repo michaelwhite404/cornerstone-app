@@ -1,30 +1,35 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
+import { aftercareKeys, useAftercareSession } from "../../api";
 import SessionsTable from "./SessionsTable";
-
 import DateSelector from "../../components/DateSelector";
 import SessionStat from "./SessionStat";
 import { format } from "date-fns";
 import { useSocket } from "../../hooks";
+import { SignedOutEntry } from "../../types/aftercareTypes";
 
 export default function Sessions() {
-  const [entries, setEntries] = useState<any[]>([]);
   const [date, setDate] = useState<Date>(new Date());
+  const queryClient = useQueryClient();
+  const { data: entries = [] } = useAftercareSession(date);
   const socket = useSocket();
 
-  const getSessions = async (date: Date) => {
-    const res = await axios.get(
-      `/api/v2/aftercare/attendance/year/${date.getFullYear()}/month/${
-        date.getMonth() + 1
-      }/day/${date.getDate()}`
-    );
-    setEntries(res.data.data.entries);
-  };
-
+  // Refetch when socket events occur
   useEffect(() => {
-    getSessions(date);
-    socket?.on("aftercareSignOutSuccess", () => getSessions(date));
-  }, [date, socket]);
+    const refetch = () => {
+      queryClient.invalidateQueries({
+        queryKey: aftercareKeys.sessionByDate(
+          date.getFullYear(),
+          date.getMonth() + 1,
+          date.getDate()
+        ),
+      });
+    };
+    socket?.on("aftercareSignOutSuccess", refetch);
+    return () => {
+      socket?.off("aftercareSignOutSuccess", refetch);
+    };
+  }, [date, socket, queryClient]);
 
   return (
     <div>
@@ -40,7 +45,7 @@ export default function Sessions() {
       </div>
       <div>
         {entries.length > 0 ? (
-          <SessionsTable entries={entries} />
+          <SessionsTable entries={entries as SignedOutEntry[]} />
         ) : (
           <span>There is no data to display</span>
         )}

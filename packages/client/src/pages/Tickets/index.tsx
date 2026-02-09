@@ -1,6 +1,5 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { TicketModel } from "../../types/models";
+import { useState } from "react";
+import { useTickets } from "../../api";
 import EmptyStateIllustration from "../../components/EmptyStateIllustration";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useDocTitle } from "../../hooks";
@@ -10,19 +9,9 @@ import TicketDetails from "./TicketDetails";
 
 export default function Tickets() {
   useDocTitle("Tickets | Cornerstone App");
-  const [tickets, setTickets] = useState<TicketModel[]>([]);
+  const { data: tickets = [], isLoading } = useTickets();
   const [modalOpen, setModalOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    const fetchTickets = async () => {
-      setLoaded(false);
-      const res = await axios.get("/api/v2/tickets");
-      setTickets(res.data.data.tickets);
-      setLoaded(true);
-    };
-    fetchTickets();
-  }, []);
   return (
     <div className="flex flex-col" style={{ padding: "10px 25px 25px" }}>
       <div className="sm:flex sm:justify-between sm:items-center">
@@ -37,7 +26,7 @@ export default function Tickets() {
           onClick={() => setModalOpen(true)}
         />
       </div>
-      {loaded && (
+      {!isLoading && (
         <div className="relative">
           {tickets.length > 0 ? (
             <MyTicketTable tickets={tickets} />

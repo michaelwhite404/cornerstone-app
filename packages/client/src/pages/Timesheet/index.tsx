@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useState } from "react";
-import { TimesheetModel } from "../../types/models";
+import { useTimesheet } from "../../api";
 import { useAuth, useDocTitle } from "../../hooks";
 import Slideover from "../../components/Slideover";
 import Admin from "./Admin";
@@ -16,17 +15,19 @@ export default function Timesheet() {
     user.departments?.some((d) => d.role === "LEADER") ? "ADMIN" : "CALENDAR"
   );
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<TimesheetModel>();
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
+
+  // Fetch entry when ID is set
+  const { data: selectedEntry } = useTimesheet(selectedEntryId || "");
 
   const showTimesheetEntry = async (entryId: string) => {
-    const res = await axios.get(`/api/v2/timesheets/${entryId}`);
-    setSelectedEntry(res.data.data.timesheetEntry);
+    setSelectedEntryId(entryId);
     setDrawerOpen(true);
   };
 
   const handleDrawerClose = () => {
     setDrawerOpen(false);
-    setSelectedEntry(undefined);
+    setSelectedEntryId(null);
   };
 
   return (

@@ -1,13 +1,12 @@
 import { FilterIcon, SearchIcon } from "@heroicons/react/outline";
-import axios from "axios";
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { EmployeeModel } from "../../types/models";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useDocTitle } from "../../hooks";
-import { APIResponse } from "../../types/apiResponses";
 import AddUser from "./AddUser";
 import UsersTable from "./UsersTable";
+import { useCreateUser } from "../../api";
 
 export interface CreateUserArgs {
   firstName: string;
@@ -25,9 +24,9 @@ export default function Users() {
   useDocTitle("Users | Cornerstone App");
   const [modalOpen, setModalOpen] = useState(false);
   const { users } = useOutletContext<{ users: EmployeeModel[] }>();
+  const createUserMutation = useCreateUser();
 
-  const createUser = async (data: CreateUserArgs) =>
-    (await axios.post<APIResponse<{ user: EmployeeModel }>>("/api/v2/users", data)).data.data.user;
+  const createUser = async (data: CreateUserArgs) => createUserMutation.mutateAsync(data);
 
   return (
     <div className="flex-1 h-full">

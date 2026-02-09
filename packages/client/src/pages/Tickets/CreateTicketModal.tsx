@@ -1,11 +1,10 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import LabeledInput2 from "../../components/LabeledInput2";
 import capitalize from "capitalize";
 import { Divider } from "../../components/ui";
-import axios from "axios";
-import { DepartmentModel, TicketModel } from "../../types/models";
+import { useDepartmentsAllowingTickets, useCreateTicket } from "../../api";
 import { useNavigate } from "react-router-dom";
 
 const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
@@ -19,16 +18,10 @@ const initialData = {
 
 export default function CreateTicketModal(props: Props) {
   const [data, setData] = useState(initialData);
-  const [allows, setAllows] = useState<DepartmentModel[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getAllowTickets = async () => {
-      const res = await axios.get("/api/v2/departments/allow-tickets");
-      setAllows(res.data.data.departments);
-    };
-    getAllowTickets();
-  }, []);
+  const { data: allows = [] } = useDepartmentsAllowingTickets();
+  const createTicketMutation = useCreateTicket();
 
   const close = () => {
     props.setOpen(false);
@@ -37,8 +30,7 @@ export default function CreateTicketModal(props: Props) {
   const submittable = Object.values(data).every((v) => v.length);
   const submit = async () => {
     try {
-      const res = await axios.post("/api/v2/tickets", data);
-      const ticket = res.data.data.ticket as TicketModel;
+      const ticket = await createTicketMutation.mutateAsync(data);
       navigate(`/tickets/${ticket.ticketId}`);
     } catch (err: any) {
       console.log(err.response);

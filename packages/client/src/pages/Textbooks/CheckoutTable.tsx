@@ -17,14 +17,14 @@ gradeValues.unshift({ value: "-1", label: "Select a grade" });
 interface CheckoutTableProps {
   data: TextbookModel[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setTextbooks: React.Dispatch<React.SetStateAction<TextbookModel[]>>;
+  onSuccess: () => void;
   showToaster: (message: string, intent: "success" | "danger") => void;
 }
 
 export default function CheckoutTable({
   data,
   setOpen,
-  setTextbooks,
+  onSuccess,
   showToaster,
 }: CheckoutTableProps) {
   const [classes, setClasses] = useState<Class[]>([]);
@@ -56,19 +56,9 @@ export default function CheckoutTable({
         const result = await axios.post("/api/v2/textbooks/books/check-out", {
           data: checkoutData,
         });
-        try {
-          const res = await axios.get("/api/v2/textbooks/books", {
-            params: {
-              sort: "textbookSet,bookNumber",
-              active: true,
-            },
-          });
-          setTextbooks(res.data.data.books);
-          setOpen(false);
-          showToaster(result.data.message, "success");
-        } catch (err) {
-          showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
-        }
+        onSuccess();
+        setOpen(false);
+        showToaster(result.data.message, "success");
       } catch (err) {
         showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
       }

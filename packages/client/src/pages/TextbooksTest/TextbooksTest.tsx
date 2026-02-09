@@ -1,7 +1,5 @@
-import axios from "axios";
-import React, { createContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useMemo, useState } from "react";
 import { TextbookSetModel } from "../../types/models/textbookSetTypes";
-import { APITextbookSetsResponse } from "../../types/apiResponses";
 import ContentPanels from "./ContentPanels";
 import AddTextbook from "./AddTextbook";
 import { useDocTitle, useWindowSize } from "../../hooks";
@@ -11,6 +9,7 @@ import SideTable from "../../components/SideTable/SideTable";
 import TextbookSetRow from "./TextbookSetRow/TextbookSetRow";
 import PageHeader from "../../components/PageHeader";
 import { Row } from "react-table";
+import { useTextbookSets } from "../../api";
 
 interface TextbookContextProps {
   getTextbookSets: () => Promise<void>;
@@ -20,23 +19,15 @@ export const TextbookContext = createContext<TextbookContextProps>({} as Textboo
 type PageState = "blank" | "view" | "add";
 
 export default function TextbooksTest() {
-  const [textbookSets, setTextbookSets] = useState<TextbookSetModel[]>([]);
+  const { data: textbookSets = [], refetch } = useTextbookSets();
   const [pageState, setPageState] = useState<PageState>("blank");
   const [selected, setSelected] = useState<TextbookSetModel>();
   const [width] = useWindowSize();
   useDocTitle("Textbooks | Cornerstone App");
 
-  useEffect(() => {
-    getTextbookSets();
-  }, []);
-  async function getTextbookSets() {
-    const res = await axios.get<APITextbookSetsResponse>("/api/v2/textbooks", {
-      params: {
-        sort: "title",
-      },
-    });
-    setTextbookSets(res.data.data.textbooks);
-  }
+  const getTextbookSets = async () => {
+    await refetch();
+  };
 
   const handleAddTextbookClick = () => {
     setPageState("add");
