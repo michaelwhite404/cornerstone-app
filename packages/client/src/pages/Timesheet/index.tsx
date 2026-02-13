@@ -11,6 +11,7 @@ type PageState = "CALENDAR" | "ADMIN";
 export default function Timesheet() {
   const user = useAuth().user!;
   useDocTitle("Timesheet | Cornerstone App");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pageState, setPageState] = useState<PageState>(
     user.departments?.some((d) => d.role === "LEADER") ? "ADMIN" : "CALENDAR"
   );

@@ -1,4 +1,4 @@
-import { FilterIcon, SearchIcon } from "@heroicons/react/outline";
+import { SearchIcon } from "@heroicons/react/outline";
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { EmployeeModel } from "../../types/models";

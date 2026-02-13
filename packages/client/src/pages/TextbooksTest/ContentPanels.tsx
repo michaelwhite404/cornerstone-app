@@ -38,7 +38,6 @@ export default function ContentPanels({
           setSelected={setSelected}
           setPageState={setPageState}
           openPanel={openPanel}
-          closePanel={closePanel}
         />
       )}
       {currentPanel.type === "addBook" && (

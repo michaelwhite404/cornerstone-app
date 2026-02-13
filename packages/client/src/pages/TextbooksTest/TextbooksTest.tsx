@@ -1,4 +1,4 @@
-import React, { createContext, useMemo, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 import { TextbookSetModel } from "../../types/models/textbookSetTypes";
 import ContentPanels from "./ContentPanels";
 import AddTextbook from "./AddTextbook";

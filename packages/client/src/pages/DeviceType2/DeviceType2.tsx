@@ -1,6 +1,5 @@
 import { PlusIcon } from "@heroicons/react/solid";
 import capitalize from "capitalize";
-import pluralize from "pluralize";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeviceModel } from "../../types/models/deviceTypes";

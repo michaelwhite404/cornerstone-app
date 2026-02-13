@@ -45,7 +45,7 @@ export default function AddTable({ setOpen, onSuccess, showToaster }: AddTablePr
     if (isNaN(valueAsNumber) || valueAsNumber < 1) return;
     setData({ ...data, num: valueAsNumber });
     setBooks(
-      Array.from({ length: valueAsNumber }).map((b, i) => ({
+      Array.from({ length: valueAsNumber }).map((_, i) => ({
         passed: true,
         bookNumber: i + 1,
         quality: "Excellent",
@@ -95,7 +95,7 @@ export default function AddTable({ setOpen, onSuccess, showToaster }: AddTablePr
     if (submittable) {
       try {
         const booksData = books.map(({ bookNumber, quality }) => ({ bookNumber, quality }));
-        const message = await createSetAndBooksMutation.mutateAsync({
+        const result = await createSetAndBooksMutation.mutateAsync({
           title: data.title,
           class: data.class,
           grade: data.grade,
@@ -103,7 +103,7 @@ export default function AddTable({ setOpen, onSuccess, showToaster }: AddTablePr
         });
         onSuccess();
         setOpen(false);
-        showToaster(message, "success");
+        showToaster(`${result.textbook.title} with ${result.books.length} books created!`, "success");
       } catch (err) {
         showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
       }

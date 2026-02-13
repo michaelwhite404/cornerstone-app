@@ -23,13 +23,11 @@ export default function TextbooksTestContent({
   setSelected,
   setPageState,
   openPanel,
-  closePanel,
 }: {
   textbook: TextbookSetModel;
   setSelected: React.Dispatch<React.SetStateAction<TextbookSetModel | undefined>>;
   setPageState: React.Dispatch<React.SetStateAction<"blank" | "view" | "add">>;
   openPanel: (panel: PanelView) => void;
-  closePanel: () => void;
 }) {
   const { data: books = [] } = useTextbookSetBooks(textbook._id);
   const [selectedBooks, setSelectedBooks] = useState<TextbookModel[]>([]);
