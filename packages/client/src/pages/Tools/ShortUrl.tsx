@@ -95,7 +95,7 @@ export default function ShortUrl() {
       </div>
       <div>
         <Label>
-          Short Link: {process.env.REACT_APP_SHORT_URL_HOST}/
+          Short Link: {import.meta.env.VITE_SHORT_URL_HOST}/
           <span style={{ color: "dodgerblue" }}>{newLink.short}</span>
         </Label>
         <Checkbox

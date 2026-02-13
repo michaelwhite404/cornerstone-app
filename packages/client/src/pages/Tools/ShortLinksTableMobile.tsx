@@ -14,7 +14,7 @@ export default function ShortLinksTableMobile({ links }: { links: ShortUrlModel[
               </div>
               <div className="mb-1.5 truncate pr-5">
                 <span className="header">Short:</span> http://
-                {process.env.REACT_APP_SHORT_URL_HOST}/{link.short}
+                {import.meta.env.VITE_SHORT_URL_HOST}/{link.short}
               </div>
               <div className="truncate pr-5">
                 <span className="mr-3">
@@ -28,7 +28,7 @@ export default function ShortLinksTableMobile({ links }: { links: ShortUrlModel[
             <div style={{ minWidth: 40 }}>
               <QRCode
                 size={40}
-                value={`${process.env.REACT_APP_SHORT_URL_HOST}/${link.short}?refer_method=qr`}
+                value={`${import.meta.env.VITE_SHORT_URL_HOST}/${link.short}?refer_method=qr`}
               />
             </div>
           </div>

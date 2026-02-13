@@ -30,11 +30,11 @@ export default function ShortLinksTable({ links }: { links: ShortUrlModel[] }) {
                 </td>
                 <td>
                   <a
-                    href={`http://${process.env.REACT_APP_SHORT_URL_HOST}/${link.short}`}
+                    href={`http://${import.meta.env.VITE_SHORT_URL_HOST}/${link.short}`}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {process.env.REACT_APP_SHORT_URL_HOST}/{link.short}
+                    {import.meta.env.VITE_SHORT_URL_HOST}/{link.short}
                   </a>
                 </td>
                 <td>{link.clicks}</td>
@@ -42,7 +42,7 @@ export default function ShortLinksTable({ links }: { links: ShortUrlModel[] }) {
                 <td>
                   <QRCode
                     size={40}
-                    value={`${process.env.REACT_APP_SHORT_URL_HOST}/${link.short}?refer_method=qr`}
+                    value={`${import.meta.env.VITE_SHORT_URL_HOST}/${link.short}?refer_method=qr`}
                   />
                 </td>
               </tr>
