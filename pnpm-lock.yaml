@@ -20,6 +20,9 @@ importers:
       '@heroicons/react':
         specifier: ^1.0.6
         version: 1.0.6(react@17.0.2)
+      '@react-oauth/google':
+        specifier: ^0.13.4
+        version: 0.13.4(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@tailwindcss/forms':
         specifier: ^0.5.2
         version: 0.5.11(tailwindcss@3.4.19)
@@ -128,9 +131,6 @@ importers:
       react-dropzone:
         specifier: ^14.2.2
         version: 14.4.0(react@17.0.2)
-      react-google-login:
-        specifier: ^5.2.2
-        version: 5.2.2(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       react-intersection-observer:
         specifier: ^9.1.0
         version: 9.16.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -891,6 +891,12 @@ packages:
   '@parcel/watcher@2.5.6':
     resolution: {integrity: sha512-tmmZ3lQxAe/k/+rNnXQRawJ4NjxO2hqiOLTHvWchtGZULp4RyFeh6aU4XdOYBFe2KE1oShQTv4AblOs2iOrNnQ==}
     engines: {node: '>= 10.0.0'}
+
+  '@react-oauth/google@0.13.4':
+    resolution: {integrity: sha512-hGKyNEH+/PK8M0sFEuo3MAEk0txtHpgs94tDQit+s2LXg7b6z53NtzHfqDvoB2X8O6lGB+FRg80hY//X6hfD+w==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   '@remix-run/router@1.23.2':
     resolution: {integrity: sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==}
@@ -2913,13 +2919,6 @@ packages:
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
 
-  react-google-login@5.2.2:
-    resolution: {integrity: sha512-JUngfvaSMcOuV0lFff7+SzJ2qviuNMQdqlsDJkUM145xkGPVIfqWXq9Ui+2Dr6jdJWH5KYdynz9+4CzKjI5u6g==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-    peerDependencies:
-      react: ^16 || ^17
-      react-dom: ^16 || ^17
-
   react-intersection-observer@9.16.0:
     resolution: {integrity: sha512-w9nJSEp+DrW9KmQmeWHQyfaP6b03v+TdXynaoA964Wxt7mdR3An11z4NNCQgL4gKSK7y1ver2Fq+JKH6CWEzUA==}
     peerDependencies:
@@ -4053,6 +4052,11 @@ snapshots:
       '@parcel/watcher-win32-ia32': 2.5.6
       '@parcel/watcher-win32-x64': 2.5.6
     optional: true
+
+  '@react-oauth/google@0.13.4(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
 
   '@remix-run/router@1.23.2': {}
 
@@ -6218,13 +6222,6 @@ snapshots:
       file-selector: 2.1.2
       prop-types: 15.8.1
       react: 17.0.2
-
-  react-google-login@5.2.2(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
-    dependencies:
-      '@types/react': 17.0.91
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
 
   react-intersection-observer@9.16.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
     dependencies:

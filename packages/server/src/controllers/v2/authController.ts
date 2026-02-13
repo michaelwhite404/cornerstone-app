@@ -1,5 +1,5 @@
+import axios from "axios";
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import { promisify } from "util";
 import { Employee } from "@models";
@@ -64,14 +64,15 @@ export const createEmployee = catchAsync(
 );
 
 export const googleLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
   const { token } = req.body;
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
-  const { email, picture } = ticket.getPayload()!;
+
+  // Fetch user info from Google using the access token
+  const { data } = await axios.get<{ email: string; picture: string }>(
+    `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
+  );
+
+  const { email, picture } = data;
+
   const employee = await Employee.findOne({ email, active: true }).populate({
     path: "departments",
     populate: "department",

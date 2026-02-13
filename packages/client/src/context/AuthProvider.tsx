@@ -1,6 +1,6 @@
 import axios from "axios";
+import { googleLogout } from "@react-oauth/google";
 import { createContext, useEffect, useState } from "react";
-import { GoogleLoginResponse, GoogleLoginResponseOffline } from "react-google-login";
 import { useNavigate, useLocation } from "react-router-dom";
 import { UserSettingModel } from "../types/models";
 import { EmployeeModel } from "../types/models/employeeTypes";
@@ -13,9 +13,7 @@ interface AuthContextType {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   logout: (callback?: VoidFunction) => Promise<void>;
   login: (email: string, password: string) => Promise<EmployeeModel>;
-  loginFromGoogle: (
-    googleData: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => Promise<EmployeeModel | undefined>;
+  loginFromGoogle: (accessToken: string) => Promise<EmployeeModel | undefined>;
   authLoaded: boolean;
   settings: Omit<UserSettingModel, "user">[];
   setSettings: React.Dispatch<React.SetStateAction<Omit<UserSettingModel, "user">[]>>;
@@ -60,6 +58,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const logout = async (callback?: VoidFunction) => {
     try {
       await axios.post<{ status: "success" }>("/api/v2/users/logout");
+      googleLogout();
       setTimeout(() => {
         setIsAuthenticated(false);
         navigate("/");
@@ -82,12 +81,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
   };
 
-  const loginFromGoogle = async (googleData: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-    const data = googleData as GoogleLoginResponse;
-    // @ts-ignore
-    if (data.error === "popup_closed_by_user") return;
+  const loginFromGoogle = async (accessToken: string) => {
     try {
-      const res = await axios.post("/api/v2/users/google", { token: data.tokenId });
+      const res = await axios.post("/api/v2/users/google", { token: accessToken });
       setUser(res.data.data.employee);
       handleAuthSuccess();
       return res.data.data.employee as EmployeeModel;
