@@ -97,6 +97,7 @@ export {
   useLegacyCheckoutTextbook,
   useLegacyCheckinTextbook,
   useCreateSetAndBooks,
+  useAddBooksToSet,
   useTextbookActions,
 } from "./textbooks";
 

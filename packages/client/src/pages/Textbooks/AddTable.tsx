@@ -1,10 +1,10 @@
 import { XCircleIcon } from "@heroicons/react/solid";
 import { LockClosedIcon, PencilIcon } from "@heroicons/react/solid";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import React, { useState } from "react";
-import { TextbookModel } from "../../types/models/textbookTypes";
 import { Button, Input, Select } from "../../components/ui";
 import TableToolbox from "../../components/Table/TableToolbox";
+import { useCreateSetAndBooks } from "../../api";
 import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
 
@@ -22,6 +22,7 @@ interface PreBook {
 }
 
 export default function AddTable({ setOpen, onSuccess, showToaster }: AddTableProps) {
+  const createSetAndBooksMutation = useCreateSetAndBooks();
   const [data, setData] = useState({ title: "", class: "", grade: 0, num: 1 });
   const [dataLocked, setDataLocked] = useState(false);
   const [books, setBooks] = useState<PreBook[]>([
@@ -93,10 +94,16 @@ export default function AddTable({ setOpen, onSuccess, showToaster }: AddTablePr
   const submit = async () => {
     if (submittable) {
       try {
-        const result = await axios.post("/api/v2/textbooks/books/both", { ...data, books });
+        const booksData = books.map(({ bookNumber, quality }) => ({ bookNumber, quality }));
+        const message = await createSetAndBooksMutation.mutateAsync({
+          title: data.title,
+          class: data.class,
+          grade: data.grade,
+          books: booksData,
+        });
         onSuccess();
         setOpen(false);
-        showToaster(result.data.message, "success");
+        showToaster(message, "success");
       } catch (err) {
         showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
       }

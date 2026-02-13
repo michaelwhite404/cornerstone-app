@@ -1,12 +1,17 @@
 import { CheckCircleIcon } from "@heroicons/react/solid";
-import axios, { AxiosError } from "axios";
-import React, { useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import React, { useState } from "react";
 import { TextbookModel } from "../../types/models/textbookTypes";
 import { Button, Select, ProgressBar } from "../../components/ui";
 import TableToolbox from "../../components/Table/TableToolbox";
+import { useLegacyCheckoutTextbook, useStudentsByGrade } from "../../api";
 import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
-import Class from "../../types/class";
+
+interface ClassGroup {
+  grade: number;
+  students: { id: string; fullName: string }[];
+}
 
 const gradeValues = grades.map((value, i) => ({
   value: `${i}`,
@@ -27,7 +32,8 @@ export default function CheckoutTable({
   onSuccess,
   showToaster,
 }: CheckoutTableProps) {
-  const [classes, setClasses] = useState<Class[]>([]);
+  const { data: classes = [] } = useStudentsByGrade();
+  const checkoutMutation = useLegacyCheckoutTextbook();
   const [checkoutData, setCheckoutData] = useState<{ book: string; student: string | null }[]>(
     data.map((t) => ({ book: t._id, student: null }))
   );
@@ -53,30 +59,18 @@ export default function CheckoutTable({
   const completeCheckout = async () => {
     if (submittable) {
       try {
-        const result = await axios.post("/api/v2/textbooks/books/check-out", {
-          data: checkoutData,
-        });
+        // Filter out null students and cast to the expected type
+        const validData = checkoutData
+          .filter((d): d is { book: string; student: string } => d.student !== null);
+        const message = await checkoutMutation.mutateAsync(validData);
         onSuccess();
         setOpen(false);
-        showToaster(result.data.message, "success");
+        showToaster(message, "success");
       } catch (err) {
         showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
       }
     }
   };
-
-  useEffect(() => {
-    getStudents();
-
-    async function getStudents() {
-      try {
-        const res = await axios.get("/api/v2/students/group");
-        setClasses(res.data.data.grades);
-      } catch (err) {
-        console.log((err as AxiosError<APIError>).response!.data);
-      }
-    }
-  }, []);
 
   return (
     <>
@@ -162,7 +156,7 @@ function CheckoutTableRow({
   currentValue,
 }: {
   textbook: TextbookModel;
-  classes: Class[];
+  classes: ClassGroup[];
   updateBookData: (id: string, student: string | null) => void;
   gradeSelect: number[];
   setGradeSelect: React.Dispatch<React.SetStateAction<number[]>>;
@@ -175,7 +169,7 @@ function CheckoutTableRow({
   const studentOptions =
     gradeSelect[index] === -1
       ? undefined
-      : classes[gradeSelect[index]].students.map((s) => ({
+      : classes[gradeSelect[index]]?.students.map((s) => ({
           label: s.fullName,
           value: s.id,
         }));

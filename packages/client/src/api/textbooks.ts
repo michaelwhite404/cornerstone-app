@@ -184,6 +184,30 @@ export const useCreateSetAndBooks = () => {
   });
 };
 
+// Add books to existing textbook set
+interface AddBooksData {
+  textbookSetId: string;
+  books: Prebook[];
+}
+
+const addBooksToSet = async ({ textbookSetId, books }: AddBooksData) => {
+  const response = await apiClient.post<{ data: { books: TextbookModel[] } }>(
+    `/textbooks/${textbookSetId}/books/bulk`,
+    { books }
+  );
+  return extractData(response).books;
+};
+
+export const useAddBooksToSet = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addBooksToSet,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: textbookKeys.all });
+    },
+  });
+};
+
 // Composite hook for legacy textbook operations
 export function useTextbookActions() {
   const checkoutMutation = useLegacyCheckoutTextbook();

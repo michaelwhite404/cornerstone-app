@@ -1,5 +1,5 @@
 import { PlusIcon } from "@heroicons/react/solid";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import pluralize from "pluralize";
 import { useContext, useState } from "react";
 import { TextbookSetModel } from "../../../../types/models/textbookSetTypes";
@@ -7,7 +7,8 @@ import { TextbookModel } from "../../../../types/models/textbookTypes";
 import { Button } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import { useToasterContext } from "../../../../hooks";
-import { APIError, APITextbooksResponse } from "../../../../types/apiResponses";
+import { useAddBooksToSet } from "../../../../api";
+import { APIError } from "../../../../types/apiResponses";
 import AddBooksTable from "../../AddBooksTable";
 import { TextbookContext } from "../../TextbooksTest";
 
@@ -34,6 +35,7 @@ const defaultPreBook = (bookNumber: number, passed = true): PreBook => ({
 export default function AddBookPanel({ textbook, books, closePanel }: AddBookProps) {
   const { showToaster } = useToasterContext();
   const { getTextbookSets } = useContext(TextbookContext);
+  const addBooksMutation = useAddBooksToSet();
   const [booksToAdd, setBooksToAdd] = useState<PreBook[]>([
     defaultPreBook(books[books.length - 1].bookNumber + 1),
   ]);
@@ -78,13 +80,12 @@ export default function AddBookPanel({ textbook, books, closePanel }: AddBookPro
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post<APITextbooksResponse>(
-        `/api/v2/textbooks/${textbook._id}/books/bulk`,
-        {
-          books: booksToAdd,
-        }
-      );
-      showToaster(pluralize("book", res.data.data.books.length, true) + " added!", "success");
+      const booksData = booksToAdd.map(({ bookNumber, quality }) => ({ bookNumber, quality }));
+      const addedBooks = await addBooksMutation.mutateAsync({
+        textbookSetId: textbook._id,
+        books: booksData,
+      });
+      showToaster(pluralize("book", addedBooks.length, true) + " added!", "success");
       closePanel();
       getTextbookSets();
     } catch (err) {

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Select } from "../../components/ui";
 import { TextbookModel } from "../../types/models/textbookTypes";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { useLegacyCheckinTextbook } from "../../api";
 import { APIError } from "../../types/apiResponses";
 
 interface CheckinTableProps {
@@ -17,6 +18,7 @@ export default function CheckinTable({
   onSuccess,
   showToaster,
 }: CheckinTableProps) {
+  const checkinMutation = useLegacyCheckinTextbook();
   const [checkinData, setCheckinData] = useState<{ id: string; quality: string }[]>(
     data.map((t) => ({ id: t._id, quality: t.quality }))
   );
@@ -34,12 +36,10 @@ export default function CheckinTable({
 
   const completeCheckout = async () => {
     try {
-      const result = await axios.patch("/api/v2/textbooks/books/check-in", {
-        books: checkinData,
-      });
+      const message = await checkinMutation.mutateAsync(checkinData);
       onSuccess();
       setOpen(false);
-      showToaster(result.data.message, "success");
+      showToaster(message, "success");
     } catch (err) {
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
     }
