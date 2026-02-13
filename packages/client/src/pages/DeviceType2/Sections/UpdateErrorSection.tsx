@@ -1,10 +1,9 @@
 import { Button, Select, Label, Textarea, Chip } from "../../../components/ui";
-import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { DeviceModel } from "../../../types/models/deviceTypes";
 import { ErrorLogModel, ErrorStatus } from "../../../types/models/errorLogTypes";
 import { useToasterContext, useWindowSize } from "../../../hooks";
-import { APIError } from "../../../types/apiResponses";
+import { getErrorMessage } from "../../../utils/getErrorMessage";
 import DevicePane from "../DevicePane";
 import UpdateErrorSkeleton from "../UpdateError.tsx/UpdateErrorSkeleton";
 
@@ -60,7 +59,7 @@ export default function UpdateErrorSection({
       showToaster("Error has been updated", "success");
       onUpdateErrorSuccess && onUpdateErrorSuccess(data);
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

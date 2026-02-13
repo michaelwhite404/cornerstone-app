@@ -1,10 +1,9 @@
-import { AxiosError } from "axios";
 import { useState } from "react";
 import { useCreateTimesheet } from "../../api";
 import Modal from "../../components/Modal";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useAuth, useToasterContext } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import AddEntry from "./AddEntry";
 import Calendar from "./Calendar";
 
@@ -24,7 +23,7 @@ export default function CalendarPage(props: Props) {
       setModalOpen(false);
       showToaster("Entry added successfully", "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

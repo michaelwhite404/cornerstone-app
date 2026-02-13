@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/solid";
 import { PlusIcon } from "@heroicons/react/solid";
@@ -10,7 +10,6 @@ import DeviceErrorStatusBadge from "../../components/Badges/DeviceErrorStatusBad
 import PaneHeader from "../../components/PaneHeader/PaneHeader";
 import TableExpanded from "../../components/TableExpanded/TableExpanded";
 import { useToasterContext } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
 
 
 interface ErrorHistoryProps {
@@ -147,7 +146,7 @@ export default function ErrorHistory({
       setErrorData({ title: "", description: "" });
       onCreateErrorSuccess && onCreateErrorSuccess(res);
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

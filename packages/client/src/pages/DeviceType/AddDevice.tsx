@@ -1,11 +1,10 @@
-import { AxiosError } from "axios";
 import capitalize from "capitalize";
 import { singular } from "pluralize";
 import React, { useState } from "react";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import { useToasterContext } from "../../hooks";
 import { useCreateDevice } from "../../api";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { Button, Input, Label } from "../../components/ui";
 
 interface AddDeviceProps {
@@ -60,7 +59,7 @@ export default function AddDevice({
       showToaster(`${device.name} successfully created`, "success");
       onDeviceAdded();
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

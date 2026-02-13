@@ -7,7 +7,7 @@ import {
   LockOpenIcon,
   // PencilIcon,
 } from "@heroicons/react/solid";
-import { AxiosError } from "axios";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { format } from "date-fns";
 import pluralize from "pluralize";
 import { useState } from "react";
@@ -16,7 +16,6 @@ import { useParams } from "react-router-dom";
 import { EmployeeModel } from "../../types/models";
 import { useTicket, useUpdateTicket, useCloseTicket } from "../../api";
 import { useAuth, useDocTitle, useToasterContext } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
 import ActivityFeed from "./ActivityFeed";
 import AssignUser from "./AssignUser";
 import CloseTicketModal from "./CloseTicketModal";
@@ -43,7 +42,7 @@ export default function TicketDetails() {
       });
       setComment("");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 
@@ -68,7 +67,7 @@ export default function TicketDetails() {
       await closeTicketMutation.mutateAsync(ticket.ticketId);
       showToaster("Ticket closed", "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

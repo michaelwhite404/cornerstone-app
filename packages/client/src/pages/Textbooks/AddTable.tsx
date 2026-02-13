@@ -1,11 +1,10 @@
 import { XCircleIcon } from "@heroicons/react/solid";
 import { LockClosedIcon, PencilIcon } from "@heroicons/react/solid";
-import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { Button, Input, Select } from "../../components/ui";
 import TableToolbox from "../../components/Table/TableToolbox";
 import { useCreateSetAndBooks } from "../../api";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { grades } from "../../utils/grades";
 
 interface AddTableProps {
@@ -105,7 +104,7 @@ export default function AddTable({ setOpen, onSuccess, showToaster }: AddTablePr
         setOpen(false);
         showToaster(`${result.textbook.title} with ${result.books.length} books created!`, "success");
       } catch (err) {
-        showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+        showToaster(getErrorMessage(err), "danger");
       }
     }
   };

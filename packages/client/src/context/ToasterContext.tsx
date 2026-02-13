@@ -1,13 +1,12 @@
-import { AxiosError } from "axios";
 import { createContext, ReactNode } from "react";
 import { toast } from "sonner";
-import { APIError } from "../types/apiResponses";
+import { getErrorMessage } from "../utils/getErrorMessage";
 
 type Intent = "success" | "danger" | "warning" | "primary" | "none";
 
 interface IToasterContext {
   showToaster: (message: string, intent: Intent, icon?: unknown) => void;
-  showError: (err: AxiosError<APIError>) => void;
+  showError: (err: unknown) => void;
 }
 
 export const ToasterContext = createContext<IToasterContext>({} as IToasterContext);
@@ -32,8 +31,8 @@ export const ToasterProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const showError = (err: AxiosError<APIError>) => {
-    toast.error(err.response?.data?.message || "An error occurred");
+  const showError = (err: unknown) => {
+    toast.error(getErrorMessage(err));
   };
 
   return (

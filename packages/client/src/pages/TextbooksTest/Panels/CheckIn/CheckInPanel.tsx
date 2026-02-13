@@ -1,11 +1,10 @@
-import { AxiosError } from "axios";
 import { useState } from "react";
 import { TextbookModel } from "../../../../types/models/textbookTypes";
 import { Button, Select } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import { useToasterContext } from "../../../../hooks";
 import { useTextbookActions } from "../../../../api";
-import { APIError } from "../../../../types/apiResponses";
+import { getErrorMessage } from "../../../../utils/getErrorMessage";
 
 interface CheckInProps {
   data: TextbookModel[];
@@ -36,7 +35,7 @@ export default function CheckInPanel({ data, closePanel }: CheckInProps) {
         closePanel();
       })
       .catch((err) => {
-        showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+        showToaster(getErrorMessage(err), "danger");
       });
   };
   return (

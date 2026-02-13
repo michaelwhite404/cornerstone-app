@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
-import { AxiosError } from "axios";
+import { getErrorMessage } from "../../../utils/getErrorMessage";
 import { startOfDay } from "date-fns";
 import { ChangeEventHandler, Fragment, useEffect, useState } from "react";
 import { RM } from ".";
@@ -8,7 +8,6 @@ import DateSelector from "../../../components/DateSelector";
 import LabeledInput2 from "../../../components/LabeledInput2";
 import { useToasterContext, useToggle } from "../../../hooks";
 import { useMyDepartmentLeaders, useCreateReimbursement } from "../../../api";
-import { APIError } from "../../../types/apiResponses";
 import stateList from "../../../utils/stateList";
 import Dropzone from "./Dropzone";
 
@@ -84,7 +83,7 @@ export default function AddReimbursement(props: AddLeaveProps) {
       close();
       showToaster("Reimbursement request submitted", "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

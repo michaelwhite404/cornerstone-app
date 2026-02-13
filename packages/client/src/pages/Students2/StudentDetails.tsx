@@ -1,5 +1,5 @@
 import { Divider } from "../../components/ui";
-import { AxiosError } from "axios";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { useEffect, useState } from "react";
 import { useLocation, useOutletContext, useParams } from "react-router-dom";
 import { StudentModel } from "../../types/models";
@@ -10,7 +10,6 @@ import LabeledInput2 from "../../components/LabeledInput2";
 import MainContent from "../../components/MainContent";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useAuth, useToasterContext } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
 import { numberToGrade } from "../../utils/grades";
 
 import StudentDevicesTable from "./StudentDevicesTable";
@@ -67,7 +66,7 @@ export default function StudentDetails() {
       setPasswordReset("");
       showToaster("Password Reset", "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

@@ -1,6 +1,6 @@
 import { LockClosedIcon, PencilIcon } from "@heroicons/react/solid";
-import { AxiosError } from "axios";
 import pluralize from "pluralize";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { useContext, useState } from "react";
 import { TextbookSetModel } from "../../types/models/textbookSetTypes";
 import { TextbookModel } from "../../types/models/textbookTypes";
@@ -12,7 +12,6 @@ import LabeledNumbericInput from "../../components/Inputs/LabeledNumbericInput";
 import LabeledSelect from "../../components/Inputs/LabeledSelect";
 import { useToasterContext } from "../../hooks";
 import { useTextbookActions } from "../../api";
-import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
 import AddBooksTable from "./AddBooksTable";
 import { TextbookContext } from "./TextbooksTest";
@@ -175,7 +174,7 @@ export default function AddTextbook(props: AddTextbookProps) {
         props.setSelected(data.textbook);
         props.setPageState("view");
       })
-      .catch((err) => showToaster((err as AxiosError<APIError>).response!.data.message, "danger"));
+      .catch((err) => showToaster(getErrorMessage(err), "danger"));
   };
   return (
     <div className="flex flex-col h-full">

@@ -1,11 +1,9 @@
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import { AxiosError } from "axios";
 import { useState } from "react";
 import { useUpdatePassword } from "../../api";
 import LabeledInput2 from "../../components/LabeledInput2";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useToasterContext } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
 
 const initialData = { password: "", passwordConfirm: "" };
 
@@ -28,7 +26,7 @@ export default function Password() {
       showToaster("Password changed", "success");
       setData(initialData);
     } catch (err) {
-      showError(err as AxiosError<APIError>);
+      showError(err);
     }
   };
   return (

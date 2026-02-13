@@ -1,11 +1,10 @@
 import { CheckCircleIcon } from "@heroicons/react/solid";
-import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { TextbookModel } from "../../types/models/textbookTypes";
 import { Button, Select, ProgressBar } from "../../components/ui";
 import TableToolbox from "../../components/Table/TableToolbox";
 import { useLegacyCheckoutTextbook, useStudentsByGrade } from "../../api";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { grades } from "../../utils/grades";
 
 interface ClassGroup {
@@ -67,7 +66,7 @@ export default function CheckoutTable({
         setOpen(false);
         showToaster(message, "success");
       } catch (err) {
-        showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+        showToaster(getErrorMessage(err), "danger");
       }
     }
   };

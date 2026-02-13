@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Button, Select } from "../../components/ui";
 import { TextbookModel } from "../../types/models/textbookTypes";
-import { AxiosError } from "axios";
 import { useLegacyCheckinTextbook } from "../../api";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 interface CheckinTableProps {
   data: TextbookModel[];
@@ -41,7 +40,7 @@ export default function CheckinTable({
       setOpen(false);
       showToaster(message, "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

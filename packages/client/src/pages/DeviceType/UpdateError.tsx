@@ -1,10 +1,9 @@
-import { AxiosError } from "axios";
 import { useState } from "react";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import { ErrorLogModel, ErrorStatus } from "../../types/models/errorLogTypes";
 import PaneHeader from "../../components/PaneHeader/PaneHeader";
 import { useToasterContext } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { Button, Chip, Label, Select, Textarea } from "../../components/ui";
 
 interface UpdateErrorPayload {
@@ -56,7 +55,7 @@ export default function UpdateError({
       showToaster("Error has been updated", "success");
       onUpdateErrorSuccess && onUpdateErrorSuccess(data);
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

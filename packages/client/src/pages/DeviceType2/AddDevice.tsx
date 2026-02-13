@@ -1,5 +1,5 @@
 import { Button, Input, Label } from "../../components/ui";
-import { AxiosError } from "axios";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import capitalize from "capitalize";
 import pluralize, { singular } from "pluralize";
 import React, { useEffect, useState } from "react";
@@ -10,7 +10,6 @@ import FadeIn from "../../components/FadeIn";
 import MainContent from "../../components/MainContent";
 import { useToasterContext } from "../../hooks";
 import { useCreateDevice } from "../../api";
-import { APIError } from "../../types/apiResponses";
 
 interface AddDeviceProps {
   deviceType: string;
@@ -96,7 +95,7 @@ export default function AddDevice() {
       reFetchDevices();
       navigate(`/devices/${pluralize(deviceType)}/${device.slug}`);
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

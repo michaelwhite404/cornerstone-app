@@ -1,6 +1,6 @@
 import { PlusIcon } from "@heroicons/react/solid";
-import { AxiosError } from "axios";
 import pluralize from "pluralize";
+import { getErrorMessage } from "../../../../utils/getErrorMessage";
 import { useContext, useState } from "react";
 import { TextbookSetModel } from "../../../../types/models/textbookSetTypes";
 import { TextbookModel } from "../../../../types/models/textbookTypes";
@@ -8,7 +8,6 @@ import { Button } from "../../../../components/ui";
 import BackButton from "../../../../components/BackButton";
 import { useToasterContext } from "../../../../hooks";
 import { useAddBooksToSet } from "../../../../api";
-import { APIError } from "../../../../types/apiResponses";
 import AddBooksTable from "../../AddBooksTable";
 import { TextbookContext } from "../../TextbooksTest";
 
@@ -89,7 +88,7 @@ export default function AddBookPanel({ textbook, books, closePanel }: AddBookPro
       closePanel();
       getTextbookSets();
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

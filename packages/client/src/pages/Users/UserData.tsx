@@ -1,5 +1,5 @@
-import { AxiosError } from "axios";
 import { Divider, Switch } from "../../components/ui";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EmployeeModel, UserGroup } from "../../types/models";
@@ -18,7 +18,6 @@ import DepartmentList from "./UserData/DepartmentList";
 import GroupList from "./UserData/GroupsList";
 import { grades } from "../../utils/grades";
 import MainContent from "../../components/MainContent";
-import { APIError } from "../../types/apiResponses";
 import { useToasterContext } from "../../hooks";
 
 export default function UserData() {
@@ -156,7 +155,7 @@ export default function UserData() {
       setUserEdit({ groups: user.groups, ...updatedUser });
       showToaster("User Updated", "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

@@ -1,10 +1,9 @@
-import { AxiosError } from "axios";
 import { useMemo, useState } from "react";
 import { AftercareAttendanceEntryModel, StudentModel } from "../../types/models";
 import { useToasterContext } from "../../hooks";
 import { useStudents } from "../../api";
 import { useAftercareStats, useUpdateStudentAftercare, useStudentAftercareEntries } from "../../api";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import StudentDataModal from "./StudentDataModal";
 import StudentSearch from "./StudentSearch";
 import StudentsTable from "./StudentsTable";
@@ -65,7 +64,7 @@ export default function LionsDenStudents() {
       await updateStudentAftercareMutation.mutateAsync({ data });
       showToaster("Students Added!", "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
       throw err;
     }
   };
@@ -76,7 +75,7 @@ export default function LionsDenStudents() {
       await updateStudentAftercareMutation.mutateAsync({ data });
       showToaster("Students Removed!", "success");
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
       throw err;
     }
   };

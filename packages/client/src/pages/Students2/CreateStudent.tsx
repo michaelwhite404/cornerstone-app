@@ -1,6 +1,6 @@
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import { Divider } from "../../components/ui";
-import { AxiosError } from "axios";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateStudent } from "../../api";
@@ -11,7 +11,6 @@ import LabeledInput2 from "../../components/LabeledInput2";
 import MainContent from "../../components/MainContent";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import { useToasterContext, useToggle } from "../../hooks";
-import { APIError } from "../../types/apiResponses";
 import { grades } from "../../utils/grades";
 
 export default function CreateStudent() {
@@ -54,7 +53,7 @@ export default function CreateStudent() {
         },
       });
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 

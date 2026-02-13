@@ -1,5 +1,4 @@
 import { CheckCircleIcon } from "@heroicons/react/solid";
-import { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { TextbookModel } from "../../../../types/models/textbookTypes";
 import { Button, ProgressBar, GradeSelect, StudentSelect } from "../../../../components/ui";
@@ -7,7 +6,7 @@ import BackButton from "../../../../components/BackButton";
 import TableToolbox from "../../../../components/Table/TableToolbox";
 import { useToasterContext } from "../../../../hooks";
 import { useTextbookActions, useClassSelection } from "../../../../api";
-import { APIError } from "../../../../types/apiResponses";
+import { getErrorMessage } from "../../../../utils/getErrorMessage";
 
 interface ClassGroup {
   grade: number;
@@ -59,7 +58,7 @@ export default function CheckOutPanel({ data, closePanel }: CheckOutProps) {
         showToaster(message, "success");
         closePanel();
       })
-      .catch((err) => showToaster((err as AxiosError<APIError>).response!.data.message, "success"));
+      .catch((err) => showToaster(getErrorMessage(err), "danger"));
   };
 
   return (

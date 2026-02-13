@@ -1,12 +1,11 @@
 import { useMemo, useState } from "react";
-import { AxiosError } from "axios";
 import { Checkbox, Label, Switch } from "../../components/ui";
 import { nanoid } from "nanoid";
 import { useShortUrls, useCreateShortUrl } from "../../api";
 import { useAuth, useDocTitle, useToasterContext, useToggle } from "../../hooks";
 import LabeledInput from "../../components/Inputs/LabeledInput";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
-import { APIError } from "../../types/apiResponses";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import ShortLinksTable from "./ShortLinksTable";
 import ShortLinksTableMobile from "./ShortLinksTableMobile";
 
@@ -54,7 +53,7 @@ export default function ShortUrl() {
       showToaster("Short link created", "success");
       clear();
     } catch (err) {
-      showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
+      showToaster(getErrorMessage(err), "danger");
     }
   };
 
