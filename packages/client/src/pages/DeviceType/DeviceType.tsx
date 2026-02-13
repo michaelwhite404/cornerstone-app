@@ -1,223 +1,169 @@
+import { PlusIcon } from "@heroicons/react/solid";
 import capitalize from "capitalize";
-import pluralize from "pluralize";
-import { Fragment, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Menu, Transition } from "@headlessui/react";
-import { CogIcon, PlusIcon, ViewListIcon, ChartBarIcon } from "@heroicons/react/solid";
-import { useQueryClient } from "@tanstack/react-query";
-import { deviceKeys, useDevices } from "../../api";
-import { Button } from "../../components/ui";
-import Slideover from "../../components/Slideover";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { DeviceModel } from "../../types/models/deviceTypes";
 import DeviceStatusBadge from "../../components/Badges/DeviceStatusBagde";
+import MainContent from "../../components/MainContent";
+import Modal from "../../components/Modal";
 import PageHeader from "../../components/PageHeader";
-import Table from "../../components/Table/Table";
-import { useDocTitle, useWindowSize } from "../../hooks";
+import SideTable from "../../components/SideTable/SideTable";
+import SideTableFilter from "../../components/SideTable/SideTableFilter";
+import { useAuth, useDocTitle, useWindowSize } from "../../hooks";
 import { grades } from "../../utils/grades";
-import AddDevice from "./AddDevice";
-import DeviceContent from "./DeviceContent";
+import { useDevices } from "../../api";
 
-export default function DeviceType() {
-  const { pathname } = useLocation();
-  const { deviceType } = useParams<{ deviceType: string }>();
-  useDocTitle(`${capitalize(deviceType!)} | Cornerstone App`);
+export default function DeviceType2() {
+  const { deviceType, slug } = useParams<"deviceType" | "slug">();
+  const location = useLocation();
+  useDocTitle(`${capitalize(deviceType!)} | Devices | Cornerstone App`);
+  const [selected, setSelected] = useState<DeviceModel>();
+
+  const getPageState = useCallback(() => {
+    if (location.pathname.endsWith("add")) return "add";
+    if (slug) return "device";
+    setSelected(undefined);
+    return "blank";
+  }, [location.pathname, slug]);
+
+  const [pageState, setPageState] = useState<"blank" | "device" | "add">(getPageState);
+  const width = useWindowSize()[0];
+  const [filter, setFilter] = useState("");
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [width] = useWindowSize();
-  const { data: devices = [] } = useDevices(deviceType!);
-  const [selectedDevice, setSelectedDevice] = useState<DeviceModel | undefined>(undefined);
-  const [pageStatus, setPageStatus] = useState<"List" | "Single" | "Add">("List");
+  const { user } = useAuth();
+  const [dialogState, setDialogState] = useState({
+    open: false,
+    title: "",
+    width: 400 as number | string,
+    Component: <></>,
+  });
 
-  const updateDevice = (id: string, newDevice: DeviceModel) => {
-    // Update the cache with the new device data
-    queryClient.setQueryData<DeviceModel[]>(deviceKeys.list(deviceType!), (oldDevices) => {
-      if (!oldDevices) return [newDevice];
-      return oldDevices.map((device) => (device._id === id ? newDevice : device));
-    });
-  };
+  const { data: devices = [], refetch: reFetchDevices } = useDevices(deviceType!);
 
-  const refetchDevices = () => {
-    queryClient.invalidateQueries({ queryKey: deviceKeys.list(deviceType!) });
-  };
+  useEffect(() => setPageState(getPageState), [getPageState]);
 
-  const getLastUser = (device: DeviceModel) => {
-    return device.status === "Checked Out" && device.lastUser
-      ? `${device.lastUser?.fullName} (${grades[device.lastUser?.grade ?? 0]})`
-      : "";
-  };
-
-  const handleDeviceNameClick = (original: DeviceModel) => {
-    setSelectedDevice(original);
-    setPageStatus("Single");
-  };
-
-  const handleDrawerClose = () => {
-    setPageStatus("List");
-    setSelectedDevice(undefined);
-  };
-
+  const data = useMemo(() => devices, [devices]);
   const columns = useMemo(
     () => [
-      {
-        Header: "Name",
-        accessor: "name",
-        width: (width - 619) / 5,
-        Cell: ({ row: { original } }: { row: { original: DeviceModel } }) => {
-          return (
-            <span style={{ display: "flex", alignItems: "center" }}>
-              <img
-                src={`/device-logos/${original.brand}-Logo.png`}
-                alt={`${original.brand} Logo`}
-                style={{ width: 30, marginRight: 10 }}
-              />
-              <span
-                className="text-black cursor-pointer hover:text-blue-400"
-                onClick={() => handleDeviceNameClick(original)}
-              >
-                {original.name}
-              </span>
-            </span>
-          );
-        },
-      },
-      { Header: "Brand", accessor: "brand", width: (width - 619) / 5 },
-      { Header: "Serial Number", accessor: "serialNumber", width: 275, minWidth: 275 },
-      { Header: "MAC Address", accessor: "macAddress", width: (width - 619) / 5 },
-      {
-        Header: "Status",
-        accessor: "status",
-        width: (width - 619) / 5,
-        Cell: ({ row: { original } }: { row: { original: DeviceModel } }) => (
-          <DeviceStatusBadge status={original.status} />
-        ),
-      },
-      {
-        Header: "Student",
-        accessor: (original: DeviceModel): string => {
-          return getLastUser(original);
-        },
-        width: (width - 619) / 5,
-        Cell: ({ row: { original } }: { row: { original: DeviceModel } }): string => {
-          return getLastUser(original);
-        },
-      },
+      { Header: "Name", accessor: "name" },
+      { Header: "Brand", accessor: "brand" },
+      { Header: "Serial Number", accessor: "serialNumber" },
+      { Header: "MAC Address", accessor: "macAddress" },
+      { Header: "Status", accessor: "status" },
+      { Header: "Student", accessor: (original: DeviceModel): string => getLastUser(original) },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [width]
+    []
   );
-  const data = useMemo(() => devices, [devices]);
 
-  const goTo = (value: string) => navigate(`${pathname}/${value}`);
+  const handleSelection = (device: DeviceModel) => {
+    setSelected(device);
+    setPageState("device");
+    navigate(`/devices/${deviceType}/${device.slug}`);
+  };
+  const handleBack = () => {
+    setPageState("blank");
+    setSelected(undefined);
+    navigate(`/devices/${deviceType}`);
+  };
 
-  const drawerTitle = {
-    Single: (
-      <div className="flex">
-        {selectedDevice && (
-          <>
-            <span style={{ marginRight: 10 }}>{selectedDevice?.name}</span>
-            <DeviceStatusBadge status={selectedDevice.status} />
-          </>
-        )}
-      </div>
-    ),
-    List: "",
-    Add: `Add ${capitalize(pluralize.singular(deviceType!))}`,
+  const handleAddClick = () => {
+    setPageState("add");
+    setSelected(undefined);
+    navigate(`/devices/${deviceType}/add`);
   };
-  const drawerContent = {
-    Single: (
-      <>
-        {selectedDevice && (
-          <DeviceContent
-            device={selectedDevice!}
-            setSelectedDevice={setSelectedDevice}
-            updateDevice={updateDevice}
-          />
-        )}
-      </>
-    ),
-    List: "",
-    Add: (
-      <AddDevice
-        deviceType={deviceType!}
-        setPageStatus={setPageStatus}
-        setSelectedDevice={setSelectedDevice}
-        onDeviceAdded={refetchDevices}
-      />
-    ),
+
+  const dialogControls = {
+    open: (title: string, width: string | number, Component: JSX.Element) => {
+      setDialogState({ open: true, title, width, Component });
+    },
+    close: () => {
+      setDialogState({ open: false, title: "", width: 400, Component: <></> });
+    },
   };
+
   return (
-    <div>
-      <PageHeader text={deviceType!}>
-        <Menu as="div" className="relative">
-          <Menu.Button as={Fragment}>
-            <Button icon={<CogIcon className="h-5 w-5" />} text="Actions" size="lg" />
-          </Menu.Button>
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <div className="py-1">
-                <Menu.Item>
-                  {({ active }) => (
-                    <button
-                      className={`${
-                        active ? "bg-gray-100" : ""
-                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
-                      onClick={() => setPageStatus("Add")}
-                    >
-                      <PlusIcon className="h-5 w-5 mr-2" />
-                      Add {capitalize(pluralize.singular(deviceType!))}
-                    </button>
-                  )}
-                </Menu.Item>
-                <Menu.Item>
-                  {({ active }) => (
-                    <button
-                      className={`${
-                        active ? "bg-gray-100" : ""
-                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
-                      onClick={() => goTo("logs")}
-                    >
-                      <ViewListIcon className="h-5 w-5 mr-2" />
-                      Checkout Logs
-                    </button>
-                  )}
-                </Menu.Item>
-                <Menu.Item>
-                  {({ active }) => (
-                    <button
-                      className={`${
-                        active ? "bg-gray-100" : ""
-                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
-                      onClick={() => goTo("stats")}
-                    >
-                      <ChartBarIcon className="h-5 w-5 mr-2" />
-                      Stats
-                    </button>
-                  )}
-                </Menu.Item>
-              </div>
-            </Menu.Items>
-          </Transition>
-        </Menu>
-      </PageHeader>
-      <Table columns={columns} data={data} sortBy="name" />
-      <Slideover open={pageStatus !== "List"} onOverlayClick={handleDrawerClose}>
-        <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-          <div className="px-4 py-4 sm:px-6 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-lg font-medium text-gray-900">{drawerTitle[pageStatus]}</div>
+    <div style={{ display: "flex", height: "100%" }}>
+      {!(width < 768 && pageState !== "blank") && (
+        <SideTable<DeviceModel>
+          data={data}
+          columns={columns}
+          rowComponent={FakeComp}
+          groupBy="brand"
+          onSelectionChange={handleSelection}
+          selected={selected?._id || ""}
+          filterValue={filter}
+        >
+          <div className="pt-6 px-6 pb-4 border-b border-gray-200">
+            <PageHeader text={deviceType!} />
+            <div style={{ display: "flex", marginTop: 5 }}>
+              <SideTableFilter value={filter} onChange={(value) => setFilter(value)} />
+              {["Super Admin", "Admin"].includes(user!.role) && (
+                <button
+                  className="flex items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-50 cursor-pointer"
+                  style={{ marginTop: 0, padding: "0 10px", marginLeft: 10 }}
+                  onClick={handleAddClick}
+                >
+                  <PlusIcon className="h-5 w-5 text-blue-600" />
+                </button>
+              )}
             </div>
+            {/* <p>Search directory of many books</p> */}
           </div>
-          <div className="relative flex-1 overflow-y-auto">{drawerContent[pageStatus]}</div>
-        </div>
-      </Slideover>
+        </SideTable>
+      )}
+      <MainContent>
+        <Outlet
+          context={{
+            device: selected,
+            onBack: handleBack,
+            reFetchDevices,
+            dialogControls,
+            user,
+            deviceType,
+            setPageState,
+            setSelectedDevice: setSelected,
+          }}
+        />
+      </MainContent>
+      <Modal
+        open={dialogState.open}
+        setOpen={() => dialogControls.close()}
+        onClose={dialogControls.close}
+      >
+        <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">{dialogState.title}</h3>
+        {dialogState.Component}
+      </Modal>
     </div>
   );
 }
+
+function FakeComp(device: DeviceModel) {
+  const { name, status, serialNumber, macAddress } = device;
+  const lastUser = getLastUser(device);
+  return (
+    <div style={{ padding: "15px 24px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontWeight: 500,
+          marginBottom: 8,
+        }}
+      >
+        {name}
+        <DeviceStatusBadge status={status} />
+      </div>
+      <div style={{ color: "#9ca3af", marginBottom: 8, fontSize: 13 }}>
+        <div>Serial Number: {serialNumber}</div>
+        <div>MAC Address: {macAddress}</div>
+      </div>
+      {lastUser && <div style={{ fontSize: 13 }}>Student: {lastUser}</div>}
+    </div>
+  );
+}
+
+const getLastUser = (device: DeviceModel) => {
+  return ["Checked Out", "Assigned"].includes(device.status) && device.lastUser
+    ? `${device.lastUser?.fullName} (${grades[device.lastUser?.grade ?? 0]})`
+    : "";
+};

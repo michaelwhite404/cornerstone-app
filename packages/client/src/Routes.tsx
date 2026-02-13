@@ -3,15 +3,15 @@ import AppContainer from "./AppContainer";
 import { useAuth } from "./hooks";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Devices from "./pages/Devices/Devices";
-import AddDevice from "./pages/DeviceType2/AddDevice";
-import DeviceData from "./pages/DeviceType2/DeviceData";
-import DeviceEmptyState from "./pages/DeviceType2/DeviceEmptyState";
-import DeviceType2 from "./pages/DeviceType2/DeviceType2";
+import AddDevice from "./pages/DeviceType/AddDevice";
+import DeviceData from "./pages/DeviceType/DeviceData";
+import DeviceEmptyState from "./pages/DeviceType/DeviceEmptyState";
+import DeviceType from "./pages/DeviceType/DeviceType";
 import CurrentSession from "./pages/LionsDen/CurrentSession";
 import LionsDen from "./pages/LionsDen/LionsDen";
 import LionsDenStudents from "./pages/LionsDen/LionsDenStudents";
 import Sessions from "./pages/LionsDen/Sessions";
-import TextbooksTest from "./pages/TextbooksTest/TextbooksTest";
+import Textbooks from "./pages/Textbooks/Textbooks";
 import Tools from "./pages/Tools";
 import * as Page from "./pages";
 import Overview from "./pages/LionsDen/Overview";
@@ -29,9 +29,9 @@ export default function Routes() {
           <Route path="add" element={<Page.Students.CreateStudent />} />
           <Route path=":slug" element={<Page.Students.StudentDetails />} />
         </Route>
-        <Route path="textbooks" element={<TextbooksTest />} />
+        <Route path="textbooks" element={<Textbooks />} />
         <Route path="devices" element={<Devices />} />
-        <Route path="/devices/:deviceType" element={<DeviceType2 />}>
+        <Route path="/devices/:deviceType" element={<DeviceType />}>
           <Route index element={<DeviceEmptyState />} />
           <Route path="add" element={<AddDevice />} />
           <Route path=":slug" element={<DeviceData />} />

@@ -9,7 +9,7 @@ import BackButton from "../../../../components/BackButton";
 import { useToasterContext } from "../../../../hooks";
 import { useAddBooksToSet } from "../../../../api";
 import AddBooksTable from "../../AddBooksTable";
-import { TextbookContext } from "../../TextbooksTest";
+import { TextbookContext } from "../../Textbooks";
 
 interface PreBook {
   passed: boolean;

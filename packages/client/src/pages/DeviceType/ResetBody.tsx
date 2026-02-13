@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useToasterContext } from "../../../hooks";
-import { Button, Checkbox, RadioGroup } from "../../../components/ui";
+import { useToasterContext } from "../../hooks";
+import { Button, Checkbox, RadioGroup } from "../../components/ui";
 
 interface ResetBodyProps {
   close: () => void;

@@ -1,215 +1,120 @@
-import { Menu as HMenu, Transition } from "@headlessui/react";
-import { CogIcon, PlusIcon, LoginIcon, LogoutIcon } from "@heroicons/react/solid";
-import { Fragment, useMemo, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { textbookKeys, useTextbooks } from "../../api";
-import { Button } from "../../components/ui";
-import Slideover from "../../components/Slideover";
-import { TextbookModel } from "../../types/models/textbookTypes";
-import { useDocTitle, useToasterContext } from "../../hooks";
-import CheckoutTable from "./CheckoutTable";
-import TextbooksTable from "./TextbooksTable";
-import BadgeColor from "../../components/Badge/BadgeColor";
-import Badge from "../../components/Badge/Badge";
-import { numberToGrade } from "../../utils/grades";
-import TableToolbox from "../../components/Table/TableToolbox";
-import CheckinTable from "./CheckinTable";
-import AddTable from "./AddTable";
+import { createContext, useMemo, useState } from "react";
+import { TextbookSetModel } from "../../types/models/textbookSetTypes";
+import ContentPanels from "./ContentPanels";
+import AddTextbook from "./AddTextbook";
+import { useDocTitle, useWindowSize } from "../../hooks";
+import FadeIn from "../../components/FadeIn";
+import CreateTextbookButton from "./CreateTextbookButton";
+import SideTable from "../../components/SideTable/SideTable";
+import TextbookSetRow from "./TextbookSetRow/TextbookSetRow";
+import PageHeader from "../../components/PageHeader";
+import { Row } from "react-table";
+import { useTextbookSets } from "../../api";
+
+interface TextbookContextProps {
+  getTextbookSets: () => Promise<void>;
+}
+
+export const TextbookContext = createContext<TextbookContextProps>({} as TextbookContextProps);
+type PageState = "blank" | "view" | "add";
 
 export default function Textbooks() {
+  const { data: textbookSets = [], refetch } = useTextbookSets();
+  const [pageState, setPageState] = useState<PageState>("blank");
+  const [selected, setSelected] = useState<TextbookSetModel>();
+  const [width] = useWindowSize();
   useDocTitle("Textbooks | Cornerstone App");
-  const queryClient = useQueryClient();
-  const { data: textbooks = [] } = useTextbooks();
-  const [selected, setSelected] = useState<TextbookModel[]>([]);
-  const [open, setOpen] = useState(false);
-  const [pageStatus, setPageStatus] = useState<"Viewing" | "Check In" | "Check Out" | "Add">(
-    "Viewing"
-  );
-  const { showToaster } = useToasterContext();
 
-  const refetchTextbooks = () => {
-    queryClient.invalidateQueries({ queryKey: textbookKeys.bookList() });
+  const getTextbookSets = async () => {
+    await refetch();
   };
 
-  const canCheckOut = selected.filter((t) => t.status === "Available");
-  const canCheckIn = selected.filter((t) => t.status === "Checked Out");
-
-  const handleClose = () => {
-    setOpen(false);
-    setPageStatus("Viewing");
+  const handleAddTextbookClick = () => {
+    setPageState("add");
+    setSelected(undefined);
   };
 
+  const handleSetClick = (set: TextbookSetModel) => {
+    pageState !== "view" && setPageState("view");
+    setSelected(set);
+  };
+
+  const data = useMemo(() => textbookSets, [textbookSets]);
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
-        accessor: "textbookSet.title",
-        Cell: ({ value }: any) => {
-          return <span className="font-medium">{value}</span>;
-        },
-      },
-      { Header: "Book #", accessor: "bookNumber" },
-      {
-        Header: "Quality",
-        accessor: "quality",
-        Cell: ({ row: { original } }: { row: { original?: TextbookModel } }) => {
-          const quality = original?.quality;
-          const statusColor: { [x: string]: BadgeColor } = {
-            Excellent: "teal",
-            Good: "lime",
-            Acceptable: "sky",
-            Poor: "fuchsia",
-            Lost: "gray",
-          };
-          return quality ? <Badge color={statusColor[quality]} text={quality} /> || "" : null;
-        },
+        Header: "Class",
+        accessor: "class",
       },
       {
-        Header: "Status",
-        accessor: "status",
-        Cell: ({ row: { original } }: { row: { original?: TextbookModel } }) => {
-          const status = original?.status;
-          const statusColor: { [x: string]: BadgeColor } = {
-            Available: "emerald",
-            "Checked Out": "red",
-            Replaced: "yellow",
-            "Not Available": "blue",
-          };
-          return status ? <Badge color={statusColor[status]} text={status} /> || "" : null;
-        },
+        Header: "Count",
+        accessor: "count",
       },
       {
-        Header: "Student",
-        accessor: "lastUser.fullName",
-        Cell: ({ row: { original } }: { row: { original: TextbookModel } }) => {
-          return original?.status === "Checked Out" && original.lastUser
-            ? `${original.lastUser.fullName} (${numberToGrade(original.lastUser.grade!)})`
-            : "";
-        },
+        Header: "Title",
+        accessor: "title",
+      },
+      {
+        Header: "First Letter",
+        id: "firstLetter",
+        accessor: ({ title }: { title: string }) => title[0].toUpperCase(),
       },
     ],
     []
   );
-  const data = useMemo(() => textbooks, [textbooks]);
 
-  const showAddTextbook = () => {
-    setPageStatus("Add");
-    setOpen(true);
-  };
-
-  const showCheckOutTextbook = () => {
-    setPageStatus("Check Out");
-    setOpen(true);
-  };
-
-  const showCheckInTextbook = () => {
-    setPageStatus("Check In");
-    setOpen(true);
+  const customMethod = (rows: Row<{}>[]) => {
+    // @ts-ignore
+    rows.sort((row1, row2) => (row1.groupByVal as string).localeCompare(row2.groupByVal));
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <h1 style={{ marginBottom: "10px" }}>Textbooks</h1>
-        <HMenu as="div" className="relative">
-          <HMenu.Button as={Fragment}>
-            <Button
-              icon={<CogIcon className="h-5 w-5" />}
-              text="Actions"
-              size="lg"
-            />
-          </HMenu.Button>
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
+    <TextbookContext.Provider value={{ getTextbookSets }}>
+      <div style={{ display: "flex", height: "100%" }}>
+        {!(width < 768 && pageState !== "blank") && (
+          <SideTable<TextbookSetModel>
+            data={data}
+            columns={columns}
+            rowComponent={TextbookSetRow}
+            groupBy="firstLetter"
+            onSelectionChange={handleSetClick}
+            selected={selected?._id || ""}
+            customMethod={customMethod}
           >
-            <HMenu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <div className="py-1">
-                <HMenu.Item>
-                  {({ active }) => (
-                    <button
-                      className={`${
-                        active ? "bg-gray-100" : ""
-                      } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
-                      onClick={showAddTextbook}
-                    >
-                      <PlusIcon className="h-5 w-5 mr-2" />
-                      Add Textbooks
-                    </button>
-                  )}
-                </HMenu.Item>
-                {canCheckIn.length > 0 && (
-                  <HMenu.Item>
-                    {({ active }) => (
-                      <button
-                        className={`${
-                          active ? "bg-gray-100" : ""
-                        } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
-                        onClick={showCheckInTextbook}
-                      >
-                        <LoginIcon className="h-5 w-5 mr-2" />
-                        Check In {canCheckIn.length} Textbooks
-                      </button>
-                    )}
-                  </HMenu.Item>
-                )}
-                {canCheckOut.length > 0 && (
-                  <HMenu.Item>
-                    {({ active }) => (
-                      <button
-                        className={`${
-                          active ? "bg-gray-100" : ""
-                        } flex w-full items-center px-4 py-2 text-sm text-gray-700`}
-                        onClick={showCheckOutTextbook}
-                      >
-                        <LogoutIcon className="h-5 w-5 mr-2" />
-                        Check Out {canCheckOut.length} Textbooks
-                      </button>
-                    )}
-                  </HMenu.Item>
-                )}
-              </div>
-            </HMenu.Items>
-          </Transition>
-        </HMenu>
-      </div>
-      <div className="mt-[15px] shadow-[0px_1px_20px_-3px_rgba(0,0,0,0.15)] rounded-lg overflow-hidden w-full select-none">
-        <TableToolbox></TableToolbox>
-        <TextbooksTable columns={columns} data={data} setSelected={setSelected} />
-      </div>
-      <Slideover open={open} onOverlayClick={handleClose}>
-        <div className="flex h-full flex-col bg-white shadow-xl">
-          <div className="px-4 py-6 sm:px-6">
-            <h2 className="text-lg font-medium text-gray-900">{pageStatus} Textbooks</h2>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {pageStatus === "Check Out" && (
-              <CheckoutTable
-                data={canCheckOut}
-                setOpen={setOpen}
-                onSuccess={refetchTextbooks}
-                showToaster={showToaster}
+            <div className="pt-6 px-6 pb-4 border-b border-gray-200">
+              <PageHeader text="Textbooks" />
+              <p>Search directory of many books</p>
+              <CreateTextbookButton
+                fill
+                onClick={handleAddTextbookClick}
+                disabled={pageState === "add"}
               />
-            )}
-            {pageStatus === "Check In" && (
-              <CheckinTable
-                data={canCheckIn}
-                setOpen={setOpen}
-                onSuccess={refetchTextbooks}
-                showToaster={showToaster}
-              />
-            )}
-            {pageStatus === "Add" && (
-              <AddTable setOpen={setOpen} onSuccess={refetchTextbooks} showToaster={showToaster} />
-            )}
-          </div>
-        </div>
-      </Slideover>
-    </div>
+            </div>
+          </SideTable>
+        )}
+        <main className="flex-grow overflow-auto bg-white">
+          {pageState === "view" && selected && (
+            <ContentPanels
+              textbook={selected}
+              setSelected={setSelected}
+              setPageState={setPageState}
+            />
+          )}
+          {pageState === "add" && (
+            <AddTextbook setPageState={setPageState} setSelected={setSelected} />
+          )}
+          {pageState === "blank" && (
+            <div className="w-full h-full flex flex-col items-center justify-center">
+              <FadeIn>
+                <div className="py-16 px-24 border-2 border-gray-200 border-dashed rounded-2xl">
+                  <div style={{ fontWeight: 500, textAlign: "center" }}>Select a textbook OR</div>
+                  <CreateTextbookButton onClick={handleAddTextbookClick} />
+                </div>
+              </FadeIn>
+            </div>
+          )}
+        </main>
+      </div>
+    </TextbookContext.Provider>
   );
 }

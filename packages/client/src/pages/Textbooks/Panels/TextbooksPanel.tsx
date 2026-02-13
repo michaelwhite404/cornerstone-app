@@ -18,7 +18,7 @@ type PanelView =
   | { type: "checkOut"; data: TextbookModel[] }
   | { type: "checkIn"; data: TextbookModel[] };
 
-export default function TextbooksTestContent({
+export default function TextbooksContent({
   textbook,
   setSelected,
   setPageState,

@@ -16,7 +16,7 @@ import MainContent from "../../components/MainContent";
 import { useDevice, useToasterContext } from "../../hooks";
 import BadgeSkeleton from "../../components/BadgeSkeleton";
 import { Button } from "../../components/ui";
-import ResetBody from "../DeviceType/SingleDevice/ResetBody";
+import ResetBody from "./ResetBody";
 import CreateError from "./Modals/CreateError";
 import { EmployeeModel } from "../../types/models/employeeTypes";
 import { useOutletContext, useParams } from "react-router-dom";

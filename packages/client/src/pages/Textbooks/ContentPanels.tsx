@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextbookSetModel } from "../../types/models/textbookSetTypes";
 import { TextbookModel } from "../../types/models/textbookTypes";
-import TextbooksTestContent from "./Panels/TextbooksTestPanel";
+import TextbooksContent from "./Panels/TextbooksPanel";
 import AddBookPanel from "./Panels/AddBook/AddBookPanel";
 import CheckOutPanel from "./Panels/CheckOut/CheckOutPanel";
 import CheckInPanel from "./Panels/CheckIn/CheckInPanel";
@@ -33,7 +33,7 @@ export default function ContentPanels({
   return (
     <div className="h-full">
       {currentPanel.type === "main" && (
-        <TextbooksTestContent
+        <TextbooksContent
           textbook={textbook}
           setSelected={setSelected}
           setPageState={setPageState}

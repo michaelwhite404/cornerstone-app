@@ -11,7 +11,7 @@ import EmptyState from "./EmptyState";
 import CreateStudent from "./CreateStudent";
 import StudentDetails from "./StudentDetails";
 
-function Students2() {
+function Students() {
   useDocTitle("Students | Cornerstone App");
   const { data: students = [] } = useStudents({ limit: 500 });
   const location = useLocation();
@@ -109,8 +109,8 @@ const Comp = ({ fullName, schoolEmail }: { fullName: string; schoolEmail: string
   </div>
 );
 
-Students2.EmptyState = EmptyState;
-Students2.CreateStudent = CreateStudent;
-Students2.StudentDetails = StudentDetails;
+Students.EmptyState = EmptyState;
+Students.CreateStudent = CreateStudent;
+Students.StudentDetails = StudentDetails;
 
-export default Students2;
+export default Students;

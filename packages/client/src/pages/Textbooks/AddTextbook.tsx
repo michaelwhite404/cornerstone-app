@@ -14,7 +14,7 @@ import { useToasterContext } from "../../hooks";
 import { useTextbookActions } from "../../api";
 import { grades } from "../../utils/grades";
 import AddBooksTable from "./AddBooksTable";
-import { TextbookContext } from "./TextbooksTest";
+import { TextbookContext } from "./Textbooks";
 
 interface AddTextbookProps {
   setPageState: React.Dispatch<React.SetStateAction<"blank" | "view" | "add">>;
