@@ -1,5 +1,5 @@
 import { Button, Input, Label } from "../../components/ui";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import capitalize from "capitalize";
 import pluralize, { singular } from "pluralize";
 import React, { useEffect, useState } from "react";
@@ -9,7 +9,8 @@ import BackButton from "../../components/BackButton";
 import FadeIn from "../../components/FadeIn";
 import MainContent from "../../components/MainContent";
 import { useToasterContext } from "../../hooks";
-import { APIDeviceResponse, APIError } from "../../types/apiResponses";
+import { useCreateDevice } from "../../api";
+import { APIError } from "../../types/apiResponses";
 
 interface AddDeviceProps {
   deviceType: string;
@@ -79,30 +80,16 @@ export default function AddDevice() {
     },
   ];
 
-  interface CreateDevicePayload {
-    name: string;
-    brand: string;
-    model: string;
-    serialNumber: string;
-    macAddress: string;
-    directoryId?: string;
-    deviceType: string;
-  }
-
-  /** Method to create a device */
-  const createDevice = async (data: CreateDevicePayload) => {
-    if (data.directoryId === "") data.directoryId = undefined;
-    const res = await axios.post<APIDeviceResponse>("/api/v2/devices", {
-      ...data,
-      deviceType: singular(deviceType),
-    });
-    return res.data.data.device;
-  };
+  const createDeviceMutation = useCreateDevice();
 
   const handleClick = async () => {
     if (!submittable) return;
     try {
-      const device = await createDevice({ ...data, deviceType: singular(deviceType) });
+      const device = await createDeviceMutation.mutateAsync({
+        ...data,
+        deviceType: singular(deviceType),
+        directoryId: data.directoryId || undefined,
+      });
       setSelectedDevice(device);
       setPageState("device");
       showToaster(`${device.name} successfully created`, "success");

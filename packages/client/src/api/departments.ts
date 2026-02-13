@@ -188,3 +188,35 @@ export const useDepartmentSettings = (departmentId: string) => {
     enabled: !!departmentId,
   });
 };
+
+// My Department Leaders (for leave/reimbursement requests)
+interface DepartmentLeader {
+  _id: string;
+  fullName: string;
+  email: string;
+  department: {
+    _id: string;
+    name: string;
+  };
+}
+
+const fetchMyDepartmentLeaders = async () => {
+  const response = await apiClient.get<{ data: { leaders: DepartmentLeader[] } }>(
+    "/departments/my-leaders"
+  );
+  const leaders = extractData(response).leaders;
+  // Deduplicate by _id
+  const uniqueIds = new Set<string>();
+  return leaders.filter((leader) => {
+    if (uniqueIds.has(leader._id)) return false;
+    uniqueIds.add(leader._id);
+    return true;
+  });
+};
+
+export const useMyDepartmentLeaders = () => {
+  return useQuery({
+    queryKey: [...departmentKeys.all, "my-leaders"] as const,
+    queryFn: fetchMyDepartmentLeaders,
+  });
+};

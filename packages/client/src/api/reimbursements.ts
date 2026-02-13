@@ -45,3 +45,24 @@ export const useFinalizeReimbursement = () => {
     },
   });
 };
+
+// Create Reimbursement (with file upload)
+const createReimbursement = async (formData: FormData) => {
+  const response = await apiClient.post<{ data: { reimbursement: ReimbursementModel } }>(
+    "/reimbursements",
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+  return extractData(response).reimbursement;
+};
+
+export const useCreateReimbursement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createReimbursement,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: reimbursementKeys.lists() });
+    },
+  });
+};

@@ -100,3 +100,26 @@ export const useAddGroupMembers = () => {
     },
   });
 };
+
+// Update Group
+interface UpdateGroupData {
+  email: string;
+  data: { name: string; description: string; email: string };
+}
+
+const updateGroup = async ({ email, data }: UpdateGroupData) => {
+  const response = await apiClient.patch<{ data: { group: GroupModel } }>(`/groups/${email}`, data);
+  return extractData(response).group;
+};
+
+export const useUpdateGroup = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateGroup,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: groupKeys.detail(variables.email) });
+      queryClient.invalidateQueries({ queryKey: groupKeys.lists() });
+    },
+  });
+};

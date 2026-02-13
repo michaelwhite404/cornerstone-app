@@ -1,13 +1,14 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { startOfDay } from "date-fns";
 import { ChangeEventHandler, Fragment, useEffect, useState } from "react";
 import { RM } from ".";
 import DateSelector from "../../../components/DateSelector";
 import LabeledInput2 from "../../../components/LabeledInput2";
 import { useToasterContext, useToggle } from "../../../hooks";
-import { APIError, APIResponse } from "../../../types/apiResponses";
+import { useMyDepartmentLeaders, useCreateReimbursement } from "../../../api";
+import { APIError } from "../../../types/apiResponses";
 import stateList from "../../../utils/stateList";
 import Dropzone from "./Dropzone";
 
@@ -32,59 +33,29 @@ const initialData = {
   sendTo: "",
 };
 
-interface DepartmentLeader {
-  _id: string;
-  fullName: string;
-  email: string;
-  department: {
-    _id: string;
-    name: string;
-  };
-}
-
 export default function AddReimbursement(props: AddLeaveProps) {
   const [data, setData] = useState(initialData);
   const [files, setFiles] = useState<CustomFile[] | null>(null);
   const [needed, toggleNeeded] = useToggle(false);
-  const [myLeaders, setMyLeaders] = useState<Omit<DepartmentLeader, "department">[]>([]);
+  const { data: leaders = [] } = useMyDepartmentLeaders();
+  const createReimbursementMutation = useCreateReimbursement();
   const { showToaster } = useToasterContext();
 
+  // Set initial sendTo when leaders load
   useEffect(() => {
-    const getMyLeaders = async () => {
-      const uniqueIds: string[] = [];
-      const res = await axios.get<APIResponse<{ leaders: DepartmentLeader[] }>>(
-        "/api/v2/departments/my-leaders"
-      );
-      const leaders = res.data.data.leaders
-        .map((l) => {
-          const { department, ...leader } = l;
-          return leader;
-        })
-        .filter((leader) => {
-          const isDuplicate = uniqueIds.includes(leader._id);
-
-          if (!isDuplicate) {
-            uniqueIds.push(leader._id);
-
-            return true;
-          }
-
-          return false;
-        });
-      setMyLeaders(leaders);
-      if (leaders[0]) setData((data) => ({ ...data, sendTo: leaders[0]._id }));
-    };
-    getMyLeaders();
-  }, []);
+    if (leaders.length > 0 && !data.sendTo) {
+      setData((d) => ({ ...d, sendTo: leaders[0]._id }));
+    }
+  }, [leaders, data.sendTo]);
 
   const close = () => {
     props.setOpen(false);
-    setData({ ...initialData, sendTo: myLeaders[0]._id || "" });
+    setData({ ...initialData, sendTo: leaders[0]?._id || "" });
     if (needed) toggleNeeded();
     setFiles(null);
   };
+
   const submit = async () => {
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
     const formData = new FormData();
     formData.append("receipt", files![0]);
     for (var key in data) {
@@ -108,8 +79,8 @@ export default function AddReimbursement(props: AddLeaveProps) {
       }
     }
     try {
-      const res = await axios.post("/api/v2/reimbursements", formData, config);
-      props.setReimbursements((r) => [{ ...res.data.data.reimbursement, status: "Pending" }, ...r]);
+      const reimbursement = await createReimbursementMutation.mutateAsync(formData);
+      props.setReimbursements((r) => [{ ...reimbursement, status: "Pending" } as RM, ...r]);
       close();
       showToaster("Reimbursement request submitted", "success");
     } catch (err) {
@@ -336,7 +307,7 @@ export default function AddReimbursement(props: AddLeaveProps) {
                           className="py-2 px-3 shadow focus:border-blue-500 border-white border-2 block w-full sm:text-sm rounded-md "
                           style={{ boxShadow: "0px 0px 2px #aeaeae" }}
                         >
-                          {myLeaders.map((leader) => (
+                          {leaders.map((leader) => (
                             <option key={leader._id} value={leader._id}>
                               {leader.fullName}
                             </option>

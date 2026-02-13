@@ -261,6 +261,33 @@ export const useResetDevice = () => {
   });
 };
 
+// Create Device
+interface CreateDeviceData {
+  name: string;
+  brand: string;
+  model: string;
+  serialNumber: string;
+  macAddress: string;
+  directoryId?: string;
+  deviceType: string;
+}
+
+const createDevice = async (data: CreateDeviceData) => {
+  const response = await apiClient.post<{ data: { device: DeviceModel } }>("/devices", data);
+  return extractData(response).device;
+};
+
+export const useCreateDevice = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createDevice,
+    onSuccess: (device) => {
+      queryClient.invalidateQueries({ queryKey: deviceKeys.list(device.deviceType) });
+    },
+  });
+};
+
 // Composite hook for device page (combines query + all mutations)
 interface DeviceWithRelations extends DeviceModel {
   checkouts?: CheckoutLogModel[];

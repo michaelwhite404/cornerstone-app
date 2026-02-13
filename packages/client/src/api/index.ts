@@ -25,6 +25,7 @@ export {
   useUpdateDepartmentMember,
   useAvailableSettings,
   useDepartmentSettings,
+  useMyDepartmentLeaders,
 } from "./departments";
 
 // Short URLs
@@ -51,6 +52,7 @@ export {
   useUnassignDevice,
   useUpdateDeviceError,
   useResetDevice,
+  useCreateDevice,
 } from "./devices";
 
 // Groups (Google Directory)
@@ -60,6 +62,7 @@ export {
   useGroup,
   useCreateGroup,
   useAddGroupMembers,
+  useUpdateGroup,
 } from "./groups";
 
 // Leaves
@@ -122,6 +125,7 @@ export {
   reimbursementKeys,
   useReimbursements,
   useFinalizeReimbursement,
+  useCreateReimbursement,
 } from "./reimbursements";
 
 // Users

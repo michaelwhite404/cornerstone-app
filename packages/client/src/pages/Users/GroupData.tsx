@@ -1,11 +1,9 @@
 import { MailIcon as MailIconSolid } from "@heroicons/react/solid";
 import { MailIcon as MailIconOutline, PencilIcon } from "@heroicons/react/outline";
-import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import { GroupMember, GroupModel } from "../../types/models";
-import { groupKeys, useGroup } from "../../api";
+import { useGroup, useAddGroupMembers, useUpdateGroup } from "../../api";
 import BackButton from "../../components/BackButton";
 import { Button } from "../../components/ui";
 import { Divider } from "../../components/ui";
@@ -15,18 +13,19 @@ import TableWrapper from "../../components/TableWrapper";
 import GroupDataSlider from "./GroupDataSlider";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import GroupDataAdd from "./GroupDataAdd";
-import { APIError, APIResponse } from "../../types/apiResponses";
-import { admin_directory_v1 } from "googleapis";
 import pluralize from "pluralize";
 import capitalize from "capitalize";
 
 export default function GroupData() {
   const { slug } = useParams();
-  const queryClient = useQueryClient();
   const { showToaster } = useToasterContext();
 
   // Fetch group with TanStack Query
   const { data: fetchedGroup } = useGroup(slug || "");
+
+  // Mutations
+  const addMembersMutation = useAddGroupMembers();
+  const updateGroupMutation = useUpdateGroup();
 
   // Local state for the group and members
   const [group, setGroup] = useState<GroupModel>();
@@ -51,10 +50,6 @@ export default function GroupData() {
     }
   }, [fetchedGroup]);
 
-  const refetchGroup = () => {
-    queryClient.invalidateQueries({ queryKey: groupKeys.detail(slug || "") });
-  };
-
   const groupData = {
     name: group?.name || "",
     description: group?.description || "",
@@ -63,40 +58,38 @@ export default function GroupData() {
   };
 
   const addMembersToGroup = async (users: { name: string; email: string; role: string }[]) => {
-    interface Res {
-      members: admin_directory_v1.Schema$Member[];
+    try {
+      const returnedMembers = await addMembersMutation.mutateAsync({
+        groupEmail: group?.email || "",
+        users: users.map((u) => ({ email: u.email, role: u.role })),
+      });
+      const membersWithName: GroupMember[] = returnedMembers.map((member) => ({
+        ...member,
+        id: member.id ?? undefined,
+        email: member.email ?? undefined,
+        role: member.role ?? undefined,
+        type: member.type ?? undefined,
+        status: member.status ?? undefined,
+        fullName: users.find((user) => user.email === member.email)!.name,
+      }));
+      setM([...members, ...membersWithName].sort((a, b) => a.email!.localeCompare(b.email!)));
+      showToaster(
+        pluralize("members", returnedMembers.length, true) +
+          " added. It might take some time for changes to be reflected.",
+        "success"
+      );
+    } catch {
+      showToaster("There was a problem with the request. Please try again", "danger");
     }
-    axios
-      .post<APIResponse<Res>>(`/api/v2/groups/${slug}/members`, { users })
-      .then((res) => {
-        const returnedMembers = res.data.data.members;
-        // fetchGroup();
-        const membersWithName: GroupMember[] = returnedMembers.map((member) => ({
-          ...member,
-          id: member.id ?? undefined,
-          email: member.email ?? undefined,
-          role: member.role ?? undefined,
-          type: member.type ?? undefined,
-          status: member.status ?? undefined,
-          fullName: users.find((user) => user.email === member.email)!.name,
-        }));
-        setM([...members, ...membersWithName].sort((a, b) => a.email!.localeCompare(b.email!)));
-        showToaster(
-          pluralize("members", returnedMembers.length, true) +
-            " added. It might take some time for changes to be reflected.",
-          "success"
-        );
-      })
-      .catch(() => showToaster("There was a problem with the request. Please try again", "danger"));
   };
 
   const updateGroup = async (data: { name: string; description: string; email: string }) => {
     try {
-      const res = await axios.patch(`/api/v2/groups/${slug}`, data);
-      setGroup({ members, ...res.data.data.group });
+      const updatedGroup = await updateGroupMutation.mutateAsync({ email: slug || "", data });
+      setGroup({ members, ...updatedGroup });
       showToaster("Group Updated!", "success");
     } catch (err: any) {
-      showToaster(err.response.data.message, "danger");
+      showToaster(err.response?.data?.message || "Error updating group", "danger");
     }
   };
 

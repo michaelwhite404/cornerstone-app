@@ -1,13 +1,14 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { isBefore, isSameDay, set } from "date-fns";
 import { ChangeEventHandler, Fragment, useEffect, useRef, useState } from "react";
 import { TimePicker } from "sassy-datepicker";
 import { Leave } from ".";
 import DateSelector from "../../../components/DateSelector";
 import { useToasterContext } from "../../../hooks";
-import { APIError, APIResponse } from "../../../types/apiResponses";
+import { useMyDepartmentLeaders, useCreateLeave } from "../../../api";
+import { APIError } from "../../../types/apiResponses";
 
 
 interface AddLeaveProps {
@@ -24,16 +25,6 @@ const initialData = {
   allDay: true,
 };
 
-interface DepartmentLeader {
-  _id: string;
-  fullName: string;
-  email: string;
-  department: {
-    _id: string;
-    name: string;
-  };
-}
-
 interface Time {
   hours: number;
   minutes: number;
@@ -41,45 +32,33 @@ interface Time {
 
 export default function AddLeave(props: AddLeaveProps) {
   const [data, setData] = useState(initialData);
-  const [myLeaders, setMyLeaders] = useState<Omit<DepartmentLeader, "department">[]>([]);
+  const { data: leaders = [] } = useMyDepartmentLeaders();
+  const createLeaveMutation = useCreateLeave();
   const { showToaster } = useToasterContext();
   const ref = useRef(null);
+
+  // Set initial sendTo when leaders load
   useEffect(() => {
-    const getMyLeaders = async () => {
-      const uniqueIds: string[] = [];
-      const res = await axios.get<APIResponse<{ leaders: DepartmentLeader[] }>>(
-        "/api/v2/departments/my-leaders"
-      );
-      const leaders = res.data.data.leaders
-        .map((l) => {
-          const { department, ...leader } = l;
-          return leader;
-        })
-        .filter((leader) => {
-          const isDuplicate = uniqueIds.includes(leader._id);
-
-          if (!isDuplicate) {
-            uniqueIds.push(leader._id);
-
-            return true;
-          }
-
-          return false;
-        });
-      setMyLeaders(leaders);
-      if (leaders[0]) setData((data) => ({ ...data, sendTo: leaders[0]._id }));
-    };
-    getMyLeaders();
-  }, []);
+    if (leaders.length > 0 && !data.sendTo) {
+      setData((d) => ({ ...d, sendTo: leaders[0]._id }));
+    }
+  }, [leaders, data.sendTo]);
 
   const close = () => {
     props.setOpen(false);
-    setData({ ...initialData, sendTo: myLeaders[0]._id || "" });
+    setData({ ...initialData, sendTo: leaders[0]?._id || "" });
   };
+
   const submit = async () => {
     try {
-      const res = await axios.post("/api/v2/leaves", data);
-      props.setLeaves((leaves) => [res.data.data.leave, ...leaves]);
+      const leave = await createLeaveMutation.mutateAsync({
+        reason: data.reason,
+        dateStart: data.dateStart.toISOString(),
+        dateEnd: data.dateEnd.toISOString(),
+        sendTo: data.sendTo,
+        comments: data.comments || undefined,
+      });
+      props.setLeaves((leaves) => [leave as Leave, ...leaves]);
       showToaster("Leave request created!", "success");
       close();
     } catch (err) {
@@ -252,7 +231,7 @@ export default function AddLeave(props: AddLeaveProps) {
                             onChange={handleChange}
                             className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                           >
-                            {myLeaders.map((leader) => (
+                            {leaders.map((leader) => (
                               <option key={leader._id} value={leader._id}>
                                 {leader.fullName}
                               </option>
