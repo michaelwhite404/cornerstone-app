@@ -27,8 +27,8 @@ export default function UserPage(props: UserPageProps) {
       const ids = selectedData.filter((e) => e.status === "Pending").map((e) => e._id) as string[];
       await finalizeTimesheet(ids, approve);
       refetch();
-    } catch (err) {
-      console.log(err);
+    } catch {
+      // Error handled silently
     }
   };
   const approve = () => handleTimesheetFinalize(true);

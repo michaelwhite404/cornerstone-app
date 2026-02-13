@@ -22,8 +22,8 @@ export default function PendingPage(props: Props) {
       await finalizeTimesheet(ids, approve);
       setSelectedData([]);
       refetch();
-    } catch (err) {
-      console.log(err);
+    } catch {
+      // Error handled silently
     }
   };
   const approve = () => handleTimesheetFinalize(true);

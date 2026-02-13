@@ -32,8 +32,8 @@ export default function CreateTicketModal(props: Props) {
     try {
       const ticket = await createTicketMutation.mutateAsync(data);
       navigate(`/tickets/${ticket.ticketId}`);
-    } catch (err: any) {
-      console.log(err.response);
+    } catch {
+      // Error handled by mutation
     }
   };
   const handleChange = (e: any) => setData({ ...data, [e.target.name]: e.target.value });

@@ -28,11 +28,9 @@ export default function ConstrainedColorSetting(props: Props) {
   const width = colors.length < 8 ? colors.length * 25 + 12 : 212;
 
   const handleColorChange: ColorChangeHandler = ({ hex }) => {
-    console.log();
-    const allowedValue = allowedValues.find((aV) => {
-      console.log(aV.value.toLowerCase(), hex.toLowerCase());
-      return aV.value.toLowerCase() === hex.toLowerCase();
-    });
+    const allowedValue = allowedValues.find(
+      (aV) => aV.value.toLowerCase() === hex.toLowerCase()
+    );
     if (!allowedValue) return;
     setValue(allowedValue.value, allowedValue.caption);
     setOpen(false);

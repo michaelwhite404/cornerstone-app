@@ -96,7 +96,6 @@ export default function AddDevice() {
       reFetchDevices();
       navigate(`/devices/${pluralize(deviceType)}/${device.slug}`);
     } catch (err) {
-      console.log(err);
       showToaster((err as AxiosError<APIError>).response!.data.message, "danger");
     }
   };

@@ -55,7 +55,6 @@ export default function CheckOutSection({
   const handleAssign = () => {
     assignDevice(studentPicked)
       .then((updatedDevice) => {
-        console.log(updatedDevice);
         showToaster(`${updatedDevice.name} has been assigned!`, "success");
         onAssignSuccess && onAssignSuccess(updatedDevice);
         setAction("Check Out");
