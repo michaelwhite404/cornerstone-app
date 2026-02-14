@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
 import compression from "compression";
+import cors from "cors";
 import passport from "passport";
 import { createHandler } from "graphql-http/lib/use/express";
 import subdomain from "express-subdomain";
@@ -20,6 +21,14 @@ const app = express();
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "../views"));
+
+// CORS - allow cross-origin requests from client in development
+app.use(
+  cors({
+    origin: process.env.NODE_ENV === "development" ? "http://localhost:3000" : true,
+    credentials: true,
+  })
+);
 
 // 1.) MIDDLEWARES
 // Serving static files
@@ -73,9 +82,10 @@ app.use("/auth", authRouter);
 app.use("/pdf", pdfRouter);
 app.use("/csv", csvRouter);
 app.get(
-  "/images/*key",
+  "/images/{*key}",
   catchAsync(async (req, res, next) => {
-    const key = req.params.key as string;
+    // Express 5: wildcard params are arrays, join with /
+    const key = (req.params as { key: string[] }).key.join("/");
     const readStream = s3.getFileStream(key);
     readStream.on("error", () => {
       return next(new AppError("No image was found", 404));

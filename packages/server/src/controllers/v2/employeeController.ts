@@ -55,7 +55,7 @@ const formatDepartments = (user: any) => {
 
 /** Adds current user id to params object */
 export const getMe: RequestHandler = (req, _, next) => {
-  req.params.id = req.employee._id;
+  req.params.id = req.employee._id.toString();
   next();
 };
 
