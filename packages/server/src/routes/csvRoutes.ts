@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { stringify } from "csv-stringify";
 import { authController } from "@controllers/v2";
-import { PopOptions } from "@@types";
+import { ParsedQueryString, PopOptions } from "@@types";
 import { CheckoutLog } from "@models";
 import { APIFeatures, catchAsync } from "@utils";
 
@@ -16,13 +16,17 @@ router.get(
       path: "device deviceUser teacherCheckOut teacherCheckIn",
       select: "name brand fullName",
     } as PopOptions;
-    !req.query.limit && (req.query.limit = "10000");
-    req.query.fields = undefined;
-    req.query.sort = "-checkOutDate -checkInDate";
+    // Create query options with defaults (don't mutate req.query - immutable in Express 5)
+    const queryOptions: ParsedQueryString = {
+      ...req.query,
+      limit: (req.query.limit as string) || "10000",
+      fields: undefined,
+      sort: "-checkOutDate -checkInDate",
+    };
 
     const query = CheckoutLog.find(filter);
     if (populate) query.populate(populate);
-    const features = new APIFeatures(query, req.query).filter().limitFields().sort().paginate();
+    const features = new APIFeatures(query, queryOptions).filter().limitFields().sort().paginate();
     const checkoutLogs = await features.query;
 
     const body = [
