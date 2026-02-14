@@ -9,14 +9,14 @@ router.use(protect);
 
 router.get(
   "/idk",
-  catchAsync(async (req, res /* , next */) => {
+  catchAsync(async (_req, res /* , next */) => {
     res.json({ success: "success" });
   })
 );
 
 router.patch(
   "/update",
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (_req, res) => {
     const googleSheets = sheets("mwhite1@cornerstone-schools.org");
     // await googleSheets.spreadsheets.
     const r = await googleSheets.spreadsheets.batchUpdate({

@@ -120,7 +120,7 @@ export const createLeave = catchAsync(async (req, res, next) => {
 
 export const generateReport = catchAsync(async (req, res, next) => {
   // TODO: Validate type and fields are correct
-  const { type, fields, dateFormat, sortBy } = req.body;
+  const { type, fields, dateFormat: _dateFormat, sortBy: _sortBy } = req.body;
   const canGenerateReport = req.employee.role === "Super Admin" || isInFinance(req);
   if (!canGenerateReport)
     return next(new AppError("You are not authorized to generate leave reports", 403));
