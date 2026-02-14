@@ -13,7 +13,7 @@ const {
   getSessionToday,
   getAllAftercareSessions,
   getAftercareSession,
-  addDateToParams,
+  addDateRangeToFilter,
   getAttendanceStats,
   generateReport,
   getStudentAftercareData,
@@ -30,7 +30,7 @@ router.get("/attendance/stats", getAttendanceStats);
 router.route("/attendance/:id").get(getAftercareEntryById);
 router.get(
   "/attendance/year/:year/month/:month/day/:day",
-  addDateToParams,
+  addDateRangeToFilter,
   getAllAttendanceEntries
 );
 router.patch("/attendance/sign-out/:id", signOutStudent);

@@ -28,7 +28,7 @@ declare namespace Express {
     requestTime: string;
     employee: Employee;
     /** Route params to use as query filters (Express 5 compatible) */
-    filterParams?: Record<string, string>;
+    filterParams?: Record<string, unknown>;
   }
 
   export interface Response {

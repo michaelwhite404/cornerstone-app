@@ -1,6 +1,5 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DatePicker from "sassy-datepicker";
-import LabeledInput from "./Inputs/LabeledInput";
 import LabeledInput2 from "./LabeledInput2";
 
 interface DateSelectorProps {
@@ -14,28 +13,23 @@ interface DateSelectorProps {
 export default function DateSelector(props: DateSelectorProps) {
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-  const inputRef = useRef<HTMLLabelElement>(null);
-  const pickerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { label, align = "right" } = props;
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Close picker if click is outside the entire container
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
     document.addEventListener("click", handleClickOutside, false);
     return () => {
       document.removeEventListener("click", handleClickOutside, false);
     };
   }, []);
-
-  // @ts-ignore
-  const handleClickOutside = (event) => {
-    if (inputRef.current && inputRef.current?.contains(event.target)) {
-      return setOpen(true);
-    }
-
-    if (pickerRef.current && !pickerRef.current?.contains(event.target)) {
-      setOpen(false);
-    }
-  };
 
   const onDateSelect = (date: Date) => {
     setDate(date);
@@ -47,6 +41,7 @@ export default function DateSelector(props: DateSelectorProps) {
 
   return (
     <div
+      ref={containerRef}
       className={`date-selector ${props.fill ? "[&_label]:w-full" : ""}`}
       style={{
         display: "flex",
@@ -69,9 +64,9 @@ export default function DateSelector(props: DateSelectorProps) {
       />
       {open && (
         <DatePicker
-          ref={pickerRef}
+          onPointerEnterCapture={() => {}}
+          onPointerLeaveCapture={() => {}}
           value={date}
-          // selected={date}
           onChange={onDateSelect}
           maxDate={props.maxDate || new Date()}
           style={{

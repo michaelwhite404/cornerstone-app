@@ -1,8 +1,7 @@
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import Badge from "@/components/Badge/Badge";
 import TableWrapper from "@/components/TableWrapper";
 import { SignedOutEntry } from "@/types/aftercareTypes";
-
 
 export default function SessionsTable({ entries }: { entries: SignedOutEntry[] }) {
   const regular: SignedOutEntry[] = [];
@@ -49,6 +48,7 @@ export default function SessionsTable({ entries }: { entries: SignedOutEntry[] }
 }
 
 function EntryRow({ entry }: { entry: SignedOutEntry }) {
+  console.log(entry);
   return (
     <tr style={{ borderBottom: "1px #e5e7eb solid" }} key={entry._id}>
       <td className="py-[7px] h-14 pl-[15px]">
@@ -61,14 +61,20 @@ function EntryRow({ entry }: { entry: SignedOutEntry }) {
               margin: "7px 0",
             }}
           >
-            Time: {format(new Date(entry.signOutDate), "h:mm aa")}
+            Time: {format(parseISO(entry.signOutDate), "h:mm aa")}
           </div>
           {entry.lateSignOut && <Badge text="Late" color="red" />}
         </div>
       </td>
-      <td className="max-[640px]:hidden py-[7px] h-14">{format(new Date(entry.signOutDate), "h:mm aa")}</td>
+      <td className="max-[640px]:hidden py-[7px] h-14">
+        {format(parseISO(entry.signOutDate), "h:mm aa")}
+      </td>
       <td className="py-[7px] h-14">
-        <img className="h-10 max-[640px]:w-[100px]" src={`/images/${entry.signature}`} alt="signature" />
+        <img
+          className="h-10 max-[640px]:w-[100px]"
+          src={`/images/${entry.signature}`}
+          alt="signature"
+        />
       </td>
       <td className="max-[640px]:hidden text-center py-[7px] h-14">
         {entry.lateSignOut && <Badge text="Late" color="red" />}

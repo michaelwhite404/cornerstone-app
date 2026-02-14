@@ -217,7 +217,8 @@ export const getAftercareSession = factory.getOneById(AftercareSession, "session
   path: "numAttended dropIns",
 });
 
-export const addDateToParams: RequestHandler = (req, _, next) => {
+/** Adds signOutDate range filter based on date params (Express 5 compatible) */
+export const addDateRangeToFilter: RequestHandler = (req, _, next) => {
   let { year, month, day } = req.params;
   if (month.length === 1) month = `0${month}`;
   if (day.length === 1) day = `0${day}`;
@@ -228,9 +229,14 @@ export const addDateToParams: RequestHandler = (req, _, next) => {
   }
   const date = new Date(+year, +month - 1, +day);
   const nextDay = addDays(date, 1);
-  req.query.signOutDate = {
-    gte: date.toISOString(),
-    lte: nextDay.toISOString(),
+
+  // Use filterParams instead of mutating req.query (Express 5 compatibility)
+  if (!req.filterParams) {
+    req.filterParams = {};
+  }
+  req.filterParams.signOutDate = {
+    $gte: date.toISOString(),
+    $lte: nextDay.toISOString(),
   };
   next();
 };
