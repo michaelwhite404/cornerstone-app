@@ -1,4 +1,3 @@
-import React from "react";
 import DevicePane from "../DevicePane";
 import { grades } from "@/utils/grades";
 import { DeviceModel } from "@/types/models/deviceTypes";

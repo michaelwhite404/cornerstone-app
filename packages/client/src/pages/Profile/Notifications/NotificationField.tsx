@@ -1,4 +1,4 @@
-import { Fragment, useContext } from "react";
+import { Fragment, useContext, ReactElement } from "react";
 import {
   NotificationSettingEnumInput,
   NotificationSettingCheckbox,
@@ -10,7 +10,7 @@ export default function NotificationField(props: NotificationFieldProps) {
   const { data, handleChange } = useContext(NotificationContext);
   const { notificationField, settingName } = props;
 
-  let Inputs: JSX.Element[];
+  let Inputs: ReactElement[];
 
   const disableField = () => {
     let disabled: boolean | undefined;

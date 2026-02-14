@@ -1,4 +1,3 @@
-import React from "react";
 import { RadioGroup } from "@/components/ui";
 import { DeviceModel } from "@/types/models/deviceTypes";
 

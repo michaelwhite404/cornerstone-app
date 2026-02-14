@@ -1,4 +1,3 @@
-import React from "react";
 import { ErrorLogModel } from "@/types/models/errorLogTypes";
 import DevicePane from "../DevicePane";
 import ErrorLog from "../ErrorLog";

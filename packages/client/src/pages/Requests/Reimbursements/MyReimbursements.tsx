@@ -1,4 +1,3 @@
-import React from "react";
 import { RM } from ".";
 import EmptyStateIllustration from "@/components/EmptyStateIllustration";
 import ReimbursementList from "./ReimbursementList";

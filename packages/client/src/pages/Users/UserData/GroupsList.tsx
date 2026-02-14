@@ -1,5 +1,5 @@
 import { Combobox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronDownIcon, SelectorIcon } from "@heroicons/react/solid";
+import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
 import { admin_directory_v1 } from "googleapis";
 import { useState } from "react";

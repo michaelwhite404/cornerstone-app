@@ -1,5 +1,4 @@
 import capitalize from "capitalize";
-import React from "react";
 import { StudentDevice } from "../../types/models";
 import DeviceStatusBadge from "../../components/Badges/DeviceStatusBagde";
 import TableWrapper from "../../components/TableWrapper";

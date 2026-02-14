@@ -1,4 +1,3 @@
-import React from "react";
 import { Label, Select } from "../ui";
 import type { SelectProps } from "../ui";
 

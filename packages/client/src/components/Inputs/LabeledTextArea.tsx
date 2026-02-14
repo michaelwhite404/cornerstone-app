@@ -1,4 +1,3 @@
-import React from "react";
 import { Label, Textarea } from "../ui";
 import type { TextareaProps } from "../ui";
 

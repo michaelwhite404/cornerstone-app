@@ -1,4 +1,3 @@
-import React from "react";
 import { Input, Label } from "../ui";
 import type { InputProps } from "../ui";
 

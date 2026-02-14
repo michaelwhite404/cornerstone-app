@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { format } from "date-fns";
-import React from "react";
 import { RM } from ".";
 import ApprovalBadge from "@/components/Badges/ApprovalBadge";
 import TableWrapper from "@/components/TableWrapper";

@@ -1,4 +1,3 @@
-import React from "react";
 import { Leave } from ".";
 import EmptyState from "./EmptyState";
 import MyLeavesList from "./MyLeavesList";

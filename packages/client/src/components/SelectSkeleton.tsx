@@ -1,5 +1,4 @@
 import { SelectorIcon } from "@heroicons/react/solid";
-import React from "react";
 import { Skeleton } from "./ui";
 
 export default function SelectSkeleton({ width = "130px" }: { width?: string | number }) {

@@ -1,5 +1,5 @@
 import { Button, Select, Label, Textarea, Chip } from "@/components/ui";
-import React, { useState } from "react";
+import { useState } from "react";
 import { DeviceModel } from "@/types/models/deviceTypes";
 import { ErrorLogModel, ErrorStatus } from "@/types/models/errorLogTypes";
 import { useToasterContext, useWindowSize } from "@/hooks";

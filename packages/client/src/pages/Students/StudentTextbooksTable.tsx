@@ -1,4 +1,3 @@
-import React from "react";
 import { StudentTextbook } from "../../types/models";
 import TableWrapper from "../../components/TableWrapper";
 

@@ -1,6 +1,5 @@
 import { SelectorIcon } from "@heroicons/react/solid";
 import { Skeleton } from "@/components/ui";
-import React from "react";
 
 export default function CheckoutSkeleton() {
   return (
