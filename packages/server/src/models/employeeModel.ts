@@ -105,36 +105,32 @@ employeeSchema.method("isLeader", function (departmentName: string) {
   return this.departments?.some((d) => d.name === departmentName && d.role === "LEADER") || false;
 });
 
-employeeSchema.pre<EmployeeDocument>("save", function (next) {
+employeeSchema.pre<EmployeeDocument>("save", function () {
   this.fullName = `${this.firstName} ${this.lastName}`;
   this.slug = slugify(this.fullName, { lower: true });
-  next();
 });
 
-employeeSchema.pre<EmployeeDocument>("save", async function (next) {
+employeeSchema.pre<EmployeeDocument>("save", async function () {
   // Only run if password is modified
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) return;
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password!, 12);
   // Delete passwordConfirm field
   this.passwordConfirm = undefined;
-  next();
 });
 
-employeeSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+employeeSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-employeeSchema.pre<EmployeeDocument>("save", function (next) {
-  if (!this.isModified("password") || this.isNew) return next();
+employeeSchema.pre<EmployeeDocument>("save", function () {
+  if (!this.isModified("password") || this.isNew) return;
 
   this.passwordChangedAt = new Date(Date.now() - 1000);
-  next();
 });
 
-employeeSchema.pre<Model<EmployeeDocument>>(/^find/, function (next) {
+employeeSchema.pre<Model<EmployeeDocument>>(/^find/, function () {
   // this.find({ active: { $ne: false } });
-  next();
 });
 
 employeeSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boolean {

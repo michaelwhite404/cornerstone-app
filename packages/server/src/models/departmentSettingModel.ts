@@ -1,12 +1,9 @@
 import { Department, DepartmentAllowedSetting, DepartmentAvailableSetting } from "@models";
 import { DepartmentSettingDocument, IDepartmentSettingModel } from "@@types/models";
-import { Model, model, ObjectId, Schema, Types } from "mongoose";
+import { model, ObjectId, Schema, Types } from "mongoose";
 import FKHelper from "./helpers/foreignKeyHelper";
 
-const departmentSettingSchema: Schema<
-  DepartmentSettingDocument,
-  Model<DepartmentSettingDocument>
-> = new Schema({
+const departmentSettingSchema = new Schema({
   department: {
     type: Types.ObjectId,
     ref: "Department",

@@ -89,12 +89,11 @@ ticketSchema.virtual("updates", {
   match: (ticket: TicketDocument) => ({ ticket: ticket._id }),
 });
 
-ticketSchema.pre("save", async function (next) {
+ticketSchema.pre("save", async function () {
   if (this.isNew) {
     const id = await Increment.getNextId("Ticket", 100);
     this.ticketId = id; // Incremented
   }
-  next();
 });
 
 const Ticket: Model<TicketDocument> = model<TicketDocument>("Ticket", ticketSchema);

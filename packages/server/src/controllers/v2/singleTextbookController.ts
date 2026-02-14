@@ -122,8 +122,7 @@ export const checkOutTextbookByStudent = catchAsync(
     /// GOOD TO GO
     await Textbook.updateMany(
       { _id: { $in: bodyBooks } },
-      { status: "Checked Out", lastUser: req.params.student_id, teacherCheckOut: req.employee._id },
-      { new: true }
+      { status: "Checked Out", lastUser: req.params.student_id, teacherCheckOut: req.employee._id }
     );
 
     const createLogs = books.map((b) => ({

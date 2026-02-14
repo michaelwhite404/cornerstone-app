@@ -46,7 +46,7 @@ export const createEmployee = catchAsync(
       });
       if (response.data.id) (user.googleId = response.data.id), await user.save();
     } catch (err) {
-      await user.remove();
+      await user.deleteOne();
       throw err;
     }
 

@@ -68,7 +68,7 @@ export const putAftercareStudentStatus = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     requestedAt: req.requestTime,
-    message: `${pluralize("status", result.nModified, true)} updated`,
+    message: `${pluralize("status", result.modifiedCount, true)} updated`,
   });
 });
 

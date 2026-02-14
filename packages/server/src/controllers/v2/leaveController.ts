@@ -85,7 +85,7 @@ export const approveLeave = catchAsync(async (req, res, next) => {
     } catch (err) {}
   }
   await leave.save();
-  await leave.populate({ path: "approval.user", select: "fullName email" }).execPopulate();
+  await leave.populate({ path: "approval.user", select: "fullName email" });
   res.sendJson(200, { leave });
   leaveEvent.finalize(leave);
 });

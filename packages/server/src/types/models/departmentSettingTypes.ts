@@ -1,16 +1,22 @@
 import { String } from "aws-sdk/clients/cloudsearch";
-import { Document, Model, ObjectId } from "mongoose";
+import { Document, Model, Types } from "mongoose";
 
 export interface DepartmentSettingModel {
-  _id: ObjectId;
-  department: ObjectId;
-  setting: ObjectId;
-  allowedSettingValue?: ObjectId;
+  _id: Types.ObjectId;
+  department: Types.ObjectId;
+  setting: Types.ObjectId;
+  allowedSettingValue?: Types.ObjectId;
+  unconstrainedValue?: any;
   value?: any;
 }
 
-export interface DepartmentSettingDocument extends DepartmentSettingModel, Document {
-  _id: DepartmentSettingModel["_id"];
+export interface DepartmentSettingDocument extends Document {
+  _id: Types.ObjectId;
+  department: Types.ObjectId;
+  setting: Types.ObjectId;
+  allowedSettingValue?: Types.ObjectId;
+  unconstrainedValue?: any;
+  value?: any;
 }
 
 export interface DepartmentSetting {

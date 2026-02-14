@@ -57,7 +57,7 @@ export const editDevicePage = catchAsync(
 export const getAllDevicesPage = catchAsync(async (req: CustomRequest, res: Response) => {
   const devices = await Device.find({ deviceType: req.device }).sort({ name: 1 }).populate({
     path: "lastUser",
-    fields: "fullName grade",
+    select: "fullName grade",
   });
   res.status(200).render("allDevices", {
     title: pluralize(capitalize(req.device!)),
@@ -78,11 +78,11 @@ export const getDevicePage = catchAsync(
     })
       .populate({
         path: "lastUser",
-        fields: "fullName grade",
+        select: "fullName grade",
       })
       .populate({
         path: "teacherCheckOut",
-        fields: "fullName email",
+        select: "fullName email",
       });
 
     if (!device) {
@@ -117,7 +117,7 @@ export const getDevicePage = catchAsync(
       .sort({ checkOutDate: -1 })
       .populate({
         path: "deviceUser teacherCheckOut teacherCheckIn",
-        fields: "fullName",
+        select: "fullName",
       });
 
     const errorLogs = await ErrorLog.find({ device: device._id })

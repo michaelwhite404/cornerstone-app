@@ -115,7 +115,7 @@ export const addTicketUpdate = catchAsync(async (req, res, next) => {
         ...data,
         comment: req.body.comment,
       });
-      const comment = ticketCommentUpdate.toJSON();
+      const comment: any = ticketCommentUpdate.toJSON();
       comment.createdBy = {
         _id: req.employee._id,
         fullName: req.employee.fullName,
@@ -126,7 +126,7 @@ export const addTicketUpdate = catchAsync(async (req, res, next) => {
       };
       ticket.updates ? ticket.updates.push(comment) : (ticket.updates = [comment]);
       newTicket = ticket;
-      ticketEvent.comment(ticketCommentUpdate);
+      ticketEvent.comment(ticketCommentUpdate as any);
       break;
     case "ASSIGN":
       if (isOnlySubmittedUser)
@@ -167,7 +167,7 @@ export const addTicketUpdate = catchAsync(async (req, res, next) => {
           select: "name email image slug fullName comment assign op date createdBy",
           populate: { path: "assign createdBy", select: "fullName email image slug" },
         });
-        ticketEvent.assign(update);
+        ticketEvent.assign(update as any);
         break;
       }
       // If operation is remove
@@ -236,7 +236,7 @@ export const closeTicket = catchAsync(async (req, res, next) => {
   ticket.closedBy = req.employee._id;
   ticket.closedAt = new Date();
   await ticket.save();
-  await ticket.populate({ path: "closedBy", select: "email image slug fullName" }).execPopulate();
+  await ticket.populate({ path: "closedBy", select: "email image slug fullName" });
   res.sendJson(200, { ticket });
   ticketEvent.close(ticket);
 });

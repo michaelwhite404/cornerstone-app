@@ -75,7 +75,7 @@ export const createStudent = catchAsync(async (req, res, next) => {
     });
     if (response.data.id) (student.googleId = response.data.id), await student.save();
   } catch (err) {
-    await student.remove();
+    await student.deleteOne();
     throw err;
   }
   res.sendJson(201, {

@@ -11,7 +11,7 @@ const aftercareSessionSchema = new Schema<AftercareSessionModel, ASM>(
     date: {
       type: Date,
       required: true,
-      default: () => new Date().toISOString(),
+      default: () => new Date(),
     },
     active: {
       type: Boolean,

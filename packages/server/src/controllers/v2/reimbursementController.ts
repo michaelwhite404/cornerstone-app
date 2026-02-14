@@ -127,7 +127,7 @@ export const createReimbursement = catchAsync(async (req, res, next) => {
       select: "fullName slug email",
     });
   } catch (err) {
-    await reimbursement.remove();
+    await reimbursement.deleteOne();
     throw err;
   }
   res.sendJson(201, { reimbursement });

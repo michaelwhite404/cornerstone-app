@@ -67,14 +67,14 @@ const errorLogSchema: Schema<ErrorLogDocument, Model<ErrorLogDocument>> = new Sc
 
 errorLogSchema.index({ device: 1 });
 
-errorLogSchema.pre("save", async function (next) {
+errorLogSchema.pre("save", async function () {
   if (this.isNew) {
     const device = await Device.findById(this.device);
     if (!device) {
-      return next(new AppError("No device found with that ID", 404));
+      throw new AppError("No device found with that ID", 404);
     }
     if (device.status === "Checked Out" && this.$locals.notCheckOut) {
-      return next(new AppError(`Create an error when checking in ${device.deviceType}`, 400));
+      throw new AppError(`Create an error when checking in ${device.deviceType}`, 400);
     }
     this.$locals.wasNew = this.isNew;
   }

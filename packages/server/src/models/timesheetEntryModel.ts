@@ -6,7 +6,6 @@ import {
   SchemaDefinition,
   SchemaTypeOptions,
   Types,
-  ValidateFn,
 } from "mongoose";
 import { TimesheetEntryDocument } from "@@types/models";
 import { AppError, datesAreOnSameDay } from "@utils";
@@ -31,11 +30,10 @@ const timesheetEntrySchema: Schema<
     type: Date,
     required: [true, "Each timesheet entry must have a start time"],
     validate: {
-      validator: function (timeStart) {
-        // @ts-ignore
+      validator: function (this: TimesheetEntryDocument, timeStart: Date) {
         const timeEnd: Date = this.timeEnd;
         return timeStart.getTime() < timeEnd.getTime();
-      } as ValidateFn<Date>,
+      },
       message: "Start time must be before end time",
     },
   } as SchemaTypeOptions<Date>,
@@ -70,15 +68,14 @@ const timesheetEntrySchema: Schema<
   finalizedAt: Date,
 } as SchemaDefinition);
 
-timesheetEntrySchema.pre<TimesheetEntryDocument>("save", function (next) {
+timesheetEntrySchema.pre<TimesheetEntryDocument>("save", function () {
   if (new Date(this.timeStart) >= new Date(this.timeEnd))
-    return next(new AppError("Start time must be before end time", 400));
+    throw new AppError("Start time must be before end time", 400);
 
   if (!datesAreOnSameDay(this.timeStart, this.timeEnd))
-    return next(new AppError("Start and end times must be on the same day", 400));
+    throw new AppError("Start and end times must be on the same day", 400);
 
   this.hours = (this.timeEnd.getTime() - this.timeStart.getTime()) / 60 / 60 / 1000;
-  next();
 });
 
 const TimesheetEntry = model<TimesheetEntryDocument>("TimesheetEntry", timesheetEntrySchema);

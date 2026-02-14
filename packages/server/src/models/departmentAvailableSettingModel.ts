@@ -16,9 +16,8 @@ const availableSettingSchema = new Schema({
     type: Boolean,
     required: true,
     validate: {
-      validator: function (value: boolean) {
-        // @ts-ignore
-        !(this.dataType === "BOOLEAN" && value === true);
+      validator: function (this: any, value: boolean) {
+        return !(this.dataType === "BOOLEAN" && value === true);
       },
       message: "Boolean type cannot be constrained",
     },

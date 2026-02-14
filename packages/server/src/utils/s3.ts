@@ -1,8 +1,6 @@
-import bluebird from "bluebird";
 import AWS from "aws-sdk";
 
 const { AWS_SECRET_KEY, AWS_ACCESS_KEY, AWS_BUCKET_REGION, AWS_BUCKET_NAME } = process.env;
-AWS.config.setPromisesDependency(bluebird);
 AWS.config.update({
   accessKeyId: AWS_ACCESS_KEY,
   secretAccessKey: AWS_SECRET_KEY,

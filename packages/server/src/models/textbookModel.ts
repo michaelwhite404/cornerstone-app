@@ -49,12 +49,11 @@ const textbookSchema: Schema<TextbookDocument, Model<TextbookDocument>> = new Sc
 
 textbookSchema.index({ textbookSet: 1, bookNumber: 1 }, { unique: true });
 
-textbookSchema.pre("save", async function (next) {
+textbookSchema.pre("save", async function () {
   if (this.isNew) {
     const set = await TextbookSet.findById(this.textbookSet);
-    if (!set) return next(new AppError(`Foreign Key Constraint: textbookSet ID is not valid`, 400));
+    if (!set) throw new AppError(`Foreign Key Constraint: textbookSet ID is not valid`, 400);
   }
-  next();
 });
 
 const Textbook = model<TextbookDocument>("Textbook", textbookSchema);

@@ -183,7 +183,7 @@ export const deleteTimesheetEntry = catchAsync(
     if (timesheetEntry.status === "Approved")
       return next(new AppError("Approved timesheet entries cannot be deleted", 403));
 
-    await timesheetEntry.remove();
+    await timesheetEntry.deleteOne();
 
     res.status(200).json({
       status: "success",

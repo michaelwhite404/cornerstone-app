@@ -40,9 +40,8 @@ textbookSetSchema.virtual("count", {
   count: true,
 });
 
-textbookSetSchema.pre("save", function (next) {
+textbookSetSchema.pre("save", function () {
   this.slug = slugify(this.title, { lower: true });
-  next();
 });
 
 const TextbookSet = model<TextbookSetDocument>("TextbookSet", textbookSetSchema);

@@ -129,7 +129,9 @@ class TicketEvent {
   async assign(update: TicketAssignUpdateDocument) {
     // Only send if user is being added
     if (update.op === "REMOVE") return;
-    const { ticket, assign: user } = await TicketAssignUpdate.populate(update, "ticket assign");
+    const populated = await TicketAssignUpdate.populate(update, "ticket assign");
+    const user = populated.assign as unknown as EmployeeDocument;
+    const ticket = populated.ticket as unknown as TicketDocument;
     this.sendAssignChat(user, ticket);
     this.sendAssignEmail(user, ticket);
   }
@@ -156,16 +158,18 @@ class TicketEvent {
   }
 
   async comment(update: TicketCommentUpdateDocument) {
-    const { createdBy, ticket } = await TicketCommentUpdate.populate(update, {
+    const populated = await TicketCommentUpdate.populate(update, {
       path: "ticket createdBy",
       populate: { path: "assignedTo submittedBy" },
     });
-    const users: EmployeeDocument[] = [...ticket.assignedTo];
+    const createdBy = populated.createdBy as unknown as EmployeeDocument;
+    const ticket = populated.ticket as unknown as TicketDocument;
+    const users: EmployeeDocument[] = [...(ticket.assignedTo as EmployeeDocument[])];
     if (!users.find((user) => user._id.toString === ticket.submittedBy._id.toString))
-      users.push(ticket.submittedBy);
+      users.push(ticket.submittedBy as EmployeeDocument);
     const data: CommentData = {
       comment: update.comment,
-      commenter: createdBy as EmployeeDocument,
+      commenter: createdBy,
       ticket,
       usersToNotify: users.filter((user) => user._id.toString() !== createdBy._id.toString()),
     };
@@ -249,9 +253,9 @@ class TicketEvent {
 
   async close(ticket: TicketDocument) {
     if (ticket.status !== "CLOSED") return;
-    const { assignedTo, closedBy, submittedBy } = await ticket
-      .populate("assignedTo submittedBy closedBy")
-      .execPopulate();
+    const { assignedTo, closedBy, submittedBy } = await ticket.populate(
+      "assignedTo submittedBy closedBy"
+    );
     // Get all users on ticket
     const users: EmployeeDocument[] = [...(assignedTo as EmployeeDocument[])];
     if (!users.find((user) => user._id.toString === submittedBy._id.toString))

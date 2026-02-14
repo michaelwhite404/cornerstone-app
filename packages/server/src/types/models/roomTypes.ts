@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 export interface RoomModel {
   /** Id of the room */
   _id: any;
-  roomNumber: number;
+  roomNumber: string;
   name: string;
 }
 

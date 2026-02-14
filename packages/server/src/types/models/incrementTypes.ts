@@ -4,6 +4,7 @@ export interface IncrementModel {
   _id: any;
   modelName: string;
   idx: number;
+  start: number;
 }
 export interface IncrementDocument extends IncrementModel, Document {
   _id: IncrementModel["_id"];

@@ -12,6 +12,7 @@ export interface TicketModel {
   priority: TicketPriority;
   submittedBy: PopulatedDoc<EmployeeModel>;
   assignedTo: PopulatedDoc<EmployeeModel[]>;
+  tags?: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
   closedBy?: PopulatedDoc<EmployeeModel>;

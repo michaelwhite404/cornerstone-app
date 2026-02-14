@@ -277,9 +277,8 @@ export const assignDevice = catchAsync(async (req, res, next) => {
   device.$locals.assigned = true;
   device.$locals.student = req.body.student;
   await device.save();
-  Device.populate(device, { path: "lastUser" }, function (_, device) {
-    sendJson(res, 200, { device });
-  });
+  await Device.populate(device, { path: "lastUser" });
+  sendJson(res, 200, { device });
 });
 
 export const unassignDevice = catchAsync(async (req, res, next) => {

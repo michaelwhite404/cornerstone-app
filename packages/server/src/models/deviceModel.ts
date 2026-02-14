@@ -98,34 +98,31 @@ deviceSchema.virtual("errorLogs", {
 
 deviceSchema.plugin(autopopulate);
 
-deviceSchema.pre<DeviceDocument>("save", function (next) {
+deviceSchema.pre<DeviceDocument>("save", function () {
   if (this.isModified("dueDate") && this.dueDate !== undefined) {
     // If due date is valid
     // @ts-ignore
     var timestamp = Date.parse(this.dueDate);
     if (isNaN(timestamp))
-      return next(new AppError("The value for 'dueDate' is not a valid date", 400));
+      throw new AppError("The value for 'dueDate' is not a valid date", 400);
     const date = new Date(timestamp);
     // Due Date can not be in the past
-    if (date <= new Date()) return next(new AppError("Due date cannot be in the past", 400));
+    if (date <= new Date()) throw new AppError("Due date cannot be in the past", 400);
     // Due Date can not be more than a year in the future
     if (date > new Date(new Date().setFullYear(new Date().getFullYear() + 1)))
-      return next(new AppError("Due Date can not be more than a year in the future", 400));
+      throw new AppError("Due Date can not be more than a year in the future", 400);
   }
   this.slug = slugify(this.name, { lower: true });
-  next();
 });
 
-deviceSchema.pre<DeviceDocument>("save", function (next) {
-  if (this.$locals.assigned)
-    FKHelper(Student, this.$locals.student as ObjectId)
-      .then(() => {
-        next();
-      })
-      .catch((reason) => {
-        next(new AppError(reason, 400));
-      });
-  next();
+deviceSchema.pre<DeviceDocument>("save", async function () {
+  if (this.$locals.assigned) {
+    try {
+      await FKHelper(Student, this.$locals.student as ObjectId);
+    } catch (reason) {
+      throw new AppError(reason as string, 400);
+    }
+  }
 });
 
 const Device: Model<DeviceDocument> = model<DeviceDocument>("Device", deviceSchema);
