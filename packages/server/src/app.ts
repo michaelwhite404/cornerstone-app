@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import compression from "compression";
 import passport from "passport";
-import { graphqlHTTP } from "express-graphql";
+import { createHandler } from "graphql-http/lib/use/express";
 import subdomain from "express-subdomain";
 
 import { AppError, catchAsync, s3 } from "@utils";
@@ -70,13 +70,7 @@ app.use(compression());
 
 app.use(subdomain("api", apiRouter));
 app.use("/api", apiRouter);
-app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema,
-    graphiql: process.env.NODE_ENV === "development",
-  })
-);
+app.all("/graphql", createHandler({ schema }));
 app.use("/auth", authRouter);
 app.use("/pdf", pdfRouter);
 app.use("/csv", csvRouter);
