@@ -29,18 +29,28 @@ const sanitizeObject = (obj: Record<string, unknown>): Record<string, unknown> =
 };
 
 /**
+ * Sanitizes object properties in place to support Express 5
+ * where req.query is a getter and cannot be reassigned.
+ */
+const sanitizeInPlace = (obj: Record<string, unknown>): void => {
+  for (const key of Object.keys(obj)) {
+    obj[key] = sanitizeValue(obj[key]);
+  }
+};
+
+/**
  * Express middleware that sanitizes req.body, req.query, and req.params
  * to prevent XSS attacks by stripping HTML tags and script content.
  */
 const xssSanitize: RequestHandler = (req, _res, next) => {
-  if (req.body) {
-    req.body = sanitizeValue(req.body);
+  if (req.body && typeof req.body === "object") {
+    sanitizeInPlace(req.body);
   }
-  if (req.query) {
-    req.query = sanitizeValue(req.query) as typeof req.query;
+  if (req.query && typeof req.query === "object") {
+    sanitizeInPlace(req.query as Record<string, unknown>);
   }
-  if (req.params) {
-    req.params = sanitizeValue(req.params) as typeof req.params;
+  if (req.params && typeof req.params === "object") {
+    sanitizeInPlace(req.params);
   }
   next();
 };

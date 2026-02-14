@@ -16,9 +16,10 @@ const key = "student";
 export const getAllStudents = factory.getAll(Student, `${key}s`);
 /** `GET` - Gets a single student */
 export const getOneStudent = catchAsync(async (req, res, next) => {
-  let query = isObjectID(req.params.id.toString())
-    ? Model.findById(req.params.id)
-    : Model.findOne({ slug: req.params.id });
+  const paramId = req.params.id as string;
+  let query = isObjectID(paramId)
+    ? Model.findById(paramId)
+    : Model.findOne({ slug: paramId });
 
   const student = await query.populate([
     {

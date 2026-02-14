@@ -21,9 +21,10 @@ export const getAllEmployees: RequestHandler = factory.getAll(
  *   - All authorized users can access this route
  */
 export const getOneEmployee: RequestHandler = catchAsync(async (req, res, next) => {
-  let query = isObjectID(req.params.id.toString())
-    ? Model.findById(req.params.id)
-    : Model.findOne({ slug: req.params.id });
+  const paramId = req.params.id as string;
+  let query = isObjectID(paramId)
+    ? Model.findById(paramId)
+    : Model.findOne({ slug: paramId });
   query = query.populate({ path: "departments", populate: "department" });
   // if (req.query.projection === "FULL")
   const user = await query;
@@ -123,9 +124,10 @@ export const updateUser = catchAsync(async (req, res, next) => {
     runValidators: true,
     populate: { path: "departments", populate: { path: "department" } },
   };
-  let query = isObjectID(req.params.id.toString())
-    ? Model.findByIdAndUpdate(req.params.id, filteredBody, queryOptions)
-    : Model.findOneAndUpdate({ slug: req.params.id }, filteredBody, queryOptions);
+  const paramId = req.params.id as string;
+  let query = isObjectID(paramId)
+    ? Model.findByIdAndUpdate(paramId, filteredBody, queryOptions)
+    : Model.findOneAndUpdate({ slug: paramId }, filteredBody, queryOptions);
   const user = await query;
   if (!user) return next(new AppError("No user found with that ID", 404));
   if (filteredBody.firstName || filteredBody.lastName) {

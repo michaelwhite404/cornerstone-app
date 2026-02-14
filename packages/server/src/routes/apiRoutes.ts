@@ -1,5 +1,5 @@
 import { AppError } from "@utils";
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import rateLimit from "express-rate-limit";
 import v1Router from "./v1/v1Routes";
 import v2Router from "./v2";
@@ -12,11 +12,11 @@ const limiter = rateLimit({
   message: "To many requests from this IP, please try again in one minute",
 });
 
-router.use(limiter);
+router.use(limiter as unknown as RequestHandler);
 router.use("/v1", v1Router);
 router.use(["/v2", "/"], v2Router);
 
-router.all("*", (req, _, next) => {
+router.all("/{*path}", (req, _, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 

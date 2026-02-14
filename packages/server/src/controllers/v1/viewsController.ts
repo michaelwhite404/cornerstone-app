@@ -38,7 +38,7 @@ export const addDevicePage = catchAsync((req: CustomRequest, res: Response) => {
 export const editDevicePage = catchAsync(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
     const device = await Device.findOne({
-      slug: req.params.slug,
+      slug: req.params.slug as string,
       deviceType: req.device,
     });
 
@@ -73,7 +73,7 @@ export const getAllDevicesPage = catchAsync(async (req: CustomRequest, res: Resp
 export const getDevicePage = catchAsync(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
     const device = await Device.findOne({
-      slug: req.params.slug,
+      slug: req.params.slug as string,
       deviceType: req.device,
     })
       .populate({
@@ -153,7 +153,7 @@ export const createUserPage = catchAsync(async (_: CustomRequest, res: Response)
 
 export const editUserPage = catchAsync(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const editEmployee = await Employee.findOne({ slug: req.params.slug });
+    const editEmployee = await Employee.findOne({ slug: req.params.slug as string });
 
     if (!editEmployee) {
       return next(new AppError("No employee found with that ID", 404));
@@ -174,7 +174,7 @@ export const createStudentPage = catchAsync(async (_: CustomRequest, res: Respon
 
 export const editStudentPage = catchAsync(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const student = await Student.findOne({ slug: req.params.slug });
+    const student = await Student.findOne({ slug: req.params.slug as string });
 
     if (!student) {
       return next(new AppError("No student found with that ID", 404));

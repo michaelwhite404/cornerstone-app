@@ -229,7 +229,7 @@ export const forgotPassword = catchAsync(
 
 export const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   // 1) Get employee based on the token
-  const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+  const hashedToken = crypto.createHash("sha256").update(req.params.token as string).digest("hex");
 
   const employee = await Employee.findOne({
     passwordResetToken: hashedToken,

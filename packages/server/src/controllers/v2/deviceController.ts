@@ -69,7 +69,7 @@ export const checkOutDevice: RequestHandler = catchAsync(
     device.checkedOut = true;
     device.status = "Checked Out";
     device.lastCheckOut = new Date(req.requestTime);
-    device.lastUser = new Types.ObjectId(req.params.student_id);
+    device.lastUser = new Types.ObjectId(req.params.student_id as string);
     device.teacherCheckOut = new Types.ObjectId(req.employee!._id);
     device.dueDate = req.body.dueDate;
 
@@ -183,7 +183,7 @@ export const getOneDeviceFromGoogle = catchAsync(async (req, res, next) => {
   try {
     const { data: device } = await admin.chromeosdevices.get({
       customerId: process.env.GOOGLE_CUSTOMER_ID,
-      deviceId: req.params.id,
+      deviceId: req.params.id as string,
     });
 
     res.status(200).json({
@@ -198,20 +198,17 @@ export const getOneDeviceFromGoogle = catchAsync(async (req, res, next) => {
   }
 });
 
-export const resetDeviceFromGoogle = catchAsync(async (req, res) => {
-  let command = "";
-  switch (req.params.reset) {
-    case "wipe":
-      command = "WIPE_USERS";
-      break;
-    case "powerwash":
-      command = "REMOTE_POWERWASH";
-      break;
+export const resetDeviceFromGoogle = catchAsync(async (req, res, next) => {
+  const reset = req.params.reset as string;
+  if (!["wipe", "powerwash"].includes(reset)) {
+    return next(new AppError("Invalid reset type. Must be 'wipe' or 'powerwash'", 400));
   }
+
+  const command = reset === "wipe" ? "WIPE_USERS" : "REMOTE_POWERWASH";
 
   await admin.customer.devices.chromeos.issueCommand({
     customerId: process.env.GOOGLE_CUSTOMER_ID,
-    deviceId: req.params.id,
+    deviceId: req.params.id as string,
     requestBody: {
       commandType: command,
     },
@@ -231,7 +228,7 @@ export const moveDeviceToOu = catchAsync(async (req, res) => {
     customerId: process.env.GOOGLE_CUSTOMER_ID,
     orgUnitPath: req.body.orgUnitPath,
     requestBody: {
-      deviceIds: [req.params.id],
+      deviceIds: [req.params.id as string],
     },
   });
 
@@ -244,12 +241,17 @@ export const moveDeviceToOu = catchAsync(async (req, res) => {
   });
 });
 
-export const deviceAction = catchAsync(async (req, res) => {
+export const deviceAction = catchAsync(async (req, res, next) => {
+  const action = req.params.action as string;
+  if (!["disable", "reenable", "deprovision"].includes(action)) {
+    return next(new AppError("Invalid action. Must be 'disable', 'reenable', or 'deprovision'", 400));
+  }
+
   await admin.chromeosdevices.action({
     customerId: process.env.GOOGLE_CUSTOMER_ID,
-    resourceId: req.params.id,
+    resourceId: req.params.id as string,
     requestBody: {
-      action: req.params.action,
+      action,
     },
   });
 
@@ -257,7 +259,7 @@ export const deviceAction = catchAsync(async (req, res) => {
     success: "success",
     requestedAt: req.requestTime,
     data: {
-      message: `${capitalize(req.params.action)} action completed suceessfully`,
+      message: `${capitalize(action)} action completed successfully`,
     },
   });
 });

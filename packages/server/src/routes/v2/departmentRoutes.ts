@@ -26,6 +26,6 @@ router.use("/:departmentId/settings", departmentSettingsRouter);
 router.use("/:departmentId/members", memberRouter);
 
 router.route("/").get(getAllDepartments).post(createDepartment);
-router.route("/:id").get(getOneDepartment).patch().delete();
+router.route("/:id").get(getOneDepartment);
 
 export default router;

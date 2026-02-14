@@ -41,7 +41,7 @@ deviceRouter.get(
   deviceController.getOneDeviceFromGoogle
 );
 deviceRouter.post(
-  "/from-google/:id/:reset(wipe|powerwash)",
+  "/from-google/:id/:reset",
   restrictTo("Super Admin"),
   deviceController.resetDeviceFromGoogle
 );
@@ -51,7 +51,7 @@ deviceRouter.post(
   deviceController.moveDeviceToOu
 );
 deviceRouter.post(
-  "/from-google/:id/:action(disable|reenable|deprovision)",
+  "/from-google/:id/:action",
   restrictTo("Super Admin"),
   deviceController.deviceAction
 );

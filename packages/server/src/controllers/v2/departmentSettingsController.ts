@@ -43,7 +43,7 @@ export const createAvailableSetting = factory.createOne(
 // =---------------------
 
 export const getAllDepartmentSettings = catchAsync(async (req, res) => {
-  const settings = await DepartmentSetting.getDepartmentSettings(req.params.departmentId);
+  const settings = await DepartmentSetting.getDepartmentSettings(req.params.departmentId as string);
   res.sendJson(200, { settings });
 });
 

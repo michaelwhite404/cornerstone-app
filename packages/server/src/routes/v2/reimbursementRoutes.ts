@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import { authController as v2auth, reimbursementController } from "@controllers/v2";
 import multer from "multer";
 
@@ -10,7 +10,10 @@ reimbursementRouter.use(v2auth.protect);
 reimbursementRouter
   .route("/")
   .get(reimbursementController.getAllReimbursements)
-  .post(upload.single("receipt"), reimbursementController.createReimbursement);
+  .post(
+    upload.single("receipt") as unknown as RequestHandler,
+    reimbursementController.createReimbursement
+  );
 
 reimbursementRouter.post(
   "/:id/approve",
