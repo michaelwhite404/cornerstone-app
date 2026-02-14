@@ -43,7 +43,7 @@ export const getTicket = catchAsync(async (req, res, next) => {
   }).populate({
     path: "department submittedBy assignedTo updates closedBy",
     select: "name email image slug fullName comment assign op date createdBy",
-    populate: { path: "assign createdBy", select: "fullName email image slug" },
+    populate: { path: "assign createdBy", select: "fullName email image slug", strictPopulate: false },
   });
 
   if (!ticket) return next(new AppError("No ticket found with this id", 404));
@@ -92,7 +92,7 @@ export const addTicketUpdate = catchAsync(async (req, res, next) => {
   }).populate({
     path: "department submittedBy assignedTo updates closedBy",
     select: "name email image slug fullName comment assign op date createdBy closedBy",
-    populate: { path: "assign createdBy", select: "fullName email image slug" },
+    populate: { path: "assign createdBy", select: "fullName email image slug", strictPopulate: false },
   });
   if (!ticket) return next(new AppError("No ticket found with this id", 404));
   if (ticket.status === "CLOSED") return next(new AppError("This ticket is closed", 403));
@@ -165,7 +165,7 @@ export const addTicketUpdate = catchAsync(async (req, res, next) => {
         ).populate({
           path: "department submittedBy assignedTo updates",
           select: "name email image slug fullName comment assign op date createdBy",
-          populate: { path: "assign createdBy", select: "fullName email image slug" },
+          populate: { path: "assign createdBy", select: "fullName email image slug", strictPopulate: false },
         });
         ticketEvent.assign(update as any);
         break;
@@ -219,7 +219,7 @@ export const closeTicket = catchAsync(async (req, res, next) => {
   }).populate({
     path: "department submittedBy assignedTo updates",
     select: "name email image slug fullName comment assign op date createdBy",
-    populate: { path: "assign createdBy", select: "fullName email image slug" },
+    populate: { path: "assign createdBy", select: "fullName email image slug", strictPopulate: false },
   });
   if (!ticket) return next(new AppError("No ticket found with this id", 404));
   if (ticket.status === "CLOSED") return next(new AppError("This ticket is already closed", 403));

@@ -14,7 +14,7 @@ export const getAllEmployees: RequestHandler = factory.getAll(
   Model,
   key,
   {},
-  { path: "departments test" }
+  { path: "departments" }
 );
 
 /** `GET` - Gets a single employee
