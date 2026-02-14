@@ -11,7 +11,9 @@ export const getAll = <T extends Mongoose["Model"]>(
   populate?: PopOptions
 ) =>
   catchAsync(async (req: Request, res: Response) => {
-    const query = Model.find(filter);
+    // Merge filterParams from middleware (Express 5 compatible) with static filter
+    const mergedFilter = { ...filter, ...req.filterParams };
+    const query = Model.find(mergedFilter);
     if (populate) query.populate(populate);
     const features = new APIFeatures(query, req.query).filter().limitFields().sort().paginate();
     const docs = await features.query;

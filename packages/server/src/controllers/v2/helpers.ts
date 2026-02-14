@@ -10,19 +10,32 @@ export const omitFromBody = (...keys: string[]): RequestHandler => {
 
 export const addParamsToBody = (...keys: string[]): RequestHandler => {
   return (req, _, next) => {
-    keys.forEach((k) => (req.body[k] = req.params[k]));
+    keys.forEach((k) => {
+      if (req.params[k]) {
+        req.body[k] = req.params[k];
+      }
+    });
     next();
   };
 };
 
-export const addDeviceToQuery: RequestHandler = (req, _, next) => {
-  if (req.params.device) req.query.device = req.params.device;
-  next();
-};
-
-export const addKeyToQuery = (key: string): RequestHandler => {
+/**
+ * Middleware that adds route params to req.filterParams for use in queries.
+ * Works around Express 5's immutable req.query by using a custom property.
+ * Use with factory.getAll which merges req.filterParams into the query filter.
+ */
+export const addParamsToFilter = (...keys: string[]): RequestHandler => {
   return (req, _, next) => {
-    if (req.params[key]) req.query[key] = req.params[key];
+    if (!req.filterParams) {
+      req.filterParams = {};
+    }
+    keys.forEach((k) => {
+      const param = req.params[k];
+      // In Express 5, wildcard params can be arrays - we only handle string params
+      if (param && typeof param === "string") {
+        req.filterParams![k] = param;
+      }
+    });
     next();
   };
 };

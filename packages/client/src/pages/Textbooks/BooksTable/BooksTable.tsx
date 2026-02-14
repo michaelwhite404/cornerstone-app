@@ -78,6 +78,8 @@ export default function BooksTable({
     state: { selectedRowIds },
   } = tableInstance;
 
+  const selectedRowIdsKey = Object.keys(selectedRowIds).join(",");
+
   useEffect(() => {
     const getSelected = (): TextbookModel[] => {
       const arr = [];
@@ -90,7 +92,7 @@ export default function BooksTable({
     };
     setSelectedBooks(getSelected());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRowIds]);
+  }, [selectedRowIdsKey]);
 
   const table = (
     <div className="textbooks-table-container">

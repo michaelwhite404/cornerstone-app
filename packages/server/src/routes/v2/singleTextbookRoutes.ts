@@ -5,7 +5,7 @@ const router = Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(helpers.addKeyToQuery("textbookSet"), singleTextbookController.getAllBooks)
+  .get(helpers.addParamsToFilter("textbookSet"), singleTextbookController.getAllBooks)
   .post(helpers.addParamsToBody("textbookSet"), singleTextbookController.createBook);
 
 router.post(

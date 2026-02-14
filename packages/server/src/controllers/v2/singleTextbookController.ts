@@ -13,6 +13,7 @@ const key = "book";
 
 /** `GET` - Gets all books
  *  - All authorized users can access this route
+ *  - Uses req.filterParams from middleware to filter by textbookSet when present
  */
 export const getAllBooks: RequestHandler = factory.getAll(
   Model,

@@ -5,7 +5,7 @@ const router = Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(helpers.addKeyToQuery("device"), deviceErrorLogController.getAllDeviceErrorLogs)
+  .get(helpers.addParamsToFilter("device"), deviceErrorLogController.getAllDeviceErrorLogs)
   .post(deviceErrorLogController.setCreateData, deviceErrorLogController.createErrorLog);
 
 router
