@@ -48,9 +48,6 @@ importers:
       '@types/deep-equal':
         specifier: ^1.0.1
         version: 1.0.4
-      '@types/lodash.isequal':
-        specifier: ^4.5.6
-        version: 4.5.8
       '@types/node':
         specifier: ^12.20.19
         version: 12.20.55
@@ -105,9 +102,6 @@ importers:
       framer-motion:
         specifier: ^6.3.16
         version: 6.5.1(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
-      lodash.isequal:
-        specifier: ^4.5.0
-        version: 4.5.0
       pluralize:
         specifier: ^8.0.0
         version: 8.0.0
@@ -1165,9 +1159,6 @@ packages:
 
   '@types/jsonwebtoken@8.5.9':
     resolution: {integrity: sha512-272FMnFGzAVMGtu9tkr29hRL6bZj4Zs1KZNeHLnKqAvp06tAIcarTMwOh8/8bz4FmKRcMxZhZNeUAQsNLoiPhg==}
-
-  '@types/lodash.isequal@4.5.8':
-    resolution: {integrity: sha512-uput6pg4E/tj2LGxCZo9+y27JNyB2OZuuI/T5F+ylVDYuqICLG2/ktjxx0v6GvVntAf8TvEzeQLcV0ffRirXuA==}
 
   '@types/lodash.isplainobject@4.0.9':
     resolution: {integrity: sha512-QC8nKcap5hRrbtIaPRjUMlcXXnLeayqQZPSaWJDx3xeuN17+2PW5wkmEJ4+lZgNnQRlSPzxjTYKCfV1uTnPaEg==}
@@ -2366,10 +2357,6 @@ packages:
 
   lodash.isboolean@3.0.3:
     resolution: {integrity: sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==}
-
-  lodash.isequal@4.5.0:
-    resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
-    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.isinteger@4.0.4:
     resolution: {integrity: sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==}
@@ -4296,10 +4283,6 @@ snapshots:
     dependencies:
       '@types/node': 16.18.126
 
-  '@types/lodash.isequal@4.5.8':
-    dependencies:
-      '@types/lodash': 4.17.23
-
   '@types/lodash.isplainobject@4.0.9':
     dependencies:
       '@types/lodash': 4.17.23
@@ -5667,8 +5650,6 @@ snapshots:
   lodash.includes@4.3.0: {}
 
   lodash.isboolean@3.0.3: {}
-
-  lodash.isequal@4.5.0: {}
 
   lodash.isinteger@4.0.4: {}
 

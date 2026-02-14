@@ -2,7 +2,6 @@ import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon, TrashIcon, XIcon } from "@heroicons/react/solid";
 import { AddOnInput } from "../../components/Inputs";
-import isEqual from "lodash.isequal";
 
 interface GroupDataSliderProps {
   open: boolean;
@@ -243,7 +242,7 @@ export default function GroupDataSlider({
                       <button
                         type="submit"
                         className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-300"
-                        disabled={isEqual(data, group)}
+                        disabled={JSON.stringify(data) === JSON.stringify(group)}
                         onClick={handleSubmit}
                       >
                         Save
