@@ -1,7 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import { Fragment, useState } from "react";
-import LoadingOverlay from "react-loading-overlay";
 import wait from "../../../../utils/wait";
 import FileTypeCards from "./FileTypeCards";
 import LeaveFields from "./LeaveFields";
@@ -95,11 +94,36 @@ export function ReportModal(props: Props) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative bg-white rounded-lg overflow-hidden text-left shadow-xl transform transition-all sm:my-8 sm:mx-4 sm:max-w-4xl sm:w-full">
-                <LoadingOverlay
-                  active={submitting}
-                  spinner
-                  text={<span className="text-white font-medium text-lg">Generating Report</span>}
-                >
+                <div className="relative">
+                  {submitting && (
+                    <div className="absolute inset-0 bg-gray-500/75 flex items-center justify-center z-50">
+                      <div className="flex flex-col items-center">
+                        <svg
+                          className="animate-spin h-8 w-8 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        <span className="text-white font-medium text-lg mt-2">
+                          Generating Report
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                     <button
                       type="button"
@@ -135,7 +159,7 @@ export function ReportModal(props: Props) {
                       Cancel
                     </button>
                   </div>
-                </LoadingOverlay>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

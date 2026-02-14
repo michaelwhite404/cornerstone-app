@@ -65,7 +65,7 @@ export default function AddUser(props: AddUserProps) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <div>
-                <AnimatePresence exitBeforeEnter initial={false}>
+                <AnimatePresence mode="wait" initial={false}>
                   {step === 1 && (
                     <CreateUser
                       setOpen={props.setOpen}
