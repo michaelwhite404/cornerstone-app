@@ -128,7 +128,7 @@ export default function PendingPage(props: Props) {
                     <div className="xs:flex xs:justify-between">
                       <div className="flex space-x-2 mb-1 xs:mb-0">
                         <CalendarIcon className="w-4 align-center" />
-                        <span>{format(new Date(entry.timeStart), "M/d/Y")}</span>
+                        <span>{format(new Date(entry.timeStart), "M/d/y")}</span>
                       </div>
                       <div className="flex space-x-2">
                         <ClockIcon className="w-4 align-center" />
