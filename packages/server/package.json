@@ -13,7 +13,7 @@
   "dependencies": {
     "@graphql-tools/schema": "^8.2.0",
     "aws-sdk": "^2.1116.0",
-    "axios": "^0.21.4",
+    "axios": "^1.13.5",
     "bcryptjs": "^3.0.3",
     "capitalize": "^2.0.3",
     "chalk": "^4.1.2",
