@@ -2,7 +2,7 @@ import { Menu as HMenu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import capitalize from "capitalize";
 import { Fragment } from "react";
-import { CalendarView } from "../../../types/calendar";
+import { CalendarView } from "@/types/calendar";
 
 const views: CalendarView[] = ["week", "month"];
 

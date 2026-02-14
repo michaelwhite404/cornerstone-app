@@ -1,9 +1,9 @@
-import { Button, Select, Label, Textarea, Chip } from "../../../components/ui";
+import { Button, Select, Label, Textarea, Chip } from "@/components/ui";
 import React, { useState } from "react";
-import { DeviceModel } from "../../../types/models/deviceTypes";
-import { ErrorLogModel, ErrorStatus } from "../../../types/models/errorLogTypes";
-import { useToasterContext, useWindowSize } from "../../../hooks";
-import { getErrorMessage } from "../../../utils/getErrorMessage";
+import { DeviceModel } from "@/types/models/deviceTypes";
+import { ErrorLogModel, ErrorStatus } from "@/types/models/errorLogTypes";
+import { useToasterContext, useWindowSize } from "@/hooks";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import DevicePane from "../DevicePane";
 import UpdateErrorSkeleton from "../UpdateError.tsx/UpdateErrorSkeleton";
 

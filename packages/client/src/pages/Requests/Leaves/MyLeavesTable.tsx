@@ -4,8 +4,8 @@ import classNames from "classnames";
 import { format } from "date-fns";
 import { useContext } from "react";
 import { Leave, LeavesSortContext } from ".";
-import ApprovalBadge from "../../../components/Badges/ApprovalBadge";
-import TableWrapper from "../../../components/TableWrapper";
+import ApprovalBadge from "@/components/Badges/ApprovalBadge";
+import TableWrapper from "@/components/TableWrapper";
 
 interface Props {
   leaves: Leave[];

@@ -1,6 +1,6 @@
 import React from "react";
-import TableWrapper from "../../../components/TableWrapper";
-import { AttendanceEntry } from "../../../types/aftercareTypes";
+import TableWrapper from "@/components/TableWrapper";
+import { AttendanceEntry } from "@/types/aftercareTypes";
 
 export default function index({ entries }: { entries: AttendanceEntry[] }) {
   return (

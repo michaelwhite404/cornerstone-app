@@ -3,10 +3,10 @@
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import React, { ReactNode, useEffect } from "react";
 import { useGroupBy, useRowSelect, useTable } from "react-table";
-import { Checkbox } from "../../../components/ui";
-import { TextbookModel } from "../../../types/models/textbookTypes";
-import FadeIn from "../../../components/FadeIn";
-import { useWindowSize } from "../../../hooks";
+import { Checkbox } from "@/components/ui";
+import { TextbookModel } from "@/types/models/textbookTypes";
+import FadeIn from "@/components/FadeIn";
+import { useWindowSize } from "@/hooks";
 
 export default function BooksTable({
   columns,

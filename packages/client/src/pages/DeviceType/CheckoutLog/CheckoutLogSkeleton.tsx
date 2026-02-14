@@ -1,6 +1,6 @@
 import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/solid";
-import { Skeleton } from "../../../components/ui";
-import BadgeSkeleton from "../../../components/BadgeSkeleton";
+import { Skeleton } from "@/components/ui";
+import BadgeSkeleton from "@/components/BadgeSkeleton";
 
 export default function CheckoutLogSkeleton({
   rows = 3,

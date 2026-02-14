@@ -1,7 +1,7 @@
 import { ExclamationIcon, ChartBarIcon } from "@heroicons/react/solid";
-import { Skeleton } from "../../../components/ui";
+import { Skeleton } from "@/components/ui";
 import React from "react";
-import BadgeSkeleton from "../../../components/BadgeSkeleton";
+import BadgeSkeleton from "@/components/BadgeSkeleton";
 
 export default function ErrorLogSkeleton({ rows = 1 }: { rows?: number }) {
   return (

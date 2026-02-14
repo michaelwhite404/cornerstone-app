@@ -7,11 +7,11 @@ import {
   EmployeeModel,
   ReimbursementApproval,
   ReimbursementModel,
-} from "../../../types/models";
-import ApprovalBadge from "../../../components/Badges/ApprovalBadge";
-import FadeIn from "../../../components/FadeIn";
-import { useToasterContext } from "../../../hooks";
-import wait from "../../../utils/wait";
+} from "@/types/models";
+import ApprovalBadge from "@/components/Badges/ApprovalBadge";
+import FadeIn from "@/components/FadeIn";
+import { useToasterContext } from "@/hooks";
+import wait from "@/utils/wait";
 import ConfirmButtons from "../ConfirmButtons";
 
 interface DetailProps {

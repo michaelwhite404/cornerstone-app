@@ -1,7 +1,7 @@
 import React from "react";
 import DevicePane from "../DevicePane";
-import { grades } from "../../../utils/grades";
-import { DeviceModel } from "../../../types/models/deviceTypes";
+import { grades } from "@/utils/grades";
+import { DeviceModel } from "@/types/models/deviceTypes";
 import BasicInfo from "../BasicInfo";
 
 export default function BasicInfoSection({

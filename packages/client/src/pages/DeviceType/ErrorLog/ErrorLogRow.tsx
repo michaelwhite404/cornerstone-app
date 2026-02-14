@@ -1,8 +1,8 @@
 import { ExclamationIcon, ChartBarIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon } from "@heroicons/react/solid";
 import { format } from "date-fns";
-import { ErrorLogModel } from "../../../types/models/errorLogTypes";
-import DeviceErrorStatusBadge from "../../../components/Badges/DeviceErrorStatusBadge";
-import { useToggle } from "../../../hooks";
+import { ErrorLogModel } from "@/types/models/errorLogTypes";
+import DeviceErrorStatusBadge from "@/components/Badges/DeviceErrorStatusBadge";
+import { useToggle } from "@/hooks";
 
 export default function ErrorLogRow({ error }: { error: ErrorLogModel }) {
   const [open, toggle] = useToggle(false);

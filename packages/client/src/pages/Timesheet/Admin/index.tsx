@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from "react";
-import { EmployeeModel } from "../../../types/models";
-import { useUsers, useFinalizeTimesheets } from "../../../api";
-import MainContent from "../../../components/MainContent";
-import PageHeader from "../../../components/PageHeader";
-import SideTable from "../../../components/SideTable/SideTable";
-import SideTableFilter from "../../../components/SideTable/SideTableFilter";
-import { useWindowSize } from "../../../hooks";
+import { EmployeeModel } from "@/types/models";
+import { useUsers, useFinalizeTimesheets } from "@/api";
+import MainContent from "@/components/MainContent";
+import PageHeader from "@/components/PageHeader";
+import SideTable from "@/components/SideTable/SideTable";
+import SideTableFilter from "@/components/SideTable/SideTableFilter";
+import { useWindowSize } from "@/hooks";
 import PendingPage from "./PendingPage";
 import UserPage from "./UserPage";
 

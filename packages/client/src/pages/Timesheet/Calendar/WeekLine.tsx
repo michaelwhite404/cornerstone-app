@@ -1,6 +1,6 @@
 import { differenceInMinutes, format, startOfDay } from "date-fns";
 import { useEffect, useState } from "react";
-import { useWindowSize } from "../../../hooks";
+import { useWindowSize } from "@/hooks";
 
 export function WeekLine() {
   const [{ dayOfWeek, minutes }, setValue] = useState(getInfo());

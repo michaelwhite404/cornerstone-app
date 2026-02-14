@@ -1,6 +1,6 @@
 import React from "react";
-import { RadioGroup } from "../../../components/ui";
-import { DeviceModel } from "../../../types/models/deviceTypes";
+import { RadioGroup } from "@/components/ui";
+import { DeviceModel } from "@/types/models/deviceTypes";
 
 export default function CheckinForm({
   device,

@@ -1,16 +1,16 @@
 import { useMemo, useState } from "react";
-import { TextbookSetModel } from "../../../types/models/textbookSetTypes";
-import { TextbookModel } from "../../../types/models/textbookTypes";
-import TextbookStatusBadge from "../../../components/Badges/TextbookStatusBadge";
-import TextbookQualityBadge from "../../../components/Badges/TextbookQualityBadge";
-import { numberToGrade } from "../../../utils/grades";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import { Button } from "../../../components/ui";
+import { TextbookSetModel } from "@/types/models/textbookSetTypes";
+import { TextbookModel } from "@/types/models/textbookTypes";
+import TextbookStatusBadge from "@/components/Badges/TextbookStatusBadge";
+import TextbookQualityBadge from "@/components/Badges/TextbookQualityBadge";
+import { numberToGrade } from "@/utils/grades";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import { Button } from "@/components/ui";
 import BooksTable from "../BooksTable/BooksTable";
 import pluralize from "pluralize";
-import BackButton from "../../../components/BackButton";
-import FadeIn from "../../../components/FadeIn";
-import { useTextbookSetBooks } from "../../../api";
+import BackButton from "@/components/BackButton";
+import FadeIn from "@/components/FadeIn";
+import { useTextbookSetBooks } from "@/api";
 
 type PanelView =
   | { type: "main" }

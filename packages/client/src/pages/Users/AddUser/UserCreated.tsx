@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { useNavigate } from "react-router-dom";
-import { EmployeeModel } from "../../../types/models";
+import { EmployeeModel } from "@/types/models";
 
 interface UserCreatedProps {
   createdUser: EmployeeModel;

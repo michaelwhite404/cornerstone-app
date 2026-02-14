@@ -1,12 +1,12 @@
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import { useCallback, useEffect, useState } from "react";
-import { TextbookModel } from "../../../../types/models/textbookTypes";
-import { Button, ProgressBar, GradeSelect, StudentSelect } from "../../../../components/ui";
-import BackButton from "../../../../components/BackButton";
-import TableToolbox from "../../../../components/Table/TableToolbox";
-import { useToasterContext } from "../../../../hooks";
-import { useTextbookActions, useClassSelection } from "../../../../api";
-import { getErrorMessage } from "../../../../utils/getErrorMessage";
+import { TextbookModel } from "@/types/models/textbookTypes";
+import { Button, ProgressBar, GradeSelect, StudentSelect } from "@/components/ui";
+import BackButton from "@/components/BackButton";
+import TableToolbox from "@/components/Table/TableToolbox";
+import { useToasterContext } from "@/hooks";
+import { useTextbookActions, useClassSelection } from "@/api";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 interface ClassGroup {
   grade: number;

@@ -1,13 +1,13 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
-import { getErrorMessage } from "../../../utils/getErrorMessage";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { isBefore, isSameDay, set } from "date-fns";
 import { ChangeEventHandler, Fragment, useEffect, useRef, useState } from "react";
 import { TimePicker } from "sassy-datepicker";
 import { Leave } from ".";
-import DateSelector from "../../../components/DateSelector";
-import { useToasterContext } from "../../../hooks";
-import { useMyDepartmentLeaders, useCreateLeave } from "../../../api";
+import DateSelector from "@/components/DateSelector";
+import { useToasterContext } from "@/hooks";
+import { useMyDepartmentLeaders, useCreateLeave } from "@/api";
 
 
 interface AddLeaveProps {

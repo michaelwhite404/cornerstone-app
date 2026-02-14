@@ -3,9 +3,9 @@ import { CheckIcon, ChevronDownIcon, SelectorIcon } from "@heroicons/react/solid
 import classNames from "classnames";
 import { admin_directory_v1 } from "googleapis";
 import { useState } from "react";
-import { EmployeeModel } from "../../../types/models";
-import Menuuuu from "../../../components/Menu";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
+import { EmployeeModel } from "@/types/models";
+import Menuuuu from "@/components/Menu";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
 
 interface GroupListProps {
   user: EmployeeModel | undefined;

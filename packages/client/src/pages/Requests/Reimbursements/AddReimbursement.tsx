@@ -1,14 +1,14 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
-import { getErrorMessage } from "../../../utils/getErrorMessage";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { startOfDay } from "date-fns";
 import { ChangeEventHandler, Fragment, useEffect, useState } from "react";
 import { RM } from ".";
-import DateSelector from "../../../components/DateSelector";
-import LabeledInput2 from "../../../components/LabeledInput2";
-import { useToasterContext, useToggle } from "../../../hooks";
-import { useMyDepartmentLeaders, useCreateReimbursement } from "../../../api";
-import stateList from "../../../utils/stateList";
+import DateSelector from "@/components/DateSelector";
+import LabeledInput2 from "@/components/LabeledInput2";
+import { useToasterContext, useToggle } from "@/hooks";
+import { useMyDepartmentLeaders, useCreateReimbursement } from "@/api";
+import stateList from "@/utils/stateList";
 import Dropzone from "./Dropzone";
 
 interface AddLeaveProps {

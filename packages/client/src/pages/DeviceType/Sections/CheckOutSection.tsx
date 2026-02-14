@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Button, Select, Skeleton, GradeSelect, StudentSelect } from "../../../components/ui";
-import { useToasterContext } from "../../../hooks";
-import { useClassSelection } from "../../../api";
+import { Button, Select, Skeleton, GradeSelect, StudentSelect } from "@/components/ui";
+import { useToasterContext } from "@/hooks";
+import { useClassSelection } from "@/api";
 import DevicePane from "../DevicePane";
 import capitalize from "capitalize";
-import { DeviceModel } from "../../../types/models/deviceTypes";
+import { DeviceModel } from "@/types/models/deviceTypes";
 import Checkout from "../Checkout";
 
 interface CheckOutSectionProps {

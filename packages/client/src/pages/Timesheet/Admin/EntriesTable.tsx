@@ -2,9 +2,9 @@ import { ArrowNarrowRightIcon } from "@heroicons/react/outline";
 import { CheckCircleIcon, ExclamationCircleIcon, XCircleIcon } from "@heroicons/react/solid";
 import { format } from "date-fns";
 import React, { Fragment, useEffect } from "react";
-import { TimesheetModel } from "../../../types/models";
-import TableWrapper from "../../../components/TableWrapper";
-import { useChecker } from "../../../hooks";
+import { TimesheetModel } from "@/types/models";
+import TableWrapper from "@/components/TableWrapper";
+import { useChecker } from "@/hooks";
 
 const headers = ["Day", "Description", "Times", ""];
 

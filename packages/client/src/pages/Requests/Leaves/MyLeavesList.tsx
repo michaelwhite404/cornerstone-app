@@ -2,8 +2,8 @@ import { ArrowNarrowRightIcon } from "@heroicons/react/outline";
 import { format } from "date-fns";
 import React from "react";
 import { Leave } from ".";
-import ApprovalBadge from "../../../components/Badges/ApprovalBadge";
-import TableWrapper from "../../../components/TableWrapper";
+import ApprovalBadge from "@/components/Badges/ApprovalBadge";
+import TableWrapper from "@/components/TableWrapper";
 
 interface Props {
   leaves: Leave[];

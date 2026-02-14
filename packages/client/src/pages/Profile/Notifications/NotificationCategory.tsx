@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import isDeepEqual from "deep-equal";
-import { INotificationCategory } from "../../../utils/notificationSettings";
+import { INotificationCategory } from "@/utils/notificationSettings";
 import { NotificationContext } from "../Notifications";
 import NotificationSetting from "./NotificationSetting";
-import { useAuth, useToasterContext } from "../../../hooks";
-import { useUpdateUserSetting } from "../../../api";
+import { useAuth, useToasterContext } from "@/hooks";
+import { useUpdateUserSetting } from "@/api";
 
 export default function NotificationCategory({ notificationCategory }: NotificationCategoryProps) {
   const getCategoryState = (data: { [x: string]: any }) =>

@@ -1,14 +1,14 @@
 import { CheckIcon, XIcon } from "@heroicons/react/outline";
 import { format, getDaysInMonth } from "date-fns";
 import { useState } from "react";
-import { EmployeeModel, TimesheetModel } from "../../../types/models";
-import BackButton from "../../../components/BackButton";
-import FadeIn from "../../../components/FadeIn";
-import MainContent from "../../../components/MainContent";
-import { end, start } from "../../../utils/startEnd";
+import { EmployeeModel, TimesheetModel } from "@/types/models";
+import BackButton from "@/components/BackButton";
+import FadeIn from "@/components/FadeIn";
+import MainContent from "@/components/MainContent";
+import { end, start } from "@/utils/startEnd";
 import EntriesTable from "./EntriesTable";
 import MonthYearPicker from "./MonthYearPicker";
-import { useTimesheets } from "../../../api";
+import { useTimesheets } from "@/api";
 
 export default function UserPage(props: UserPageProps) {
   const [date, setDate] = useState(new Date());

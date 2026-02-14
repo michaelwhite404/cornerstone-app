@@ -1,10 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import { Fragment, useState } from "react";
-import wait from "../../../../utils/wait";
+import { useGenerateLeaveReport } from "@/api";
+import wait from "@/utils/wait";
 import FileTypeCards from "./FileTypeCards";
 import LeaveFields from "./LeaveFields";
-import { useGenerateLeaveReport } from "../../../../api";
 
 const initialFields = [
   { text: "Reason for Leave", value: "reason", checked: true },

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Select from "react-select";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import { StudentModel } from "../../../types/models";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import { StudentModel } from "@/types/models";
 import pluralize from "pluralize";
 
 interface StudentSearchProps {

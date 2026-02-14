@@ -1,6 +1,6 @@
 import DevicePane from "../DevicePane";
 import CheckoutLog from "../CheckoutLog";
-import { CheckoutLogModel } from "../../../types/models/checkoutLogTypes";
+import { CheckoutLogModel } from "@/types/models/checkoutLogTypes";
 
 export default function CheckoutLogSection({
   checkouts,

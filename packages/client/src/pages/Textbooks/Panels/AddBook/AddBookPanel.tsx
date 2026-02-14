@@ -1,13 +1,13 @@
 import { PlusIcon } from "@heroicons/react/solid";
 import pluralize from "pluralize";
-import { getErrorMessage } from "../../../../utils/getErrorMessage";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { useContext, useState } from "react";
-import { TextbookSetModel } from "../../../../types/models/textbookSetTypes";
-import { TextbookModel } from "../../../../types/models/textbookTypes";
-import { Button } from "../../../../components/ui";
-import BackButton from "../../../../components/BackButton";
-import { useToasterContext } from "../../../../hooks";
-import { useAddBooksToSet } from "../../../../api";
+import { TextbookSetModel } from "@/types/models/textbookSetTypes";
+import { TextbookModel } from "@/types/models/textbookTypes";
+import { Button } from "@/components/ui";
+import BackButton from "@/components/BackButton";
+import { useToasterContext } from "@/hooks";
+import { useAddBooksToSet } from "@/api";
 import AddBooksTable from "../../AddBooksTable";
 import { TextbookContext } from "../../Textbooks";
 

@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { RM } from ".";
-import ApprovalBadge from "../../../components/Badges/ApprovalBadge";
-import TableWrapper from "../../../components/TableWrapper";
+import ApprovalBadge from "@/components/Badges/ApprovalBadge";
+import TableWrapper from "@/components/TableWrapper";
 import { CalendarIcon, UserIcon } from "@heroicons/react/outline";
 
 interface Props {

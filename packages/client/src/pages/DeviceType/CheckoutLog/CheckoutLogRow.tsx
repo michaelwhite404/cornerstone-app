@@ -1,6 +1,6 @@
 import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/solid";
-import { CheckoutLogModel } from "../../../types/models/checkoutLogTypes";
-import DeviceCheckoutStatusBadge from "../../../components/Badges/DeviceCheckoutStatusBadge";
+import { CheckoutLogModel } from "@/types/models/checkoutLogTypes";
+import DeviceCheckoutStatusBadge from "@/components/Badges/DeviceCheckoutStatusBadge";
 
 export default function CheckoutLogRow({ checkout }: { checkout: CheckoutLogModel }) {
   return (

@@ -1,10 +1,10 @@
-import { Button } from "../../../components/ui";
+import { Button } from "@/components/ui";
 import React, { useState } from "react";
-import { DeviceModel } from "../../../types/models/deviceTypes";
-import { ErrorLogModel } from "../../../types/models/errorLogTypes";
-import LabeledInput from "../../../components/Inputs/LabeledInput";
-import LabeledTextArea from "../../../components/Inputs/LabeledTextArea";
-import { useToasterContext } from "../../../hooks";
+import { DeviceModel } from "@/types/models/deviceTypes";
+import { ErrorLogModel } from "@/types/models/errorLogTypes";
+import LabeledInput from "@/components/Inputs/LabeledInput";
+import LabeledTextArea from "@/components/Inputs/LabeledTextArea";
+import { useToasterContext } from "@/hooks";
 
 interface CreateErrorProps {
   /**Closes the dialog */

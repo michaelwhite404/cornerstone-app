@@ -1,6 +1,6 @@
 import { Switch } from "@headlessui/react";
 import classNames from "classnames";
-import { DepartmentSetting } from "../../../types/models";
+import { DepartmentSetting } from "@/types/models";
 
 export default function BooleanSetting(props: BooleanSettingProps) {
   const { setting, setValue } = props;

@@ -3,7 +3,7 @@ import { GithubPicker, ColorChangeHandler } from "react-color";
 import {
   DepartmentAvailableSettingModel as AvailableSetting,
   DepartmentSetting,
-} from "../../../types/models";
+} from "@/types/models";
 
 export default function ConstrainedColorSetting(props: Props) {
   const { setting, allowedValues, setValue } = props;

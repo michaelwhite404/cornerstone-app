@@ -1,10 +1,10 @@
-import { Checkbox } from "../../../components/ui";
+import { Checkbox } from "@/components/ui";
 import classNames from "classnames";
 import pluralize from "pluralize";
 import { useEffect, useState } from "react";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import TableWrapper from "../../../components/TableWrapper";
-import { numberToGrade } from "../../../utils/grades";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import TableWrapper from "@/components/TableWrapper";
+import { numberToGrade } from "@/utils/grades";
 
 
 type RemoveArray<T> = T extends any[] ? T[number] : never;

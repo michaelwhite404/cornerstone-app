@@ -1,7 +1,7 @@
 import { ChatAltIcon } from "@heroicons/react/solid";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
-import { TicketCommentUpdateModel } from "../../../types/models";
+import { TicketCommentUpdateModel } from "@/types/models";
 
 export default function Comment({ update }: { update: TicketCommentUpdateModel }) {
   return (

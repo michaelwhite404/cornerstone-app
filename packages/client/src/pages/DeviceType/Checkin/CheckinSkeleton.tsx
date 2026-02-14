@@ -1,5 +1,5 @@
-import { Skeleton } from "../../../components/ui";
-import { useWindowSize } from "../../../hooks";
+import { Skeleton } from "@/components/ui";
+import { useWindowSize } from "@/hooks";
 
 export default function CheckinSkeleton() {
   const [width] = useWindowSize();

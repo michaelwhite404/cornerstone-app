@@ -3,11 +3,11 @@ import classNames from "classnames";
 import { format } from "date-fns";
 import pluralize from "pluralize";
 import { RM } from ".";
-import { ReimbursementModel } from "../../../types/models";
-import ApprovalBadge from "../../../components/Badges/ApprovalBadge";
-import EmptyStateIllustration from "../../../components/EmptyStateIllustration";
-import TableWrapper from "../../../components/TableWrapper";
-import { useChecker, useToasterContext } from "../../../hooks";
+import { ReimbursementModel } from "@/types/models";
+import ApprovalBadge from "@/components/Badges/ApprovalBadge";
+import EmptyStateIllustration from "@/components/EmptyStateIllustration";
+import TableWrapper from "@/components/TableWrapper";
+import { useChecker, useToasterContext } from "@/hooks";
 import ApprovalsList from "./ApprovalsList";
 import ApprovalsTable from "./ApprovalsTable";
 

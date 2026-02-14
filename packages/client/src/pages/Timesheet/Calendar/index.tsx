@@ -4,12 +4,12 @@ import { CalendarViewDropdown } from "./ViewDropdown";
 import { DatePick } from "./DatePick";
 import { WeekLine } from "./WeekLine";
 import { useMemo, useState } from "react";
-import { CalendarEvent, CalendarView } from "../../../types/calendar";
+import { CalendarEvent, CalendarView } from "@/types/calendar";
 import { endOfWeek, format, startOfWeek } from "date-fns";
-import { useAuth } from "../../../hooks";
-import { start, end } from "../../../utils/startEnd";
-import Month from "../../../types/month";
-import { useTimesheets } from "../../../api";
+import { useAuth } from "@/hooks";
+import { start, end } from "@/utils/startEnd";
+import Month from "@/types/month";
+import { useTimesheets } from "@/api";
 
 
 function Calendar(props: CalendarProps) {

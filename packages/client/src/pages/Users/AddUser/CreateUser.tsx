@@ -3,13 +3,13 @@ import { XIcon } from "@heroicons/react/outline";
 import React, { ReactNode, useState } from "react";
 import { Dialog, RadioGroup } from "@headlessui/react";
 import classNames from "classnames";
-import { grades } from "../../../utils/grades";
-import { Divider, Switch } from "../../../components/ui";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
-import { AddOnInput } from "../../../components/Inputs";
+import { AddOnInput } from "@/components/Inputs";
+import { Divider, Switch } from "@/components/ui";
+import { useToasterContext } from "@/hooks";
+import { EmployeeModel } from "@/types/models";
+import { grades } from "@/utils/grades";
 import { CreateUserArgs } from "../Users";
-import { EmployeeModel } from "../../../types/models";
-import { useToasterContext } from "../../../hooks";
 
 interface CreateUserProps {
   setOpen: (value: React.SetStateAction<boolean>) => void;

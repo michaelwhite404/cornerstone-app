@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
-import { Checkbox, Label } from "../../../components/ui";
+import { Checkbox, Label } from "@/components/ui";
 import { useInView } from "react-intersection-observer";
-import BackButton from "../../../components/BackButton";
-import FadeIn from "../../../components/FadeIn";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import { useWindowSize, useChecker } from "../../../hooks";
-import { InactiveAftercarePagesProps } from "../../../types/aftercareTypes";
-import { useAftercareStudents } from "../../../api";
-import { StudentModel } from "../../../types/models";
+import BackButton from "@/components/BackButton";
+import FadeIn from "@/components/FadeIn";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import { useWindowSize, useChecker } from "@/hooks";
+import { InactiveAftercarePagesProps } from "@/types/aftercareTypes";
+import { useAftercareStudents } from "@/api";
+import { StudentModel } from "@/types/models";
 
 export default function AddStudents({
   setPageState,

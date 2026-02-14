@@ -1,6 +1,6 @@
-import { Label, Skeleton } from "../../../components/ui";
-import SelectSkeleton from "../../../components/SelectSkeleton";
-import { useWindowSize } from "../../../hooks";
+import { Label, Skeleton } from "@/components/ui";
+import SelectSkeleton from "@/components/SelectSkeleton";
+import { useWindowSize } from "@/hooks";
 
 export default function UpdateErrorSkeleton() {
   const [width] = useWindowSize();

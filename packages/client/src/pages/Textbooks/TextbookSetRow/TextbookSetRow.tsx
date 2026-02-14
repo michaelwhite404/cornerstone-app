@@ -1,4 +1,4 @@
-import Badge from "../../../components/Badge/Badge";
+import Badge from "@/components/Badge/Badge";
 
 interface Props {
   class: string;

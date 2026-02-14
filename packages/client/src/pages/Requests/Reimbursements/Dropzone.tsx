@@ -2,7 +2,7 @@ import { PaperClipIcon, TrashIcon } from "@heroicons/react/outline";
 import pluralize from "pluralize";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useToasterContext } from "../../../hooks";
+import { useToasterContext } from "@/hooks";
 
 interface CustomFile extends File {
   preview: string;

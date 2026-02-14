@@ -1,6 +1,6 @@
-import FadeIn from "../../../components/FadeIn";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import { InactiveAftercarePagesProps } from "../../../types/aftercareTypes";
+import FadeIn from "@/components/FadeIn";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import { InactiveAftercarePagesProps } from "@/types/aftercareTypes";
 
 export default function EmptyPage({ setPageState }: InactiveAftercarePagesProps) {
   return (

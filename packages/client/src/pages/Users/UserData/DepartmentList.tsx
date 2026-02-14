@@ -2,11 +2,11 @@ import { useState, Fragment } from "react";
 import { Combobox, Menu, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon, SelectorIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
-import { DepartmentModel, EmployeeModel } from "../../../types/models";
+import { DepartmentModel, EmployeeModel } from "@/types/models";
 import capitalize from "capitalize";
-import Menuuuu from "../../../components/Menu";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import { useToasterContext } from "../../../hooks";
+import Menuuuu from "@/components/Menu";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import { useToasterContext } from "@/hooks";
 
 const roles = ["Member", "Leader"];
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { RM } from ".";
-import EmptyStateIllustration from "../../../components/EmptyStateIllustration";
+import EmptyStateIllustration from "@/components/EmptyStateIllustration";
 import ReimbursementList from "./ReimbursementList";
 import ReimbursementTable from "./ReimbursementTable";
 

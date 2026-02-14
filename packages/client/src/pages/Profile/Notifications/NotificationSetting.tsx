@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { INotificationSetting } from "../../../utils/notificationSettings";
+import { INotificationSetting } from "@/utils/notificationSettings";
 import NotificationField from "./NotificationField";
 
 export default function NotificationSetting(props: NotificationSettingProps) {

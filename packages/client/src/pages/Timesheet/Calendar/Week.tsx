@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import "date-fns";
 import { add, isToday, set, startOfWeek, differenceInMinutes, format, isSameDay } from "date-fns";
-import { CalendarEvent } from "../../../types/calendar";
+import { CalendarEvent } from "@/types/calendar";
 import classNames from "classnames";
 import Calendar from ".";
-import { useWindowSize } from "../../../hooks";
+import { useWindowSize } from "@/hooks";
 
 export function CalendarWeek(props: CalendarWeekProps) {
   const [days, setDays] = useState(createDates(props.date));

@@ -1,14 +1,14 @@
 import { TrashIcon } from "@heroicons/react/solid";
-import { Button } from "../../../components/ui";
+import { Button } from "@/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { ActionMeta } from "react-select";
 import Select from "react-select";
-import { StudentModel } from "../../../types/models";
-import FadeIn from "../../../components/FadeIn";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import { InactiveAftercarePagesProps } from "../../../types/aftercareTypes";
-import BackButton from "../../../components/BackButton";
-import { useStudents } from "../../../api";
+import { StudentModel } from "@/types/models";
+import FadeIn from "@/components/FadeIn";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import { InactiveAftercarePagesProps } from "@/types/aftercareTypes";
+import BackButton from "@/components/BackButton";
+import { useStudents } from "@/api";
 
 interface StudentToSelect {
   student: StudentModel;

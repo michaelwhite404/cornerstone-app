@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { ReimbursementApproval, ReimbursementModel } from "../../../types/models";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import Tabs2, { TabOption } from "../../../components/Tabs2";
-import { useAuth, useDocTitle, useSocket } from "../../../hooks";
+import { ReimbursementApproval, ReimbursementModel } from "@/types/models";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import Tabs2, { TabOption } from "@/components/Tabs2";
+import { useAuth, useDocTitle, useSocket } from "@/hooks";
 import AddReimbursement from "./AddReimbursement";
 import Approvals from "./Approvals";
 import Detail from "./Detail";
 import MyReimbursements from "./MyReimbursements";
-import { useReimbursements, useFinalizeReimbursement } from "../../../api";
+import { useReimbursements, useFinalizeReimbursement } from "@/api";
 
 export interface RM extends ReimbursementModel {
   selected: boolean;

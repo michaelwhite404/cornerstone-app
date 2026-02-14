@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { TextbookModel } from "../../../../types/models/textbookTypes";
-import { Button, Select } from "../../../../components/ui";
-import BackButton from "../../../../components/BackButton";
-import { useToasterContext } from "../../../../hooks";
-import { useTextbookActions } from "../../../../api";
-import { getErrorMessage } from "../../../../utils/getErrorMessage";
+import { TextbookModel } from "@/types/models/textbookTypes";
+import { Button, Select } from "@/components/ui";
+import BackButton from "@/components/BackButton";
+import { useToasterContext } from "@/hooks";
+import { useTextbookActions } from "@/api";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 interface CheckInProps {
   data: TextbookModel[];

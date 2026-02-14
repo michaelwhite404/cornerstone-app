@@ -2,11 +2,11 @@ import { ArrowNarrowRightIcon, CheckIcon, XIcon } from "@heroicons/react/outline
 import { CalendarIcon, ClockIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
 import { format } from "date-fns";
-// import BackButton from "../../../components/BackButton";
-import FadeIn from "../../../components/FadeIn";
-import MainContent from "../../../components/MainContent";
-import { useChecker } from "../../../hooks";
-import { useTimesheets } from "../../../api";
+// import BackButton from "@/components/BackButton";
+import FadeIn from "@/components/FadeIn";
+import MainContent from "@/components/MainContent";
+import { useChecker } from "@/hooks";
+import { useTimesheets } from "@/api";
 
 export default function PendingPage(props: Props) {
   const { showTimesheetEntry, finalizeTimesheet } = props;

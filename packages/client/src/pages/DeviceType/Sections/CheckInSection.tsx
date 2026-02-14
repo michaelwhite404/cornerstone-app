@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { DeviceModel } from "../../../types/models/deviceTypes";
-import { useToasterContext } from "../../../hooks";
+import { DeviceModel } from "@/types/models/deviceTypes";
+import { useToasterContext } from "@/hooks";
 import Checkin from "../Checkin";
 import DevicePane from "../DevicePane";
 

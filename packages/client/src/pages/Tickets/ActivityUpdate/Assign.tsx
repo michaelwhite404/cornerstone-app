@@ -1,7 +1,7 @@
 import { UserCircleIcon } from "@heroicons/react/solid";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
-import { TicketAssignUpdateModel } from "../../../types/models";
+import { TicketAssignUpdateModel } from "@/types/models";
 
 export default function Assign({ update }: { update: TicketAssignUpdateModel }) {
   return (

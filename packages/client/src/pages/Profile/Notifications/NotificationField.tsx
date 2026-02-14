@@ -2,8 +2,8 @@ import { Fragment, useContext } from "react";
 import {
   NotificationSettingEnumInput,
   NotificationSettingCheckbox,
-} from "../../../components/NotificationSettingInputs";
-import { INotificationSettingField } from "../../../utils/notificationSettings";
+} from "@/components/NotificationSettingInputs";
+import { INotificationSettingField } from "@/utils/notificationSettings";
 import { NotificationContext } from "../Notifications";
 
 export default function NotificationField(props: NotificationFieldProps) {

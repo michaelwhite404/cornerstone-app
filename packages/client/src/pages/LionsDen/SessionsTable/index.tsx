@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import Badge from "../../../components/Badge/Badge";
-import TableWrapper from "../../../components/TableWrapper";
-import { SignedOutEntry } from "../../../types/aftercareTypes";
+import Badge from "@/components/Badge/Badge";
+import TableWrapper from "@/components/TableWrapper";
+import { SignedOutEntry } from "@/types/aftercareTypes";
 
 
 export default function SessionsTable({ entries }: { entries: SignedOutEntry[] }) {

@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
 import { sub, add } from "date-fns";
 import pluralize from "pluralize";
-import { CalendarView } from "../../../types/calendar";
+import { CalendarView } from "@/types/calendar";
 
 export function DatePick(props: DatePickProps) {
   const handleTodayClick = () => props.setDate(new Date());

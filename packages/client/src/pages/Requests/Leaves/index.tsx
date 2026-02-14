@@ -1,15 +1,15 @@
 import React, { createContext, useEffect, useMemo, useState } from "react";
-import { useAuth, useDocTitle, useSocket } from "../../../hooks";
-import { LeaveApproval, LeaveModel } from "../../../types/models";
+import { useAuth, useDocTitle, useSocket } from "@/hooks";
+import { LeaveApproval, LeaveModel } from "@/types/models";
 import Detail from "./Detail";
 import AddLeave from "./AddLeave";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
-import Tabs2, { TabOption } from "../../../components/Tabs2";
+import PrimaryButton from "@/components/PrimaryButton/PrimaryButton";
+import Tabs2, { TabOption } from "@/components/Tabs2";
 import MyLeaves from "./MyLeaves";
 import { useLocation } from "react-router-dom";
 import { DocumentTextIcon } from "@heroicons/react/solid";
 import ReportModal from "./ReportModal";
-import { useLeaves, useFinalizeLeave } from "../../../api";
+import { useLeaves, useFinalizeLeave } from "@/api";
 
 type PageState = "MY_LEAVES" | "APPROVALS" | "ALL";
 const getStatus = (approval?: LeaveApproval): Leave["status"] =>

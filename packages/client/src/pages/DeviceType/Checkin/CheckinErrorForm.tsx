@@ -1,6 +1,6 @@
 import React from "react";
-import { Input, Textarea } from "../../../components/ui";
-import FadeIn from "../../../components/FadeIn";
+import { Input, Textarea } from "@/components/ui";
+import FadeIn from "@/components/FadeIn";
 
 export default function CheckinErrorForm({
   value,
