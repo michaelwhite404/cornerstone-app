@@ -1,7 +1,6 @@
 import express from "express";
 import morgan from "morgan";
 import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean";
 import cookieParser from "cookie-parser";
 import path from "path";
 import compression from "compression";
@@ -9,7 +8,7 @@ import passport from "passport";
 import { createHandler } from "graphql-http/lib/use/express";
 import subdomain from "express-subdomain";
 
-import { AppError, catchAsync, s3 } from "@utils";
+import { AppError, catchAsync, s3, xssSanitize } from "@utils";
 import globalErrorHandler from "@controllers/errorController";
 import apiRouter from "./routes/apiRoutes";
 import authRouter from "./routes/authRoutes";
@@ -63,8 +62,8 @@ app.use(passport.initialize());
 // Data Sanitization angainst NoSQL query injection
 app.use(mongoSanitize());
 
-// Data Sanitization angainst XSS attacks
-app.use(xss());
+// Data Sanitization against XSS attacks
+app.use(xssSanitize);
 
 app.use(compression());
 
