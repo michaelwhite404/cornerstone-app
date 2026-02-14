@@ -45,7 +45,7 @@ export default function Topbar() {
           </Transition>
         </HMenu>
       </div>
-      <Slideover open={open} onOverlayClick={close}>
+      <Slideover open={open} onOverlayClick={close} side="left" maxWidth="w-64">
         <Sidebar closeMenu={close} />
       </Slideover>
     </div>
