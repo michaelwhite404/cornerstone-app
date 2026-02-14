@@ -18,7 +18,7 @@ import makePassword from "../../utils/makePassword";
 const signToken = (id: EmployeeDocument["_id"]) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
     expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  } as jwt.SignOptions);
 };
 
 export const createSendToken = (employee: EmployeeDocument, statusCode: number, res: Response) => {
