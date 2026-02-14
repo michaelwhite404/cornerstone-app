@@ -1,4 +1,3 @@
-import { String } from "aws-sdk/clients/cloudsearch";
 import { Document, Model, Types } from "mongoose";
 
 export interface DepartmentSettingModel {
@@ -25,7 +24,7 @@ export interface DepartmentSetting {
   description: string;
   helpText?: string;
   value: any;
-  caption?: String;
+  caption?: string;
 }
 
 export interface IDepartmentSettingModel extends Model<DepartmentSettingDocument> {
