@@ -1,0 +1,57 @@
+# Authentication
+
+The Cornerstone API uses JWT (JSON Web Tokens) for authentication. All API requests must include a valid JWT token in the Authorization header.
+
+## Obtaining a Token
+
+To authenticate, make a POST request to the login endpoint with your Google OAuth credentials or use the Google OAuth flow:
+
+```bash
+POST /auth/google/callback
+```
+
+After successful authentication, you'll receive a JWT token in the response.
+
+## Using the Token
+
+Include the token in the `Authorization` header of all API requests:
+
+```bash
+curl -X GET "https://api.cornerstone-schools.org/v2/students" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+## Token Structure
+
+The JWT token contains:
+
+| Field   | Description                                        |
+| ------- | -------------------------------------------------- |
+| `id`    | User's unique identifier                           |
+| `email` | User's email address                               |
+| `role`  | User's role (Super Admin, Admin, Instructor, etc.) |
+| `exp`   | Token expiration timestamp                         |
+
+## Token Expiration
+
+Tokens expire after the configured duration (typically 90 days). When a token expires, you'll receive a `401 Unauthorized` response and need to re-authenticate.
+
+## Role-Based Access
+
+The API uses role-based access control. Available roles are:
+
+- **Super Admin** - Full access to all resources
+- **Admin** - Administrative access to most resources
+- **Development** - Development team access
+- **Instructor** - Teacher-level access
+- **Intern** - Limited intern access
+- **Maintenance** - Maintenance staff access
+
+Different endpoints may require specific roles. See each endpoint's documentation for required permissions.
+
+## Security Best Practices
+
+1. **Never expose your token** in client-side code or public repositories
+2. **Use HTTPS** for all API requests
+3. **Store tokens securely** using httpOnly cookies or secure storage
+4. **Handle token expiration** gracefully in your application

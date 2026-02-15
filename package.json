@@ -9,7 +9,10 @@
     "build:all": "pnpm --filter @cornerstone/client build && pnpm --filter @cornerstone/server build",
     "start": "pnpm --filter @cornerstone/server start",
     "deploy": "git push heroku master",
-    "heroku-postbuild": "pnpm --filter @cornerstone/client build && pnpm --filter @cornerstone/server build"
+    "heroku-postbuild": "pnpm --filter @cornerstone/client build && pnpm --filter @cornerstone/server build",
+    "docs:dev": "pnpm --filter @cornerstone/docs dev",
+    "docs:build": "pnpm --filter @cornerstone/docs build",
+    "docs:generate": "pnpm --filter @cornerstone/docs generate:openapi"
   },
   "dependencies": {
     "concurrently": "^6.2.1"

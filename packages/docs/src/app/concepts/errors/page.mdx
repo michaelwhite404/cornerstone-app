@@ -1,0 +1,135 @@
+# Error Handling
+
+The Cornerstone API uses conventional HTTP response codes and returns detailed error information in a consistent JSON format.
+
+## HTTP Status Codes
+
+| Code  | Description                                          |
+| ----- | ---------------------------------------------------- |
+| `200` | Success - Request completed successfully             |
+| `201` | Created - Resource was created successfully          |
+| `204` | No Content - Request succeeded with no response body |
+| `400` | Bad Request - Invalid request parameters             |
+| `401` | Unauthorized - Missing or invalid authentication     |
+| `403` | Forbidden - Insufficient permissions                 |
+| `404` | Not Found - Resource doesn't exist                   |
+| `422` | Unprocessable Entity - Validation error              |
+| `500` | Internal Server Error - Server-side error            |
+
+## Error Response Format
+
+All error responses follow this structure:
+
+```json
+{
+  "status": "fail",
+  "message": "Human-readable error description"
+}
+```
+
+For server errors (500):
+
+```json
+{
+  "status": "error",
+  "message": "Something went wrong"
+}
+```
+
+## Common Errors
+
+### Authentication Errors
+
+```json
+{
+  "status": "fail",
+  "message": "You are not logged in! Please log in to get access."
+}
+```
+
+### Validation Errors
+
+```json
+{
+  "status": "fail",
+  "message": "Invalid input data. email: Please provide a valid email"
+}
+```
+
+### Not Found Errors
+
+```json
+{
+  "status": "fail",
+  "message": "No student found with that ID"
+}
+```
+
+### Permission Errors
+
+```json
+{
+  "status": "fail",
+  "message": "You do not have permission to perform this action"
+}
+```
+
+## Handling Errors in Code
+
+### JavaScript Example
+
+```javascript
+async function fetchStudent(id) {
+  try {
+    const response = await fetch(`https://api.cornerstone-schools.org/v2/students/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // Handle API error
+      throw new Error(data.message || "Request failed");
+    }
+
+    return data.data.student;
+  } catch (error) {
+    // Handle network or parsing errors
+    console.error("API Error:", error.message);
+    throw error;
+  }
+}
+```
+
+### Retry Logic
+
+For transient errors (503, network issues), implement retry with exponential backoff:
+
+```javascript
+async function fetchWithRetry(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+
+      if (response.status === 503) {
+        // Service unavailable - wait and retry
+        await new Promise((r) => setTimeout(r, Math.pow(2, i) * 1000));
+        continue;
+      }
+
+      return response;
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise((r) => setTimeout(r, Math.pow(2, i) * 1000));
+    }
+  }
+}
+```
+
+## Best Practices
+
+1. **Always check response status** before processing data
+2. **Display user-friendly messages** - Don't expose raw error messages to end users
+3. **Log errors** for debugging and monitoring
+4. **Implement retry logic** for transient failures
+5. **Handle token expiration** by redirecting to login when receiving 401

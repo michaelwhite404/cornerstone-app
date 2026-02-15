@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 255 255 255;
+    --foreground: 15 23 42;
+    --muted: 248 250 252;
+    --muted-foreground: 100 116 139;
+    --border: 226 232 240;
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+    --primary: 14 165 233;
+    --primary-foreground: 255 255 255;
+    --accent: 241 245 249;
+    --accent-foreground: 15 23 42;
+  }
+
+  .dark {
+    --background: 15 23 42;
+    --foreground: 248 250 252;
+    --muted: 30 41 59;
+    --muted-foreground: 148 163 184;
+    --border: 51 65 85;
+    --card: 30 41 59;
+    --card-foreground: 248 250 252;
+    --primary: 56 189 248;
+    --primary-foreground: 15 23 42;
+    --accent: 51 65 85;
+    --accent-foreground: 248 250 252;
+  }
+
+  body {
+    @apply bg-[rgb(var(--background))] text-[rgb(var(--foreground))];
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .sidebar-link {
+    @apply flex items-center gap-2 px-3 py-2 text-sm rounded-lg
+           text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))]
+           hover:bg-[rgb(var(--accent))] transition-colors;
+  }
+
+  .sidebar-link.active {
+    @apply text-[rgb(var(--primary))] bg-[rgb(var(--accent))]
+           font-medium;
+  }
+
+  .method-badge {
+    @apply inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide;
+  }
+
+  .method-get {
+    @apply bg-emerald-500 text-white;
+  }
+
+  .method-post {
+    @apply bg-blue-500 text-white;
+  }
+
+  .method-put {
+    @apply bg-amber-500 text-white;
+  }
+
+  .method-patch {
+    @apply bg-orange-500 text-white;
+  }
+
+  .method-delete {
+    @apply bg-red-500 text-white;
+  }
+}
+
+/* Scrollbar styling */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+  }
+}
+
+/* Code block styling */
+.shiki {
+  @apply rounded-lg p-4 text-sm overflow-x-auto;
+}
+
+.shiki code {
+  @apply bg-transparent p-0;
+}

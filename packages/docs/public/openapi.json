@@ -1,0 +1,1232 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cornerstone API",
+    "version": "2.0.0",
+    "description": "REST API for the Cornerstone School Management Platform. This API provides endpoints for managing students, devices, textbooks, tickets, and other school resources."
+  },
+  "servers": [
+    {
+      "url": "https://api.cornerstone-schools.org/api/v2",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:8080/api/v2",
+      "description": "Development server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Students",
+      "description": "Manage student records including enrollment status, contact information, and associated resources like devices and textbooks."
+    },
+    {
+      "name": "Devices",
+      "description": "Track and manage school devices including Chromebooks, tablets, and other equipment. Handle device checkout/checkin operations."
+    },
+    {
+      "name": "Tickets",
+      "description": "Support ticket system for maintenance requests, IT issues, and other internal support needs."
+    },
+    {
+      "name": "Users",
+      "description": "Manage employee/staff accounts, roles, and permissions."
+    },
+    {
+      "name": "Textbooks",
+      "description": "Track textbook inventory and assignments to students."
+    },
+    {
+      "name": "Leaves",
+      "description": "Employee leave request management including PTO, sick days, and other time-off requests."
+    },
+    {
+      "name": "Reimbursements",
+      "description": "Handle employee expense reimbursement requests and approvals."
+    },
+    {
+      "name": "Aftercare",
+      "description": "Manage aftercare program sessions and student attendance."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from Google OAuth authentication. Include in the Authorization header as: `Bearer <token>`"
+      }
+    },
+    "schemas": {
+      "Student": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier for the student",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Student's first name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Student's last name",
+            "example": "Doe"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Computed full name (firstName + lastName)",
+            "example": "John Doe",
+            "readOnly": true
+          },
+          "grade": {
+            "type": "integer",
+            "description": "Student's current grade level (K-12)",
+            "minimum": 0,
+            "maximum": 12,
+            "example": 8
+          },
+          "schoolEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Student's school-assigned email address",
+            "example": "john.doe@cornerstone-schools.org"
+          },
+          "personalEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Student's personal/parent email address for communications",
+            "example": "parent@gmail.com"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Active", "Inactive", "Graduate"],
+            "description": "Current enrollment status of the student",
+            "example": "Active"
+          },
+          "customID": {
+            "type": "string",
+            "description": "Custom student ID used by the school",
+            "example": "STU-2024-001"
+          },
+          "mainPhoto": {
+            "type": "string",
+            "description": "URL to the student's profile photo",
+            "example": "https://storage.example.com/photos/john-doe.jpg"
+          },
+          "aftercare": {
+            "type": "boolean",
+            "description": "Whether the student is enrolled in the aftercare program",
+            "example": true
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly identifier for the student",
+            "example": "john-doe",
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the student record was created",
+            "readOnly": true
+          },
+          "lastUpdate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the last update to the student record",
+            "readOnly": true
+          },
+          "devices": {
+            "type": "array",
+            "description": "List of devices currently assigned to or checked out by the student",
+            "items": {
+              "$ref": "#/components/schemas/StudentDevice"
+            },
+            "readOnly": true
+          },
+          "textbooks": {
+            "type": "array",
+            "description": "List of textbooks currently assigned to the student",
+            "items": {
+              "$ref": "#/components/schemas/StudentTextbook"
+            },
+            "readOnly": true
+          }
+        },
+        "required": ["firstName", "lastName", "schoolEmail", "status"]
+      },
+      "StudentDevice": {
+        "type": "object",
+        "description": "A device assigned to a student (summary view)",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Device ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Device name/identifier",
+            "example": "Chromebook-101"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Dell"
+          },
+          "deviceType": {
+            "type": "string",
+            "example": "chromebook"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Available", "Checked Out", "Assigned", "Broken", "Not Available"]
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      },
+      "StudentTextbook": {
+        "type": "object",
+        "description": "A textbook assigned to a student",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "bookNumber": {
+            "type": "string",
+            "description": "Unique book number/barcode",
+            "example": "ISBN-001-234"
+          },
+          "quality": {
+            "type": "string",
+            "enum": ["New", "Good", "Acceptable", "Poor"],
+            "description": "Condition of the book when checked out"
+          },
+          "textbookSet": {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" },
+              "title": { "type": "string", "example": "Algebra I" },
+              "class": { "type": "string", "example": "Math 101" }
+            }
+          }
+        }
+      },
+      "Device": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier for the device",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name or asset tag for the device",
+            "example": "Chromebook-Lab1-01"
+          },
+          "brand": {
+            "type": "string",
+            "description": "Device manufacturer",
+            "example": "Dell"
+          },
+          "model": {
+            "type": "string",
+            "description": "Device model name/number",
+            "example": "Chromebook 3100"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "Manufacturer serial number (unique)",
+            "example": "ABC123XYZ"
+          },
+          "macAddress": {
+            "type": "string",
+            "description": "Network MAC address",
+            "example": "00:1A:2B:3C:4D:5E"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Available", "Checked Out", "Assigned", "Broken", "Not Available"],
+            "description": "Current availability status of the device",
+            "example": "Available"
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "Category of device",
+            "example": "chromebook"
+          },
+          "checkedOut": {
+            "type": "boolean",
+            "description": "Whether the device is currently checked out",
+            "example": false,
+            "readOnly": true
+          },
+          "lastUser": {
+            "type": "object",
+            "description": "The last student who used this device",
+            "properties": {
+              "_id": { "type": "string" },
+              "fullName": { "type": "string" },
+              "grade": { "type": "integer" }
+            },
+            "readOnly": true
+          },
+          "teacherCheckOut": {
+            "type": "object",
+            "description": "The teacher/staff member who checked out the device",
+            "properties": {
+              "_id": { "type": "string" },
+              "fullName": { "type": "string" },
+              "email": { "type": "string" }
+            },
+            "readOnly": true
+          },
+          "lastCheckOut": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the last checkout",
+            "readOnly": true
+          },
+          "lastCheckIn": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the last checkin",
+            "readOnly": true
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the device is due to be returned (if checked out)"
+          },
+          "autoUpdateExpiration": {
+            "type": "string",
+            "description": "Auto-update policy expiration date from Google Admin"
+          },
+          "directoryId": {
+            "type": "string",
+            "description": "Google Workspace Directory API device ID"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly identifier",
+            "readOnly": true
+          }
+        },
+        "required": ["name", "serialNumber", "deviceType"]
+      },
+      "Ticket": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier"
+          },
+          "ticketId": {
+            "type": "integer",
+            "description": "Human-readable ticket number",
+            "example": 1042,
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Brief summary of the issue",
+            "example": "Projector not working in Room 201"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the issue or request",
+            "example": "The projector in Room 201 is not displaying any image. The power light is on but no signal is being received from the computer."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["OPEN", "CLOSED"],
+            "description": "Current status of the ticket",
+            "example": "OPEN"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["URGENT", "HIGH", "MEDIUM", "LOW"],
+            "description": "Priority level of the ticket",
+            "example": "MEDIUM"
+          },
+          "department": {
+            "type": "object",
+            "description": "Department this ticket is assigned to",
+            "properties": {
+              "_id": { "type": "string" },
+              "name": { "type": "string", "example": "IT Support" }
+            }
+          },
+          "submittedBy": {
+            "type": "object",
+            "description": "Employee who created the ticket",
+            "properties": {
+              "_id": { "type": "string" },
+              "fullName": { "type": "string" },
+              "email": { "type": "string" }
+            },
+            "readOnly": true
+          },
+          "assignedTo": {
+            "type": "array",
+            "description": "Staff members assigned to resolve this ticket",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": { "type": "string" },
+                "fullName": { "type": "string" },
+                "email": { "type": "string" }
+              }
+            }
+          },
+          "updates": {
+            "type": "array",
+            "description": "History of updates/comments on the ticket",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string" },
+                "createdBy": { "type": "object" },
+                "createdAt": { "type": "string", "format": "date-time" }
+              }
+            },
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the ticket was closed",
+            "readOnly": true
+          },
+          "closedBy": {
+            "type": "object",
+            "description": "Staff member who closed the ticket",
+            "readOnly": true
+          }
+        },
+        "required": ["title", "description", "priority"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["fail", "error"],
+            "example": "fail"
+          },
+          "message": {
+            "type": "string",
+            "example": "No student found with that ID"
+          }
+        }
+      },
+      "PaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "results": {
+            "type": "integer",
+            "description": "Number of items returned in this response",
+            "example": 10
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "pageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "Page number for pagination (1-indexed)",
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1
+        }
+      },
+      "limitParam": {
+        "name": "limit",
+        "in": "query",
+        "description": "Number of items per page (max 100)",
+        "schema": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "sortParam": {
+        "name": "sort",
+        "in": "query",
+        "description": "Sort order. Prefix with `-` for descending. Example: `-createdAt` or `lastName`",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "fieldsParam": {
+        "name": "fields",
+        "in": "query",
+        "description": "Comma-separated list of fields to include in response. Prefix with `-` to exclude.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/students": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "List all students",
+        "description": "Retrieve a paginated list of all students. Supports filtering by status, grade, and other fields. Results can be sorted and paginated.",
+        "operationId": "getStudents",
+        "parameters": [
+          { "$ref": "#/components/parameters/pageParam" },
+          { "$ref": "#/components/parameters/limitParam" },
+          { "$ref": "#/components/parameters/sortParam" },
+          { "$ref": "#/components/parameters/fieldsParam" },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by enrollment status",
+            "schema": {
+              "type": "string",
+              "enum": ["Active", "Inactive", "Graduate"]
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "description": "Filter by grade level",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            }
+          },
+          {
+            "name": "aftercare",
+            "in": "query",
+            "description": "Filter by aftercare enrollment",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of students retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "results": { "type": "integer", "example": 25 },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "students": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Student" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Students"],
+        "summary": "Create a student",
+        "description": "Create a new student record. The student will be assigned a unique ID and slug automatically.",
+        "operationId": "createStudent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["firstName", "lastName", "schoolEmail"],
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "description": "Student's first name",
+                    "example": "Jane"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "Student's last name",
+                    "example": "Smith"
+                  },
+                  "schoolEmail": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "School email address (must be unique)",
+                    "example": "jane.smith@cornerstone-schools.org"
+                  },
+                  "personalEmail": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Personal/parent email address"
+                  },
+                  "grade": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 12,
+                    "description": "Grade level (0 for Kindergarten)"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["Active", "Inactive", "Graduate"],
+                    "default": "Active"
+                  },
+                  "aftercare": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "customID": {
+                    "type": "string",
+                    "description": "Optional custom student ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Student created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "student": { "$ref": "#/components/schemas/Student" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - missing required fields or invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/students/{id}": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Get a student",
+        "description": "Retrieve detailed information about a specific student, including their assigned devices and textbooks.",
+        "operationId": "getStudent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Student ID (MongoDB ObjectId)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Student retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "student": { "$ref": "#/components/schemas/Student" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Students"],
+        "summary": "Update a student",
+        "description": "Update one or more fields on an existing student record. Only include fields you want to change.",
+        "operationId": "updateStudent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Student ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "grade": { "type": "integer" },
+                  "status": { "type": "string", "enum": ["Active", "Inactive", "Graduate"] },
+                  "personalEmail": { "type": "string" },
+                  "aftercare": { "type": "boolean" },
+                  "customID": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Student updated successfully" },
+          "404": { "description": "Student not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Students"],
+        "summary": "Delete a student",
+        "description": "Permanently delete a student record. This action cannot be undone. Consider setting status to 'Inactive' instead.",
+        "operationId": "deleteStudent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Student deleted successfully" },
+          "404": { "description": "Student not found" }
+        }
+      }
+    },
+    "/devices": {
+      "get": {
+        "tags": ["Devices"],
+        "summary": "List all devices",
+        "description": "Retrieve a paginated list of all devices in the inventory. Filter by device type, status, or other attributes.",
+        "operationId": "getDevices",
+        "parameters": [
+          { "$ref": "#/components/parameters/pageParam" },
+          { "$ref": "#/components/parameters/limitParam" },
+          { "$ref": "#/components/parameters/sortParam" },
+          {
+            "name": "deviceType",
+            "in": "query",
+            "description": "Filter by device type (e.g., chromebook, tablet, laptop)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by availability status",
+            "schema": {
+              "type": "string",
+              "enum": ["Available", "Checked Out", "Assigned", "Broken", "Not Available"]
+            }
+          },
+          {
+            "name": "checkedOut",
+            "in": "query",
+            "description": "Filter by checkout status",
+            "schema": { "type": "boolean" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of devices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "results": { "type": "integer" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "devices": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Device" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Devices"],
+        "summary": "Create a device",
+        "description": "Register a new device in the inventory system.",
+        "operationId": "createDevice",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "serialNumber", "deviceType"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Human-readable name or asset tag",
+                    "example": "Chromebook-Lab2-15"
+                  },
+                  "brand": { "type": "string", "example": "HP" },
+                  "model": { "type": "string", "example": "Chromebook 14" },
+                  "serialNumber": {
+                    "type": "string",
+                    "description": "Unique serial number",
+                    "example": "5CG1234567"
+                  },
+                  "macAddress": { "type": "string", "example": "AA:BB:CC:DD:EE:FF" },
+                  "deviceType": {
+                    "type": "string",
+                    "description": "Category of device",
+                    "example": "chromebook"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["Available", "Checked Out", "Assigned", "Broken", "Not Available"],
+                    "default": "Available"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Device created successfully" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/devices/{id}": {
+      "get": {
+        "tags": ["Devices"],
+        "summary": "Get a device",
+        "description": "Retrieve detailed information about a specific device, including checkout history.",
+        "operationId": "getDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Device ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "device": { "$ref": "#/components/schemas/Device" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Device not found" }
+        }
+      },
+      "patch": {
+        "tags": ["Devices"],
+        "summary": "Update a device",
+        "description": "Update device information. Requires Admin or Super Admin role. Some fields like status and checkout info are managed automatically.",
+        "operationId": "updateDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "brand": { "type": "string" },
+                  "model": { "type": "string" },
+                  "macAddress": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Device updated" },
+          "403": { "description": "Forbidden - requires Admin role" },
+          "404": { "description": "Device not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Devices"],
+        "summary": "Delete a device",
+        "description": "Remove a device from the inventory. Requires Super Admin role.",
+        "operationId": "deleteDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Device deleted" },
+          "403": { "description": "Forbidden - requires Super Admin role" },
+          "404": { "description": "Device not found" }
+        }
+      }
+    },
+    "/devices/{id}/check-out/student/{student_id}": {
+      "post": {
+        "tags": ["Devices"],
+        "summary": "Check out device to student",
+        "description": "Check out a device to a specific student. The device must be in 'Available' status. Creates a checkout log entry.",
+        "operationId": "checkoutDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Device ID",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "student_id",
+            "in": "path",
+            "required": true,
+            "description": "Student ID to check out the device to",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device checked out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "device": { "$ref": "#/components/schemas/Device" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Device not available for checkout" },
+          "404": { "description": "Device or student not found" }
+        }
+      }
+    },
+    "/devices/{id}/check-in": {
+      "post": {
+        "tags": ["Devices"],
+        "summary": "Check in device",
+        "description": "Return a checked-out device. Updates the device status to 'Available' and records the checkin in the log.",
+        "operationId": "checkinDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Device ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Device checked in successfully" },
+          "400": { "description": "Device is not currently checked out" },
+          "404": { "description": "Device not found" }
+        }
+      }
+    },
+    "/devices/types": {
+      "get": {
+        "tags": ["Devices"],
+        "summary": "Get all device types",
+        "description": "Retrieve a list of all unique device types in the system (e.g., chromebook, tablet, laptop).",
+        "operationId": "getDeviceTypes",
+        "responses": {
+          "200": {
+            "description": "List of device types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "deviceTypes": {
+                          "type": "array",
+                          "items": { "type": "string" },
+                          "example": ["chromebook", "tablet", "laptop", "calculator"]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "List all tickets",
+        "description": "Retrieve support tickets. Filter by status, priority, or department.",
+        "operationId": "getTickets",
+        "parameters": [
+          { "$ref": "#/components/parameters/pageParam" },
+          { "$ref": "#/components/parameters/limitParam" },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["OPEN", "CLOSED"] }
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["URGENT", "HIGH", "MEDIUM", "LOW"] }
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "description": "Department ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tickets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "results": { "type": "integer" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "tickets": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Ticket" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tickets"],
+        "summary": "Create a ticket",
+        "description": "Submit a new support ticket. The ticket will be assigned a unique ticket number automatically.",
+        "operationId": "createTicket",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "description", "department", "priority"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Brief summary of the issue",
+                    "example": "Printer not working"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Detailed description",
+                    "example": "The printer in the main office is showing an error code E-04 and won't print."
+                  },
+                  "department": {
+                    "type": "string",
+                    "description": "Department ID to route the ticket to"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["URGENT", "HIGH", "MEDIUM", "LOW"],
+                    "example": "MEDIUM"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Ticket created" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/tickets/{id}": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get a ticket",
+        "description": "Retrieve a specific ticket with all updates and comments.",
+        "operationId": "getTicket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "ticket": { "$ref": "#/components/schemas/Ticket" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Ticket not found" }
+        }
+      },
+      "patch": {
+        "tags": ["Tickets"],
+        "summary": "Update a ticket",
+        "description": "Update ticket details, status, or assignment.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "status": { "type": "string", "enum": ["OPEN", "CLOSED"] },
+                  "priority": { "type": "string", "enum": ["URGENT", "HIGH", "MEDIUM", "LOW"] },
+                  "assignedTo": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Array of employee IDs"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Ticket updated" },
+          "404": { "description": "Ticket not found" }
+        }
+      }
+    }
+  }
+}

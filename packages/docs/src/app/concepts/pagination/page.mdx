@@ -1,0 +1,76 @@
+# Pagination
+
+The Cornerstone API supports pagination for all list endpoints to efficiently handle large datasets.
+
+## Query Parameters
+
+| Parameter | Type    | Default | Description                         |
+| --------- | ------- | ------- | ----------------------------------- |
+| `page`    | integer | 1       | The page number to retrieve         |
+| `limit`   | integer | 10      | Number of items per page (max: 100) |
+
+## Example Request
+
+```bash
+curl -X GET "https://api.cornerstone-schools.org/v2/students?page=2&limit=25" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+## Response Format
+
+Paginated responses include metadata about the current page and total results:
+
+```json
+{
+  "status": "success",
+  "results": 25,
+  "data": {
+    "students": [
+      { "id": "...", "firstName": "John", "lastName": "Doe" },
+      { "id": "...", "firstName": "Jane", "lastName": "Smith" }
+    ]
+  }
+}
+```
+
+## Pagination Headers
+
+Some endpoints also return pagination information in response headers:
+
+| Header          | Description           |
+| --------------- | --------------------- |
+| `X-Total-Count` | Total number of items |
+| `X-Page`        | Current page number   |
+| `X-Per-Page`    | Items per page        |
+
+## Best Practices
+
+1. **Use reasonable page sizes** - Start with 10-25 items per page
+2. **Don't fetch all pages at once** - Paginate through results as needed
+3. **Cache previous pages** - Store fetched pages to reduce API calls
+4. **Handle empty pages** - Check if `results` is 0 to detect the end
+
+## JavaScript Example
+
+```javascript
+async function fetchAllStudents() {
+  let page = 1;
+  const limit = 50;
+  const allStudents = [];
+
+  while (true) {
+    const response = await fetch(
+      `https://api.cornerstone-schools.org/v2/students?page=${page}&limit=${limit}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const data = await response.json();
+    allStudents.push(...data.data.students);
+
+    if (data.results < limit) break; // No more pages
+    page++;
+  }
+
+  return allStudents;
+}
+```

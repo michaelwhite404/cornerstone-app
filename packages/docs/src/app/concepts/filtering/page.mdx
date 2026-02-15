@@ -1,0 +1,118 @@
+# Filtering & Sorting
+
+The Cornerstone API provides powerful filtering and sorting capabilities to help you retrieve exactly the data you need.
+
+## Basic Filtering
+
+Filter results by including field names as query parameters:
+
+```bash
+# Get active students
+GET /api/v2/students?status=active
+
+# Get devices of a specific type
+GET /api/v2/devices?deviceType=chromebook
+```
+
+## Comparison Operators
+
+Use special suffixes for comparison operations:
+
+| Operator | Description           | Example                     |
+| -------- | --------------------- | --------------------------- |
+| `[gte]`  | Greater than or equal | `?age[gte]=18`              |
+| `[gt]`   | Greater than          | `?createdAt[gt]=2024-01-01` |
+| `[lte]`  | Less than or equal    | `?grade[lte]=8`             |
+| `[lt]`   | Less than             | `?price[lt]=100`            |
+
+### Example
+
+```bash
+# Get students in grades 6 through 8
+GET /api/v2/students?grade[gte]=6&grade[lte]=8
+
+# Get tickets created after a specific date
+GET /api/v2/tickets?createdAt[gte]=2024-01-01
+```
+
+## Sorting
+
+Use the `sort` parameter to order results. Prefix with `-` for descending order:
+
+```bash
+# Sort by last name (ascending)
+GET /api/v2/students?sort=lastName
+
+# Sort by creation date (newest first)
+GET /api/v2/students?sort=-createdAt
+
+# Multiple sort fields
+GET /api/v2/students?sort=grade,-lastName
+```
+
+## Field Selection
+
+Use the `fields` parameter to select specific fields:
+
+```bash
+# Only return name and email
+GET /api/v2/students?fields=firstName,lastName,email
+
+# Exclude certain fields with -
+GET /api/v2/students?fields=-__v,-updatedAt
+```
+
+## Combining Filters
+
+Combine multiple filters in a single request:
+
+```bash
+curl -X GET "https://api.cornerstone-schools.org/v2/students\
+?status=active\
+&grade[gte]=6\
+&grade[lte]=8\
+&sort=-lastName\
+&fields=firstName,lastName,grade,email\
+&page=1\
+&limit=25" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+## JavaScript Example
+
+```javascript
+// Build query parameters
+const params = new URLSearchParams({
+  status: "active",
+  "grade[gte]": "6",
+  "grade[lte]": "8",
+  sort: "-lastName",
+  fields: "firstName,lastName,grade,email",
+  page: "1",
+  limit: "25",
+});
+
+const response = await fetch(`https://api.cornerstone-schools.org/v2/students?${params}`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+```
+
+## Common Use Cases
+
+### Recent Items
+
+```bash
+GET /api/v2/tickets?sort=-createdAt&limit=10
+```
+
+### Date Range
+
+```bash
+GET /api/v2/leave?startDate[gte]=2024-01-01&startDate[lte]=2024-12-31
+```
+
+### Search by Status
+
+```bash
+GET /api/v2/reimbursements?status=pending
+```
